@@ -1409,6 +1409,32 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                       <Copy className="h-4 w-4 mr-2" />
                       {t('editor.copyToClipboard', 'Copy to Clipboard')}
                     </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const hashtagRegex = /#[\p{L}\p{N}_]+/gu;
+                        const hashtags = plainText.match(hashtagRegex);
+                        if (hashtags && hashtags.length > 0) {
+                          const trimmed = hashtags.map(h => h.trim());
+                          const uniqueHashtags = [...new Set(trimmed)];
+                          const duplicatesRemoved = trimmed.length - uniqueHashtags.length;
+                          if (duplicatesRemoved > 0) {
+                            const hashtagContent = uniqueHashtags.map(tag => `<p>${tag}</p>`).join('');
+                            setContent(hashtagContent);
+                            toast.success(t('editor.duplicatesRemoved', { count: duplicatesRemoved }) || `${duplicatesRemoved} duplicate hashtag(s) removed, ${uniqueHashtags.length} unique kept`);
+                          } else {
+                            toast.info(t('editor.noDuplicates') || 'No duplicate hashtags found');
+                          }
+                        } else {
+                          toast.error(t('editor.noHashtagsFound') || 'No hashtags found in content');
+                        }
+                      }}
+                    >
+                      <ListFilter className="h-4 w-4 mr-2" />
+                      {t('editor.removeDuplicate', 'Remove Duplicate')}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
                 {note && (
