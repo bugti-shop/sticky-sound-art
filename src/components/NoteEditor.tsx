@@ -27,7 +27,7 @@ import { sanitizeForDisplay } from '@/lib/sanitize';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PdfExportSuccessDialog } from './PdfExportSuccessDialog';
 import { PdfExportOptionsSheet, PdfExportSettings } from './PdfExportOptionsSheet';
-import { ArrowLeft, Folder as FolderIcon, Plus, CalendarIcon, History, FileDown, Link2, ChevronDown, FileText, BookOpen, BarChart3, MoreVertical, Mic, Share2, Search, Image, Table, Minus, SeparatorHorizontal, MessageSquare, FileSymlink, FileType, Bell, Clock, Repeat, Trash2, Mail, Phone, LinkIcon, Copy, Replace, Palette, Hash, Crown } from 'lucide-react';
+import { ArrowLeft, Folder as FolderIcon, Plus, CalendarIcon, History, FileDown, Link2, ChevronDown, FileText, BookOpen, BarChart3, MoreVertical, Mic, Share2, Search, Image, Table, Minus, SeparatorHorizontal, MessageSquare, FileSymlink, FileType, Bell, Clock, Repeat, Trash2, Mail, Phone, LinkIcon, Copy, Replace, Palette, Hash, Crown, ListFilter } from 'lucide-react';
 import { exportNoteToPdf, getPageBreakCount, PdfExportResult } from '@/utils/exportToPdf';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -1128,6 +1128,31 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                     >
                       <Copy className="h-4 w-4 mr-2" />
                       {t('editor.copyToClipboard', 'Copy to Clipboard')}
+                    </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+                        const emails = plainText.match(emailRegex);
+                        if (emails && emails.length > 0) {
+                          const uniqueEmails = [...new Set(emails)];
+                          const duplicatesRemoved = emails.length - uniqueEmails.length;
+                          if (duplicatesRemoved > 0) {
+                            const emailContent = uniqueEmails.map(email => `<p>${email}</p>`).join('');
+                            setContent(emailContent);
+                            toast.success(t('editor.duplicatesRemoved', { count: duplicatesRemoved }) || `${duplicatesRemoved} duplicate email(s) removed, ${uniqueEmails.length} unique emails kept`);
+                          } else {
+                            toast.info(t('editor.noDuplicates') || 'No duplicate emails found');
+                          }
+                        } else {
+                          toast.error(t('editor.noEmailsFound') || 'No emails found in content');
+                        }
+                      }}
+                    >
+                      <ListFilter className="h-4 w-4 mr-2" />
+                      {t('editor.removeDuplicate', 'Remove Duplicate')}
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
