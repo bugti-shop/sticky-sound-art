@@ -1374,6 +1374,30 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                       <ListFilter className="h-4 w-4 mr-2" />
                       {t('editor.removeDuplicate', 'Remove Duplicate')}
                     </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const hrefRegex = /href=["']([^"']+)["']/gi;
+                        const hrefMatches = [...content.matchAll(hrefRegex)].map(m => m[1]);
+                        const urlRegex = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/gi;
+                        const urls = plainText.match(urlRegex) || [];
+                        const allUrls = [...urls, ...hrefMatches].map(url => url.trim().replace(/[.,;:!?)]+$/, ''));
+                        if (allUrls.length > 0) {
+                          const lowercaseUrls = allUrls.map(url => url.toLowerCase());
+                          const uniqueUrls = [...new Set(lowercaseUrls)];
+                          const urlContent = uniqueUrls.map(url => `<p><a href="${url}" target="_blank">${url}</a></p>`).join('');
+                          setContent(urlContent);
+                          toast.success(t('editor.urlsLowercased', { count: uniqueUrls.length }) || `${uniqueUrls.length} URL(s) converted to lowercase`);
+                        } else {
+                          toast.error(t('editor.noUrlsFound') || 'No URLs found in content');
+                        }
+                      }}
+                    >
+                      <CaseLower className="h-4 w-4 mr-2" />
+                      {t('editor.convertToLowercase', 'Convert to Lowercase')}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
 
@@ -1455,6 +1479,27 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                     >
                       <ListFilter className="h-4 w-4 mr-2" />
                       {t('editor.removeDuplicate', 'Remove Duplicate')}
+                    </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const hashtagRegex = /#[\p{L}\p{N}_]+/gu;
+                        const hashtags = plainText.match(hashtagRegex);
+                        if (hashtags && hashtags.length > 0) {
+                          const lowercaseHashtags = hashtags.map(h => h.toLowerCase());
+                          const uniqueHashtags = [...new Set(lowercaseHashtags)];
+                          const hashtagContent = uniqueHashtags.map(tag => `<p>${tag}</p>`).join('');
+                          setContent(hashtagContent);
+                          toast.success(t('editor.hashtagsLowercased', { count: uniqueHashtags.length }) || `${uniqueHashtags.length} hashtag(s) converted to lowercase`);
+                        } else {
+                          toast.error(t('editor.noHashtagsFound') || 'No hashtags found in content');
+                        }
+                      }}
+                    >
+                      <CaseLower className="h-4 w-4 mr-2" />
+                      {t('editor.convertToLowercase', 'Convert to Lowercase')}
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
