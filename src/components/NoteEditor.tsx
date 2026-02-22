@@ -1226,6 +1226,40 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                       <Copy className="h-4 w-4 mr-2" />
                       {t('editor.copyToClipboard', 'Copy to Clipboard')}
                     </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const phoneRegex = /(?:\+?\d{1,4}[\s.-]?)?(?:\(?\d{1,4}\)?[\s.-]?)?\d{1,4}[\s.-]?\d{1,4}[\s.-]?\d{1,9}/g;
+                        const phones = plainText.match(phoneRegex);
+                        if (phones && phones.length > 0) {
+                          const validPhones = phones.filter(phone => {
+                            const digitsOnly = phone.replace(/\D/g, '');
+                            return digitsOnly.length >= 7 && digitsOnly.length <= 15;
+                          });
+                          if (validPhones.length > 0) {
+                            const trimmed = validPhones.map(p => p.trim());
+                            const uniquePhones = [...new Set(trimmed)];
+                            const duplicatesRemoved = trimmed.length - uniquePhones.length;
+                            if (duplicatesRemoved > 0) {
+                              const phoneContent = uniquePhones.map(phone => `<p>${phone}</p>`).join('');
+                              setContent(phoneContent);
+                              toast.success(t('editor.duplicatesRemoved', { count: duplicatesRemoved }) || `${duplicatesRemoved} duplicate phone number(s) removed, ${uniquePhones.length} unique kept`);
+                            } else {
+                              toast.info(t('editor.noDuplicates') || 'No duplicate phone numbers found');
+                            }
+                          } else {
+                            toast.error(t('editor.noPhonesFound') || 'No phone numbers found in content');
+                          }
+                        } else {
+                          toast.error(t('editor.noPhonesFound') || 'No phone numbers found in content');
+                        }
+                      }}
+                    >
+                      <ListFilter className="h-4 w-4 mr-2" />
+                      {t('editor.removeDuplicate', 'Remove Duplicate')}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
 
@@ -1289,6 +1323,35 @@ export const NoteEditor = ({ note, isOpen, onClose, onSave, defaultType = 'regul
                     >
                       <Copy className="h-4 w-4 mr-2" />
                       {t('editor.copyToClipboard', 'Copy to Clipboard')}
+                    </div>
+                    <div 
+                      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const plainText = content.replace(/<[^>]*>/g, ' ');
+                        const hrefRegex = /href=["']([^"']+)["']/gi;
+                        const hrefMatches = [...content.matchAll(hrefRegex)].map(m => m[1]);
+                        const urlRegex = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/gi;
+                        const urls = plainText.match(urlRegex) || [];
+                        const allUrls = [...urls, ...hrefMatches].map(url => url.trim().replace(/[.,;:!?)]+$/, ''));
+                        
+                        if (allUrls.length > 0) {
+                          const uniqueUrls = [...new Set(allUrls)];
+                          const duplicatesRemoved = allUrls.length - uniqueUrls.length;
+                          if (duplicatesRemoved > 0) {
+                            const urlContent = uniqueUrls.map(url => `<p><a href="${url}" target="_blank">${url}</a></p>`).join('');
+                            setContent(urlContent);
+                            toast.success(t('editor.duplicatesRemoved', { count: duplicatesRemoved }) || `${duplicatesRemoved} duplicate URL(s) removed, ${uniqueUrls.length} unique kept`);
+                          } else {
+                            toast.info(t('editor.noDuplicates') || 'No duplicate URLs found');
+                          }
+                        } else {
+                          toast.error(t('editor.noUrlsFound') || 'No URLs found in content');
+                        }
+                      }}
+                    >
+                      <ListFilter className="h-4 w-4 mr-2" />
+                      {t('editor.removeDuplicate', 'Remove Duplicate')}
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
