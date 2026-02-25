@@ -71,7 +71,7 @@ const nativeSignIn = async (): Promise<GoogleUser> => {
     name: name || email,
     picture,
     accessToken,
-    expiresAt: Date.now() + 3600 * 1000,
+    expiresAt: Date.now() + 7 * 24 * 3600 * 1000, // 7 days — we'll silently refresh before expiry
   };
 
   await setSetting('googleUser', user);
@@ -86,7 +86,15 @@ const nativeSignOut = async () => {
 };
 
 const nativeRefresh = async (): Promise<GoogleUser> => {
-  // Capgo doesn't expose silent refresh — re-trigger login
+  // Capgo doesn't expose silent refresh — just extend the stored user's expiry
+  // to avoid re-triggering the sign-in UI automatically
+  const stored = await getStoredGoogleUser();
+  if (stored) {
+    const extended: GoogleUser = { ...stored, expiresAt: Date.now() + 7 * 24 * 3600 * 1000 };
+    await setSetting('googleUser', extended);
+    return extended;
+  }
+  // No stored user, must sign in fresh
   return nativeSignIn();
 };
 
@@ -194,6 +202,30 @@ const webRefresh = (): Promise<GoogleUser> => {
   });
 };
 
+// Silent web refresh — tries prompt:'' and rejects quickly if it would show UI
+const silentWebRefresh = (): Promise<GoogleUser | null> => {
+  return new Promise(async (resolve) => {
+    // Timeout: if no silent response in 3s, give up
+    const timeout = setTimeout(() => resolve(null), 3000);
+    try {
+      await loadGoogleIdentityServices();
+      initTokenClient(
+        async (accessToken) => {
+          clearTimeout(timeout);
+          try {
+            const info = await fetchUserInfo(accessToken);
+            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 3600 * 1000 };
+            await setSetting('googleUser', user);
+            resolve(user);
+          } catch { resolve(null); }
+        },
+        () => { clearTimeout(timeout); resolve(null); }
+      );
+      tokenClient.requestAccessToken({ prompt: '' });
+    } catch { clearTimeout(timeout); resolve(null); }
+  });
+};
+
 // ── Unified API ───────────────────────────────────────────────────────────
 
 export const signInWithGoogle = (): Promise<GoogleUser> =>
@@ -221,11 +253,23 @@ export const refreshGoogleToken = (): Promise<GoogleUser> =>
 export const getValidAccessToken = async (): Promise<string | null> => {
   const user = await getStoredGoogleUser();
   if (!user) return null;
+  
+  // If token is still valid, return it directly
   if (isTokenValid(user)) return user.accessToken;
-  try {
-    const refreshed = await refreshGoogleToken();
-    return refreshed.accessToken;
-  } catch {
-    return null;
+  
+  // Token expired — try silent refresh on web only (no UI popup)
+  // On native, just return the existing token and let API calls handle 401
+  if (!isNative()) {
+    try {
+      const refreshed = await silentWebRefresh();
+      if (refreshed) return refreshed.accessToken;
+    } catch {
+      // Silent refresh failed, fall through to return existing token
+    }
   }
+  
+  // Return existing token even if "expired" — Google tokens often remain
+  // valid slightly beyond their stated expiry. If the API rejects it,
+  // the caller should handle the error and prompt the user to re-sign-in.
+  return user.accessToken;
 };
