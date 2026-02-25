@@ -71,7 +71,7 @@ const nativeSignIn = async (): Promise<GoogleUser> => {
     name: name || email,
     picture,
     accessToken,
-    expiresAt: Date.now() + 7 * 24 * 3600 * 1000, // 7 days — we'll silently refresh before expiry
+    expiresAt: Date.now() + 365 * 24 * 3600 * 1000, // 1 year — effectively never expires
   };
 
   await setSetting('googleUser', user);
@@ -90,7 +90,7 @@ const nativeRefresh = async (): Promise<GoogleUser> => {
   // to avoid re-triggering the sign-in UI automatically
   const stored = await getStoredGoogleUser();
   if (stored) {
-    const extended: GoogleUser = { ...stored, expiresAt: Date.now() + 7 * 24 * 3600 * 1000 };
+    const extended: GoogleUser = { ...stored, expiresAt: Date.now() + 365 * 24 * 3600 * 1000 };
     await setSetting('googleUser', extended);
     return extended;
   }
@@ -164,7 +164,7 @@ const webSignIn = (): Promise<GoogleUser> => {
         async (accessToken) => {
           try {
             const info = await fetchUserInfo(accessToken);
-            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 3600 * 1000 };
+            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 365 * 24 * 3600 * 1000 };
             await setSetting('googleUser', user);
             resolve(user);
           } catch (err) { reject(err); }
@@ -190,7 +190,7 @@ const webRefresh = (): Promise<GoogleUser> => {
         async (accessToken) => {
           try {
             const info = await fetchUserInfo(accessToken);
-            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 3600 * 1000 };
+            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 365 * 24 * 3600 * 1000 };
             await setSetting('googleUser', user);
             resolve(user);
           } catch (err) { reject(err); }
@@ -214,7 +214,7 @@ const silentWebRefresh = (): Promise<GoogleUser | null> => {
           clearTimeout(timeout);
           try {
             const info = await fetchUserInfo(accessToken);
-            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 3600 * 1000 };
+            const user: GoogleUser = { ...info, accessToken, expiresAt: Date.now() + 365 * 24 * 3600 * 1000 };
             await setSetting('googleUser', user);
             resolve(user);
           } catch { resolve(null); }

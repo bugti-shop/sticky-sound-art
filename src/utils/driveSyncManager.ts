@@ -298,11 +298,9 @@ export const performSync = async (): Promise<SyncResult> => {
     const deviceId = await getDeviceId();
     const folderId = await getOrCreateAppFolder();
 
-    // List existing files in Drive
-    const { files } = await listDriveFiles(folderId);
-
-    // Load all local data
-    const [localNotes, localTasks, allSettings] = await Promise.all([
+    // List existing files in Drive + load all local data IN PARALLEL
+    const [{ files }, localNotes, localTasks, allSettings] = await Promise.all([
+      listDriveFiles(folderId),
       loadNotesFromDB(),
       loadTodoItems(),
       getAllSettings(),
@@ -316,112 +314,104 @@ export const performSync = async (): Promise<SyncResult> => {
       }
     }
 
+    const notesFile = findDriveFile(files, FILES.NOTES);
+    const tasksFile = findDriveFile(files, FILES.TASKS);
+    const settingsFile = findDriveFile(files, FILES.SETTINGS);
+
+    // ── Download ALL remote files IN PARALLEL ─────────────────────────
+    const [remoteNotesData, remoteTasksData, remoteSettingsData] = await Promise.all([
+      notesFile ? downloadFileContent<SyncDataFile<any[]>>(notesFile.id).catch(() => null) : Promise.resolve(null),
+      tasksFile ? downloadFileContent<SyncDataFile<any[]>>(tasksFile.id).catch(() => null) : Promise.resolve(null),
+      settingsFile ? downloadFileContent<SyncDataFile<Record<string, any>>>(settingsFile.id).catch(() => null) : Promise.resolve(null),
+    ]);
+
     let notesDownloaded = 0;
     let tasksDownloaded = 0;
     let totalConflicts = 0;
     let allConflictItems: import('./syncConflicts').SyncConflict[] = [];
 
-    // ── Sync Notes ───────────────────────────────────────────────────────
-    const notesFile = findDriveFile(files, FILES.NOTES);
+    // ── Merge Notes ───────────────────────────────────────────────────
     let finalNotes = localNotes;
-
-    if (notesFile) {
-      // Download remote notes and merge
-      const remoteData = await downloadFileContent<SyncDataFile<any[]>>(notesFile.id);
-      const remoteNotes = hydrateNotes(remoteData.data || []);
+    if (remoteNotesData) {
+      const remoteNotes = hydrateNotes(remoteNotesData.data || []);
       const { merged, conflictItems } = mergeNotes(localNotes, remoteNotes);
       finalNotes = merged;
       totalConflicts += conflictItems.length;
       allConflictItems.push(...conflictItems);
       notesDownloaded = remoteNotes.length;
-
-      // Save merged notes locally
-      await saveNotesToDB(finalNotes);
-      window.dispatchEvent(new Event('notesUpdated'));
     }
 
-    // Upload notes to Drive
-    const notesPayload: SyncDataFile<any[]> = {
-      _type: 'notes',
-      _version: (await getSetting<number>('sync_notes_version', 0)) + 1,
-      _lastModified: new Date().toISOString(),
-      _deviceId: deviceId,
-      data: serializeNotes(finalNotes),
-    };
-    await uploadJsonFile(folderId, FILES.NOTES, notesPayload, notesFile?.id);
-    await setSetting('sync_notes_version', notesPayload._version);
-
-    // ── Sync Tasks ───────────────────────────────────────────────────────
-    const tasksFile = findDriveFile(files, FILES.TASKS);
+    // ── Merge Tasks ───────────────────────────────────────────────────
     let finalTasks = localTasks;
-
-    if (tasksFile) {
-      const remoteData = await downloadFileContent<SyncDataFile<any[]>>(tasksFile.id);
-      const remoteTasks = hydrateTasks(remoteData.data || []);
+    if (remoteTasksData) {
+      const remoteTasks = hydrateTasks(remoteTasksData.data || []);
       const taskMerge = mergeTasks(localTasks, remoteTasks);
       finalTasks = taskMerge.merged;
       totalConflicts += taskMerge.conflictItems.length;
       allConflictItems.push(...taskMerge.conflictItems);
       tasksDownloaded = remoteTasks.length;
-
-      await saveTodoItems(finalTasks);
-      window.dispatchEvent(new Event('tasksUpdated'));
     }
 
+    // ── Merge Settings ────────────────────────────────────────────────
+    if (remoteSettingsData) {
+      const merged = mergeSettings(localSettings, remoteSettingsData.data || {});
+      // Apply merged settings in parallel
+      await Promise.all(
+        Object.entries(merged).map(([key, value]) => setSetting(key, value))
+      );
+    }
+
+    // ── Save merged local data + dispatch events IN PARALLEL ──────────
+    await Promise.all([
+      remoteNotesData ? saveNotesToDB(finalNotes) : Promise.resolve(),
+      remoteTasksData ? saveTodoItems(finalTasks) : Promise.resolve(),
+    ]);
+
+    if (remoteNotesData) window.dispatchEvent(new Event('notesUpdated'));
+    if (remoteTasksData) window.dispatchEvent(new Event('tasksUpdated'));
+    if (remoteSettingsData) window.dispatchEvent(new Event('foldersUpdated'));
+
+    // ── Upload ALL files to Drive IN PARALLEL ─────────────────────────
+    const notesVersion = (await getSetting<number>('sync_notes_version', 0)) + 1;
+    const tasksVersion = (await getSetting<number>('sync_tasks_version', 0)) + 1;
+    const settingsVersion = (await getSetting<number>('sync_settings_version', 0)) + 1;
+
+    const notesPayload: SyncDataFile<any[]> = {
+      _type: 'notes', _version: notesVersion,
+      _lastModified: new Date().toISOString(), _deviceId: deviceId,
+      data: serializeNotes(finalNotes),
+    };
     const tasksPayload: SyncDataFile<any[]> = {
-      _type: 'tasks',
-      _version: (await getSetting<number>('sync_tasks_version', 0)) + 1,
-      _lastModified: new Date().toISOString(),
-      _deviceId: deviceId,
+      _type: 'tasks', _version: tasksVersion,
+      _lastModified: new Date().toISOString(), _deviceId: deviceId,
       data: finalTasks,
     };
-    await uploadJsonFile(folderId, FILES.TASKS, tasksPayload, tasksFile?.id);
-    await setSetting('sync_tasks_version', tasksPayload._version);
-
-    // ── Sync Settings ────────────────────────────────────────────────────
-    const settingsFile = findDriveFile(files, FILES.SETTINGS);
-
-    if (settingsFile) {
-      const remoteData = await downloadFileContent<SyncDataFile<Record<string, any>>>(settingsFile.id);
-      const merged = mergeSettings(localSettings, remoteData.data || {});
-
-      // Apply merged settings locally
-      for (const [key, value] of Object.entries(merged)) {
-        await setSetting(key, value);
-      }
-
-      // Dispatch folder updates
-      window.dispatchEvent(new Event('foldersUpdated'));
-    }
-
     const settingsPayload: SyncDataFile<Record<string, any>> = {
-      _type: 'settings',
-      _version: (await getSetting<number>('sync_settings_version', 0)) + 1,
-      _lastModified: new Date().toISOString(),
-      _deviceId: deviceId,
+      _type: 'settings', _version: settingsVersion,
+      _lastModified: new Date().toISOString(), _deviceId: deviceId,
       data: localSettings,
     };
-    await uploadJsonFile(folderId, FILES.SETTINGS, settingsPayload, settingsFile?.id);
-    await setSetting('sync_settings_version', settingsPayload._version);
 
-    // ── Update Sync Meta ─────────────────────────────────────────────────
     let changeToken: string | undefined;
-    try {
-      changeToken = await getStartPageToken();
-    } catch { }
+    try { changeToken = await getStartPageToken(); } catch { }
 
     const meta: SyncMeta = {
-      lastSyncAt: new Date().toISOString(),
-      deviceId,
-      changeToken,
-      notesVersion: notesPayload._version,
-      tasksVersion: tasksPayload._version,
-      settingsVersion: settingsPayload._version,
+      lastSyncAt: new Date().toISOString(), deviceId, changeToken,
+      notesVersion, tasksVersion, settingsVersion,
     };
-
     const metaFile = findDriveFile(files, FILES.META);
-    await uploadJsonFile(folderId, FILES.META, meta, metaFile?.id);
-    await setSetting('npd_last_sync', meta);
+
+    // Upload all 4 files + save version numbers IN PARALLEL
+    await Promise.all([
+      uploadJsonFile(folderId, FILES.NOTES, notesPayload, notesFile?.id),
+      uploadJsonFile(folderId, FILES.TASKS, tasksPayload, tasksFile?.id),
+      uploadJsonFile(folderId, FILES.SETTINGS, settingsPayload, settingsFile?.id),
+      uploadJsonFile(folderId, FILES.META, meta, metaFile?.id),
+      setSetting('sync_notes_version', notesVersion),
+      setSetting('sync_tasks_version', tasksVersion),
+      setSetting('sync_settings_version', settingsVersion),
+      setSetting('npd_last_sync', meta),
+    ]);
 
     // Surface conflicts to UI
     if (allConflictItems.length > 0) {
