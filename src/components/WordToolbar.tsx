@@ -442,10 +442,10 @@ export const WordToolbar = ({
                   <div className="h-1.5 w-5 rounded-full" style={{ backgroundColor: selectedTextColor }} />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-2 max-h-72 overflow-y-auto" align="start">
+              <PopoverContent className="w-auto p-2 max-h-72 overflow-y-auto" align="start" onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-10 gap-1">
                   {TEXT_COLORS.map((color) => (
-                    <button key={color} type="button" onClick={() => { onTextColor(color); setSelectedTextColor(color); setTextColorOpen(false); }} className={cn("h-6 w-6 rounded border border-border/50 hover:scale-110 transition-transform", selectedTextColor === color && "ring-2 ring-primary ring-offset-1", color === '#FFFFFF' && "border-border")} style={{ backgroundColor: color }} title={color} />
+                    <button key={color} type="button" onPointerDown={(e) => { e.preventDefault(); onTextColor(color); setSelectedTextColor(color); setTextColorOpen(false); }} className={cn("h-6 w-6 rounded border border-border/50 hover:scale-110 transition-transform", selectedTextColor === color && "ring-2 ring-primary ring-offset-1", color === '#FFFFFF' && "border-border")} style={{ backgroundColor: color }} title={color} />
                   ))}
                 </div>
               </PopoverContent>
@@ -461,10 +461,10 @@ export const WordToolbar = ({
                   <Highlighter className="h-5 w-5" strokeWidth={2} />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-2 max-h-64 overflow-y-auto" align="start">
+              <PopoverContent className="w-auto p-2 max-h-64 overflow-y-auto" align="start" onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-6 gap-1">
                   {HIGHLIGHT_COLORS.map((color) => (
-                    <button key={color} type="button" onClick={() => { onHighlight(color); setSelectedHighlight(color); setHighlightOpen(false); }} className={cn("h-6 w-6 rounded border border-border/50 hover:scale-110 transition-transform", color === 'transparent' && "bg-[repeating-linear-gradient(45deg,#ccc,#ccc_2px,#fff_2px,#fff_4px)]", selectedHighlight === color && "ring-2 ring-primary ring-offset-1")} style={{ backgroundColor: color === 'transparent' ? undefined : color }} title={color === 'transparent' ? 'None' : color} />
+                    <button key={color} type="button" onPointerDown={(e) => { e.preventDefault(); onHighlight(color); setSelectedHighlight(color); setHighlightOpen(false); }} className={cn("h-6 w-6 rounded border border-border/50 hover:scale-110 transition-transform", color === 'transparent' && "bg-[repeating-linear-gradient(45deg,#ccc,#ccc_2px,#fff_2px,#fff_4px)]", selectedHighlight === color && "ring-2 ring-primary ring-offset-1")} style={{ backgroundColor: color === 'transparent' ? undefined : color }} title={color === 'transparent' ? 'None' : color} />
                   ))}
                 </div>
               </PopoverContent>

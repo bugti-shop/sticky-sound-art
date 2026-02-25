@@ -762,9 +762,29 @@ export const RichTextEditor = ({
 
   const execCommand = useCallback((command: string, value?: string) => {
     try {
-      editorRef.current?.focus();
+      const editor = editorRef.current;
+      if (!editor) return;
+      
+      // Save selection before focus
+      const sel = window.getSelection();
+      const savedRange = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+      
+      // Only focus if not already focused (prevents blink)
+      if (document.activeElement !== editor) {
+        editor.focus();
+        // Restore selection after focus shift
+        if (savedRange && sel) {
+          sel.removeAllRanges();
+          sel.addRange(savedRange);
+        }
+      }
+      
       document.execCommand(command, false, value);
-      editorRef.current?.focus();
+      
+      // Update lastContentRef immediately to prevent re-render cycle
+      if (editor) {
+        lastContentRef.current = editor.innerHTML;
+      }
     } catch (error) {
       console.error('Error executing command:', command, error);
     }
