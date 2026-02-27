@@ -21,21 +21,20 @@ import { getSetting, setSetting } from "@/utils/settingsStorage";
 import { shouldAppBeLocked, updateLastUnlockTime } from "@/utils/appLockStorage";
 import { AppLockScreen } from "@/components/AppLockScreen";
 import { WhatsNewSheet } from "@/components/WhatsNewSheet";
+// Eager load only the two most critical pages for instant first render
 import Index from "./pages/Index";
-import Notes from "./pages/Notes";
-import NotesCalendar from "./pages/NotesCalendar";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsAndConditions from "./pages/TermsAndConditions";
-
-// Eager load main todo pages for instant navigation
 import Today from "./pages/todo/Today";
-import Progress from "./pages/todo/Progress";
-import TodoCalendar from "./pages/todo/TodoCalendar";
-import TodoSettings from "./pages/todo/TodoSettings";
 
-// Lazy load less-frequently accessed pages
+// Lazy load everything else - they load in background after first paint
+const Notes = lazy(() => import("./pages/Notes"));
+const NotesCalendar = lazy(() => import("./pages/NotesCalendar"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const Progress = lazy(() => import("./pages/todo/Progress"));
+const TodoCalendar = lazy(() => import("./pages/todo/TodoCalendar"));
+const TodoSettings = lazy(() => import("./pages/todo/TodoSettings"));
 const WebClipper = lazy(() => import("./pages/WebClipper"));
 const Reminders = lazy(() => import("./pages/Reminders"));
 const NotFound = lazy(() => import("./pages/NotFound"));
