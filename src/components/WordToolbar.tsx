@@ -320,6 +320,8 @@ export const WordToolbar = ({
     <button
       type="button"
       onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()}
+      onPointerDown={(e) => e.preventDefault()}
       disabled={disabled}
       title={title}
       className={cn(
