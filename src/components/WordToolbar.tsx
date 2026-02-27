@@ -466,7 +466,13 @@ export const WordToolbar = ({
           <OrderedItem id="highlight">
             <Popover open={highlightOpen} onOpenChange={setHighlightOpen}>
               <PopoverTrigger asChild>
-                <button type="button" title={t('wordToolbar.highlight')} className="h-11 w-11 flex items-center justify-center rounded hover:bg-muted/80 transition-colors flex-shrink-0">
+                <button
+                  type="button"
+                  title={t('wordToolbar.highlight')}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onPointerDown={(e) => e.preventDefault()}
+                  className="h-11 w-11 flex items-center justify-center rounded hover:bg-muted/80 transition-colors flex-shrink-0"
+                >
                   <Highlighter className="h-5 w-5" strokeWidth={2} />
                 </button>
               </PopoverTrigger>

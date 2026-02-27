@@ -494,21 +494,38 @@ export const RichTextEditor = ({
     }
   }, []);
 
-  // Listen to selection changes to update formatting states - debounced via rAF
-  const selectionRafRef = useRef<number | null>(null);
+  // Listen to selection changes with debounce to avoid Android/WebView selection flicker
+  const selectionDebounceRef = useRef<number | null>(null);
+  const lastSelectionSignatureRef = useRef<string>('');
   useEffect(() => {
     const handleSelectionChange = () => {
-      if (editorRef.current?.contains(document.activeElement) || 
-          document.activeElement === editorRef.current) {
-        if (selectionRafRef.current) cancelAnimationFrame(selectionRafRef.current);
-        selectionRafRef.current = requestAnimationFrame(updateActiveStates);
+      if (!(editorRef.current?.contains(document.activeElement) || document.activeElement === editorRef.current)) {
+        return;
       }
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      const range = selection.getRangeAt(0);
+      const signature = `${selection.isCollapsed}-${range.startOffset}-${range.endOffset}-${range.commonAncestorContainer.nodeName}`;
+      if (signature === lastSelectionSignatureRef.current) return;
+      lastSelectionSignatureRef.current = signature;
+
+      if (selectionDebounceRef.current) {
+        window.clearTimeout(selectionDebounceRef.current);
+      }
+
+      selectionDebounceRef.current = window.setTimeout(() => {
+        updateActiveStates();
+      }, 80);
     };
-    
+
     document.addEventListener('selectionchange', handleSelectionChange);
     return () => {
       document.removeEventListener('selectionchange', handleSelectionChange);
-      if (selectionRafRef.current) cancelAnimationFrame(selectionRafRef.current);
+      if (selectionDebounceRef.current) {
+        window.clearTimeout(selectionDebounceRef.current);
+      }
     };
   }, [updateActiveStates]);
 
