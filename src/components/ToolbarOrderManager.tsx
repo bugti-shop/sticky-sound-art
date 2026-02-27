@@ -23,9 +23,10 @@ const TOOLBAR_ORDER_KEY = 'wordToolbarOrder';
 const TOOLBAR_VISIBILITY_KEY = 'wordToolbarVisibility';
 
 export const DEFAULT_TOOLBAR_ORDER: ToolbarItemId[] = [
-  'bold', 'italic', 'underline', 'fontFamily', 'fontSize', 'strikethrough', 'subscript', 'superscript',
+  'bold', 'italic', 'underline', 'fontFamily', 'fontSize', 'highlight', 'textColor',
+  'image', 'table', 'bulletList', 'numberedList', 'checklist',
+  'strikethrough', 'subscript', 'superscript',
   'clearFormatting', 'codeBlock', 'horizontalRule', 'blockquote', 'emoji',
-  'bulletList', 'numberedList', 'checklist', 'image', 'table', 'highlight', 'textColor',
   'undo', 'redo', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify',
   'headings', 'textCase', 'textDirection',
   'comment', 'link', 'noteLink', 'attachment', 'zoom'

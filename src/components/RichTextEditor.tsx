@@ -455,7 +455,7 @@ export const RichTextEditor = ({
   const updateActiveStates = useCallback(() => {
     try {
       const isBold = document.queryCommandState('bold');
-      const isItalic = document.queryCommandState('italic');
+      const isItalicState = document.queryCommandState('italic');
       const isUnderline = document.queryCommandState('underline');
       const isStrikethrough = document.queryCommandState('strikeThrough');
       const isSubscript = document.queryCommandState('subscript');
@@ -478,23 +478,38 @@ export const RichTextEditor = ({
       else if (document.queryCommandState('justifyRight')) alignment = 'right';
       else if (document.queryCommandState('justifyFull')) alignment = 'justify';
       
-      setActiveStates({ isBold, isItalic, isUnderline, isStrikethrough, isSubscript, isSuperscript, alignment, isBulletList, isNumberedList, isChecklist });
+      setActiveStates(prev => {
+        // Only update if something actually changed to prevent unnecessary re-renders
+        if (prev.isBold === isBold && prev.isItalic === isItalicState && prev.isUnderline === isUnderline &&
+            prev.isStrikethrough === isStrikethrough && prev.isSubscript === isSubscript &&
+            prev.isSuperscript === isSuperscript && prev.alignment === alignment &&
+            prev.isBulletList === isBulletList && prev.isNumberedList === isNumberedList &&
+            prev.isChecklist === isChecklist) {
+          return prev;
+        }
+        return { isBold, isItalic: isItalicState, isUnderline, isStrikethrough, isSubscript, isSuperscript, alignment, isBulletList, isNumberedList, isChecklist };
+      });
     } catch (e) {
       // queryCommandState may fail in some contexts
     }
   }, []);
 
-  // Listen to selection changes to update formatting states
+  // Listen to selection changes to update formatting states - debounced via rAF
+  const selectionRafRef = useRef<number | null>(null);
   useEffect(() => {
     const handleSelectionChange = () => {
       if (editorRef.current?.contains(document.activeElement) || 
           document.activeElement === editorRef.current) {
-        updateActiveStates();
+        if (selectionRafRef.current) cancelAnimationFrame(selectionRafRef.current);
+        selectionRafRef.current = requestAnimationFrame(updateActiveStates);
       }
     };
     
     document.addEventListener('selectionchange', handleSelectionChange);
-    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange);
+      if (selectionRafRef.current) cancelAnimationFrame(selectionRafRef.current);
+    };
   }, [updateActiveStates]);
 
   // Setup audio progress tracking and event delegation for inline voice recordings
@@ -767,7 +782,7 @@ export const RichTextEditor = ({
       
       // Save selection before focus
       const sel = window.getSelection();
-      const savedRange = sel && sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+      const savedRange = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
       
       // Only focus if not already focused (prevents blink)
       if (document.activeElement !== editor) {
@@ -779,16 +794,26 @@ export const RichTextEditor = ({
         }
       }
       
+      // Mark as user input BEFORE executing to prevent re-render cycle
+      isUserInputRef.current = true;
+      
       document.execCommand(command, false, value);
       
-      // Update lastContentRef immediately to prevent re-render cycle
+      // Sync lastContentRef and fire onChange immediately (don't wait for input event)
       if (editor) {
-        lastContentRef.current = editor.innerHTML;
+        const newContent = editor.innerHTML;
+        if (newContent !== lastContentRef.current) {
+          lastContentRef.current = newContent;
+          onChange(newContent);
+        }
       }
+      
+      // Update active formatting states without causing re-render delay
+      requestAnimationFrame(updateActiveStates);
     } catch (error) {
       console.error('Error executing command:', command, error);
     }
-  }, []);
+  }, [onChange, updateActiveStates]);
 
   const handleBold = () => execCommand('bold');
   const handleItalic = () => execCommand('italic');
