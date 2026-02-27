@@ -440,7 +440,13 @@ export const WordToolbar = ({
           <OrderedItem id="textColor">
             <Popover open={textColorOpen} onOpenChange={setTextColorOpen}>
               <PopoverTrigger asChild>
-                <button type="button" title={t('wordToolbar.textColor')} className="h-11 w-11 flex flex-col items-center justify-center gap-0.5 rounded hover:bg-muted/80 transition-colors flex-shrink-0">
+                <button
+                  type="button"
+                  title={t('wordToolbar.textColor')}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onPointerDown={(e) => e.preventDefault()}
+                  className="h-11 w-11 flex flex-col items-center justify-center gap-0.5 rounded hover:bg-muted/80 transition-colors flex-shrink-0"
+                >
                   <span className="text-base font-semibold leading-none">A</span>
                   <div className="h-1.5 w-5 rounded-full" style={{ backgroundColor: selectedTextColor }} />
                 </button>
