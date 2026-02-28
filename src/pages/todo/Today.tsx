@@ -66,6 +66,8 @@ import { SaveSmartViewSheet } from '@/components/SaveSmartViewSheet';
 import { AutoScheduleSheet } from '@/components/AutoScheduleSheet';
 import { useSubscription, FREE_LIMITS } from '@/contexts/SubscriptionContext';
 import { TASK_CIRCLE, TASK_CHECK_ICON } from '@/utils/taskItemStyles';
+import { StreakChallengeDialog, useStreakChallengeDialog } from '@/components/StreakChallengeDialog';
+import { useStreak } from '@/hooks/useStreak';
 
 type ViewMode = 'flat' | 'kanban' | 'kanban-status' | 'timeline' | 'progress' | 'priority' | 'history';
 type SortBy = 'date' | 'priority' | 'name' | 'created';
