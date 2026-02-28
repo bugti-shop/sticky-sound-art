@@ -77,7 +77,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Achiever',
     subtitle: 'Building Momentum',
     icon: Star,
-    requirements: { tasksCompleted: 50, streakDays: 7, notesCreated: 10, foldersUsed: 2, xpLevel: 5 },
+    requirements: { tasksCompleted: 50, streakDays: 7, notesCreated: 10, foldersUsed: 2 },
     certificateText: 'This certifies that the holder has demonstrated consistent dedication to productivity by completing 50+ tasks and maintaining a full week of unbroken task completion on Npd. Their commitment to organized workflows and systematic note-taking marks them as a true achiever.',
     linkedInDescription: '⭐ Earned the Npd Achiever Certificate!\n\nMilestone reached:\n✅ 50+ tasks completed\n🔥 7-day streak maintained\n📝 10+ notes organized\n\nConsistency isn\'t glamorous, but it\'s what separates those who plan from those who execute.\n\n#Productivity #Accountability #Npd #GoalSetting #GrowthMindset',
     colors: {
