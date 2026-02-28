@@ -27,6 +27,7 @@ const Progress = () => {
   const [hasNewCerts, setHasNewCerts] = useState(false);
   const [completedCycles, setCompletedCycles] = useState(0);
   const [hasNewReport, setHasNewReport] = useState(false);
+  const [isPersonalBest, setIsPersonalBest] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -64,6 +65,12 @@ const Progress = () => {
         const weekKey = `npd_report_seen_${format(weekStart, 'yyyy-MM-dd')}`;
         const reportSeen = localStorage.getItem(weekKey);
         setHasNewReport(thisWeekTasks.length > 0 && !reportSeen);
+
+        // Check for personal best streak
+        const currentStreak = data?.currentStreak || 0;
+        const longestStreak = data?.longestStreak || 0;
+        const lastSharedBest = parseInt(localStorage.getItem('npd_last_shared_best_streak') || '0', 10);
+        setIsPersonalBest(currentStreak > 0 && currentStreak >= longestStreak && currentStreak > lastSharedBest);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
@@ -422,9 +429,18 @@ const Progress = () => {
             <motion.button
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              onClick={() => setShowShowcase(true)}
-              className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-[10px] active:scale-[0.98] transition-transform"
+              onClick={() => {
+                setShowShowcase(true);
+                if (isPersonalBest) {
+                  localStorage.setItem('npd_last_shared_best_streak', String(data?.currentStreak || 0));
+                  setIsPersonalBest(false);
+                }
+              }}
+              className="relative bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-[10px] active:scale-[0.98] transition-transform"
             >
+              {isPersonalBest && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
+              )}
               <Share2 className="h-4 w-4" />
               Share Streak
             </motion.button>
