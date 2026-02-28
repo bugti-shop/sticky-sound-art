@@ -479,12 +479,6 @@ const Progress = () => {
       </div>
 
 
-      {/* Weekly Report Modal */}
-      <WeeklyReportCard
-        isOpen={showWeeklyReport}
-        onClose={() => setShowWeeklyReport(false)}
-        streakData={data}
-      />
 
       {/* Certificates Modal */}
       <GamificationCertificates
