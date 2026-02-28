@@ -179,14 +179,6 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                       <span className="text-[9px] font-bold text-muted-foreground mt-1">
                         D{reward.day}
                       </span>
-                      <span
-                        className={cn(
-                          'text-[8px] font-bold mt-0.5',
-                          isCurrent ? 'text-primary' : 'text-muted-foreground'
-                        )}
-                      >
-                        {reward.xp}xp
-                      </span>
                     </motion.div>
                   );
                 })}
