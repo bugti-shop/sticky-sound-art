@@ -339,8 +339,10 @@ const Progress = () => {
             <p className="text-2xl font-bold">{data?.streakFreezes || 0}</p>
           </div>
         </div>
-        
-        
+        {/* Weekly Challenges */}
+        <WeeklyChallengesCard />
+
+
         {/* Daily Reward Cycle */}
         <div
           className="bg-card rounded-xl p-4 border cursor-pointer active:scale-[0.98] transition-transform"
