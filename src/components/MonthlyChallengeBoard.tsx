@@ -160,7 +160,7 @@ export const MonthlyChallengeBoard = () => {
               >
                 <p className="text-lg font-black text-warning">Badge Unlocked!</p>
                 <p className="text-sm font-bold text-foreground mt-1">{unlockedBadge.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">All monthly challenges completed · +500 XP bonus 🎉</p>
+                <p className="text-xs text-muted-foreground mt-1">All monthly challenges completed! 🎉</p>
               </motion.div>
 
               {/* Dismiss button */}
