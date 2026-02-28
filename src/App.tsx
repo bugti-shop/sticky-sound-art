@@ -22,6 +22,7 @@ import { shouldAppBeLocked, updateLastUnlockTime } from "@/utils/appLockStorage"
 import { AppLockScreen } from "@/components/AppLockScreen";
 import { WhatsNewSheet } from "@/components/WhatsNewSheet";
 import { StreakMilestoneCelebration } from "@/components/StreakMilestoneCelebration";
+import { StreakTierCelebration } from "@/components/StreakTierCelebration";
 import { DailyLoginRewardDialog } from "@/components/DailyLoginRewardDialog";
 import { WelcomeBackCelebration } from "@/components/WelcomeBackCelebration";
 import { useRetentionLogo } from "@/hooks/useRetentionLogo";
