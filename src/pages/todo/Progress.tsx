@@ -20,6 +20,7 @@ const Progress = () => {
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showCertificates, setShowCertificates] = useState(false);
+  const [showStreakDetail, setShowStreakDetail] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
