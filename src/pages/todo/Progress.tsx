@@ -309,7 +309,10 @@ const Progress = () => {
         
         
         {/* Daily Reward Cycle */}
-        <div className="bg-card rounded-xl p-4 border">
+        <div
+          className="bg-card rounded-xl p-4 border cursor-pointer active:scale-[0.98] transition-transform"
+          onClick={() => window.dispatchEvent(new Event('openDailyReward'))}
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold flex items-center gap-2">
               <Gift className="h-4 w-4 text-primary" />
@@ -362,7 +365,7 @@ const Progress = () => {
           </div>
           {!rewardClaimed && (
             <p className="text-[10px] text-muted-foreground text-center mt-2">
-              Open the app daily to claim rewards · Missing a day resets the cycle
+              Tap to claim your daily reward · Missing a day resets the cycle
             </p>
           )}
         </div>

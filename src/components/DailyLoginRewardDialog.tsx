@@ -12,29 +12,56 @@ import {
   type DailyRewardData,
 } from '@/utils/dailyRewardStorage';
 
-export const DailyLoginRewardDialog = () => {
+interface DailyLoginRewardDialogProps {
+  forceOpen?: boolean;
+  onForceOpenHandled?: () => void;
+}
+
+export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyLoginRewardDialogProps = {}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentDay, setCurrentDay] = useState(1);
   const [data, setData] = useState<DailyRewardData | null>(null);
   const [claimed, setClaimed] = useState(false);
   const [xpEarned, setXpEarned] = useState(0);
 
+  const loadRewardState = useCallback(async () => {
+    try {
+      const result = await checkDailyReward();
+      setCurrentDay(result.currentDay);
+      setData(result.data);
+      return result;
+    } catch (e) {
+      console.error('Daily reward check failed:', e);
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
     const check = async () => {
-      try {
-        const result = await checkDailyReward();
-        if (result.canClaim) {
-          setCurrentDay(result.currentDay);
-          setData(result.data);
-          // Small delay so it doesn't fight other popups
-          setTimeout(() => setIsOpen(true), 800);
-        }
-      } catch (e) {
-        console.error('Daily reward check failed:', e);
+      const result = await loadRewardState();
+      if (result?.canClaim) {
+        setTimeout(() => setIsOpen(true), 800);
       }
     };
     check();
-  }, []);
+  }, [loadRewardState]);
+
+  // Handle forceOpen from parent or global event
+  useEffect(() => {
+    if (forceOpen) {
+      loadRewardState().then(() => setIsOpen(true));
+      onForceOpenHandled?.();
+    }
+  }, [forceOpen, loadRewardState, onForceOpenHandled]);
+
+  // Listen for global open event
+  useEffect(() => {
+    const handler = () => {
+      loadRewardState().then(() => setIsOpen(true));
+    };
+    window.addEventListener('openDailyReward', handler);
+    return () => window.removeEventListener('openDailyReward', handler);
+  }, [loadRewardState]);
 
   const handleClaim = useCallback(async () => {
     triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
