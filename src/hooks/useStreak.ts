@@ -89,8 +89,16 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
       await recordCompletionEvent();
     } catch (e) { /* ignore on web */ }
     
-    // Award XP for task completion
+    // Record combo and award XP (with bonus)
+    const { recordComboCompletion } = await import('@/utils/comboSystem');
+    const combo = recordComboCompletion();
     await addXp(XP_REWARDS.TASK_COMPLETE, 'Task completed');
+    if (combo.bonusXp > 0) {
+      await addXp(combo.bonusXp, `Combo x${combo.multiplier} bonus`);
+    }
+    if (combo.isNewCombo) {
+      window.dispatchEvent(new CustomEvent('comboHit', { detail: combo }));
+    }
     
     // Award XP for streak day if streak incremented
     if (result.streakIncremented) {
