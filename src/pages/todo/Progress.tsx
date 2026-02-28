@@ -393,6 +393,9 @@ const Progress = () => {
       <GamificationCertificates
         isOpen={showCertificates}
         onClose={() => setShowCertificates(false)}
+        streakData={data}
+      />
+
       {/* Streak Detail Sheet */}
       <StreakDetailSheet
         isOpen={showStreakDetail}
