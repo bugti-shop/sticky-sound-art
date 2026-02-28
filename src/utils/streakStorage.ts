@@ -4,6 +4,7 @@
 
 import { getSetting, setSetting } from './settingsStorage';
 import { startOfDay, differenceInDays, differenceInHours, format, subDays } from 'date-fns';
+import { markStreakLost } from './streakRepairStorage';
 
 export interface StreakData {
   currentStreak: number;
