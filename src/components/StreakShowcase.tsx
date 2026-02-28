@@ -2,6 +2,9 @@
  * Streak Showcase - Share streak achievements on social media
  * 5 shareable card designs with viral caption templates
  * All cards include the Npd logo
+ * 
+ * IMPORTANT: Shareable cards use INLINE STYLES ONLY for html2canvas compatibility.
+ * Do NOT use Tailwind classes inside ShareableCard components.
  */
 
 import { useState, useRef, useCallback } from 'react';
@@ -262,6 +265,7 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
 
 /* ============================================
    SHAREABLE CARD DESIGNS
+   All use INLINE STYLES for html2canvas compatibility.
    ============================================ */
 
 interface ShareableCardProps {
@@ -285,53 +289,50 @@ const ShareableCard = (props: ShareableCardProps) => {
   }
 };
 
-/* ---- Logo Footer Component ---- */
-const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)', userName, userAvatar }: { color?: string; userName?: string; userAvatar?: string }) => (
-  <CardBrandingFooter color={color} userName={userName} userAvatar={userAvatar} />
-);
-
 /* ---- Card 1: Fire Streak ---- */
 const FireCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'linear-gradient(145deg, hsl(15, 90%, 8%), hsl(0, 85%, 12%), hsl(25, 95%, 15%))' }}>
-    {/* Glow ring behind flame */}
-    <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full"
-      style={{ 
-        background: 'radial-gradient(circle, hsl(25, 95%, 53%, 0.35), hsl(25, 95%, 53%, 0.1) 50%, transparent 70%)',
-        boxShadow: '0 0 60px 20px hsl(25, 95%, 53%, 0.15)'
-      }} />
-    <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full"
-      style={{ border: '2px solid hsl(25, 95%, 53%, 0.15)' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'linear-gradient(145deg, hsl(15, 90%, 8%), hsl(0, 85%, 12%), hsl(25, 95%, 15%))',
+  }}>
+    {/* Glow ring */}
+    <div style={{
+      position: 'absolute', top: '30%', left: '50%', marginLeft: '-72px', marginTop: '-72px',
+      width: '144px', height: '144px', borderRadius: '50%',
+      background: 'radial-gradient(circle, hsl(25, 95%, 53%, 0.35), hsl(25, 95%, 53%, 0.1) 50%, transparent 70%)',
+      boxShadow: '0 0 60px 20px hsl(25, 95%, 53%, 0.15)',
+    }} />
     
-    <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-2 mt-2">
-        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
-        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(25, 95%, 70%)' }}>
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px', textAlign: 'center',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+        <img src={npdLogo} alt="Npd" style={{ width: '20px', height: '20px', borderRadius: '4px' }} />
+        <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'hsl(25, 95%, 70%)' }}>
           Npd Streak
         </span>
       </div>
 
       <div>
-        <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 2, repeat: Infinity }}>
-          <Flame className="h-14 w-14 mx-auto mb-1" style={{ color: 'hsl(25, 95%, 53%)', fill: 'hsl(25, 95%, 53%)' }} />
-        </motion.div>
-        <p className="text-7xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)', textShadow: '0 0 40px hsl(25, 95%, 53%, 0.4)' }}>{streak}</p>
-        <p className="text-sm font-semibold mt-1 tracking-wide" style={{ color: 'hsl(25, 95%, 65%)' }}>days on fire</p>
+        <Flame style={{ width: '56px', height: '56px', margin: '0 auto 4px', color: 'hsl(25, 95%, 53%)', fill: 'hsl(25, 95%, 53%)' }} />
+        <p style={{ fontSize: '72px', fontWeight: 900, lineHeight: 1, color: 'hsl(0, 0%, 100%)', textShadow: '0 0 40px hsl(25, 95%, 53%, 0.4)' }}>{streak}</p>
+        <p style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', letterSpacing: '0.05em', color: 'hsl(25, 95%, 65%)' }}>days on fire</p>
       </div>
 
-      <div className="w-full">
-        <div className="flex gap-6 justify-center mb-4">
+      <div style={{ width: '100%' }}>
+        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginBottom: '16px' }}>
           <div>
-            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
-            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>tasks</p>
+            <p style={{ fontSize: '20px', fontWeight: 900, color: 'hsl(0, 0%, 100%)' }}>{total}</p>
+            <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 500, color: 'hsl(0, 0%, 55%)' }}>tasks</p>
           </div>
-          <div className="w-px" style={{ background: 'hsl(0, 0%, 20%)' }} />
+          <div style={{ width: '1px', background: 'hsl(0, 0%, 20%)' }} />
           <div>
-            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
-            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>best</p>
+            <p style={{ fontSize: '20px', fontWeight: 900, color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
+            <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 500, color: 'hsl(0, 0%, 55%)' }}>best</p>
           </div>
         </div>
-        <CardLogoFooter color="hsl(0, 0%, 35%)" userName={userName} userAvatar={userAvatar} />
+        <CardBrandingFooter color="hsl(0, 0%, 35%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
@@ -339,34 +340,39 @@ const FireCard = ({ streak, total, longest, userName, userAvatar }: ShareableCar
 
 /* ---- Card 2: Clean Minimal ---- */
 const MinimalCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'hsl(220, 15%, 8%)' }}>
-    <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-8"
-      style={{ background: 'hsl(220, 85%, 59%)' }} />
-    <div className="absolute inset-0 opacity-[0.03]" 
-      style={{ backgroundImage: 'linear-gradient(hsl(220, 85%, 59%) 1px, transparent 1px), linear-gradient(90deg, hsl(220, 85%, 59%) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'hsl(220, 15%, 8%)',
+  }}>
+    <div style={{
+      position: 'absolute', top: 0, right: 0, width: '128px', height: '128px',
+      borderBottomLeftRadius: '100%', opacity: 0.08, background: 'hsl(220, 85%, 59%)',
+    }} />
 
-    <div className="relative z-10 flex flex-col justify-between h-full p-6">
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+      justifyContent: 'space-between', height: '100%', padding: '24px',
+    }}>
       <div>
-        <div className="flex items-center gap-2 mb-6">
-          <img src={npdLogo} alt="Npd" className="w-6 h-6 rounded" />
-          <Zap className="h-4 w-4" style={{ color: 'hsl(220, 85%, 59%)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
+          <img src={npdLogo} alt="Npd" style={{ width: '24px', height: '24px', borderRadius: '4px' }} />
+          <Zap style={{ width: '16px', height: '16px', color: 'hsl(220, 85%, 59%)' }} />
         </div>
-        <p className="text-[10px] tracking-[0.3em] uppercase mb-2 font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Current Streak</p>
-        <p className="text-7xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)' }}>{streak}</p>
-        <p className="text-base font-light mt-1" style={{ color: 'hsl(220, 15%, 55%)' }}>consecutive days</p>
+        <p style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 500, color: 'hsl(220, 15%, 45%)' }}>Current Streak</p>
+        <p style={{ fontSize: '72px', fontWeight: 900, lineHeight: 1, color: 'hsl(0, 0%, 100%)' }}>{streak}</p>
+        <p style={{ fontSize: '16px', fontWeight: 300, marginTop: '4px', color: 'hsl(220, 15%, 55%)' }}>consecutive days</p>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between items-center py-2.5 border-t" style={{ borderColor: 'hsl(220, 15%, 15%)' }}>
-          <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Tasks Done</span>
-          <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</span>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderTop: '1px solid hsl(220, 15%, 15%)' }}>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: 'hsl(220, 15%, 45%)' }}>Tasks Done</span>
+          <span style={{ fontSize: '14px', fontWeight: 700, color: 'hsl(0, 0%, 100%)' }}>{total}</span>
         </div>
-        <div className="flex justify-between items-center py-2.5 border-t" style={{ borderColor: 'hsl(220, 15%, 15%)' }}>
-          <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Best Streak</span>
-          <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest} days</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderTop: '1px solid hsl(220, 15%, 15%)' }}>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: 'hsl(220, 15%, 45%)' }}>Best Streak</span>
+          <span style={{ fontSize: '14px', fontWeight: 700, color: 'hsl(0, 0%, 100%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
+        <CardBrandingFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
@@ -374,43 +380,54 @@ const MinimalCard = ({ streak, total, longest, userName, userAvatar }: Shareable
 
 /* ---- Card 3: Neon Glow ---- */
 const NeonCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'linear-gradient(180deg, hsl(270, 50%, 6%), hsl(260, 60%, 10%))' }}>
-    <div className="absolute bottom-10 left-6 w-24 h-24 rounded-full opacity-20 blur-2xl"
-      style={{ background: 'hsl(280, 100%, 60%)' }} />
-    <div className="absolute top-16 right-4 w-20 h-20 rounded-full opacity-15 blur-2xl"
-      style={{ background: 'hsl(200, 100%, 60%)' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'linear-gradient(180deg, hsl(270, 50%, 6%), hsl(260, 60%, 10%))',
+  }}>
+    <div style={{
+      position: 'absolute', bottom: '40px', left: '24px', width: '96px', height: '96px',
+      borderRadius: '50%', opacity: 0.2, filter: 'blur(16px)', background: 'hsl(280, 100%, 60%)',
+    }} />
+    <div style={{
+      position: 'absolute', top: '64px', right: '16px', width: '80px', height: '80px',
+      borderRadius: '50%', opacity: 0.15, filter: 'blur(16px)', background: 'hsl(200, 100%, 60%)',
+    }} />
 
-    <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-full" 
-        style={{ border: '1px solid hsl(280, 80%, 50%, 0.3)', background: 'hsl(280, 80%, 50%, 0.08)' }}>
-        <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
-        <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(280, 80%, 70%)' }}>
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px', textAlign: 'center',
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px',
+        padding: '6px 12px', borderRadius: '999px',
+        border: '1px solid hsl(280, 80%, 50%, 0.3)', background: 'hsl(280, 80%, 50%, 0.08)',
+      }}>
+        <img src={npdLogo} alt="Npd" style={{ width: '16px', height: '16px', borderRadius: '4px' }} />
+        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'hsl(280, 80%, 70%)' }}>
           Streak Mode
         </span>
       </div>
 
       <div>
-        <p className="text-8xl font-black leading-none" 
-          style={{ 
-            color: 'hsl(0, 0%, 100%)',
-            textShadow: '0 0 30px hsl(280, 100%, 60%, 0.5), 0 0 60px hsl(280, 100%, 60%, 0.2)'
-          }}>
+        <p style={{
+          fontSize: '80px', fontWeight: 900, lineHeight: 1, color: 'hsl(0, 0%, 100%)',
+          textShadow: '0 0 30px hsl(280, 100%, 60%, 0.5), 0 0 60px hsl(280, 100%, 60%, 0.2)',
+        }}>
           {streak}
         </p>
-        <p className="text-sm font-semibold mt-2 tracking-wide" style={{ color: 'hsl(280, 60%, 70%)' }}>day streak</p>
+        <p style={{ fontSize: '14px', fontWeight: 600, marginTop: '8px', letterSpacing: '0.05em', color: 'hsl(280, 60%, 70%)' }}>day streak</p>
       </div>
 
-      <div className="w-full space-y-2.5">
-        <div className="flex justify-between px-2">
-          <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Total completed</span>
-          <span className="text-xs font-bold" style={{ color: 'hsl(200, 100%, 70%)' }}>{total}</span>
+      <div style={{ width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 8px', marginBottom: '8px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: 'hsl(260, 30%, 50%)' }}>Total completed</span>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'hsl(200, 100%, 70%)' }}>{total}</span>
         </div>
-        <div className="flex justify-between px-2">
-          <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
-          <span className="text-xs font-bold" style={{ color: 'hsl(280, 100%, 70%)' }}>{longest} days</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 8px', marginBottom: '10px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'hsl(280, 100%, 70%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(260, 30%, 30%)" userName={userName} userAvatar={userAvatar} />
+        <CardBrandingFooter color="hsl(260, 30%, 30%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
@@ -418,40 +435,48 @@ const NeonCard = ({ streak, total, longest, userName, userAvatar }: ShareableCar
 
 /* ---- Card 4: Sunset Gradient ---- */
 const GradientCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'linear-gradient(160deg, hsl(25, 100%, 55%), hsl(340, 80%, 50%), hsl(280, 70%, 45%))' }}>
-    <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full opacity-10"
-      style={{ background: 'hsl(0, 0%, 100%)' }} />
-    <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-8"
-      style={{ background: 'hsl(0, 0%, 100%)' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'linear-gradient(160deg, hsl(25, 100%, 55%), hsl(340, 80%, 50%), hsl(280, 70%, 45%))',
+  }}>
+    <div style={{
+      position: 'absolute', bottom: '-40px', right: '-40px', width: '192px', height: '192px',
+      borderRadius: '50%', opacity: 0.1, background: 'hsl(0, 0%, 100%)',
+    }} />
 
-    <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-2 mt-2">
-        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded shadow-lg" />
-        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(0, 0%, 100%, 0.85)' }}>
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px', textAlign: 'center',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+        <img src={npdLogo} alt="Npd" style={{ width: '20px', height: '20px', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0,0,0,0.2)' }} />
+        <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'hsl(0, 0%, 100%, 0.85)' }}>
           Npd Streak
         </span>
       </div>
 
       <div>
-        <p className="text-8xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)', textShadow: '0 4px 20px hsl(0, 0%, 0%, 0.3)' }}>{streak}</p>
-        <p className="text-lg font-semibold mt-1" style={{ color: 'hsl(0, 0%, 100%, 0.75)' }}>days strong 💪</p>
+        <p style={{ fontSize: '80px', fontWeight: 900, lineHeight: 1, color: 'hsl(0, 0%, 100%)', textShadow: '0 4px 20px hsl(0, 0%, 0%, 0.3)' }}>{streak}</p>
+        <p style={{ fontSize: '18px', fontWeight: 600, marginTop: '4px', color: 'hsl(0, 0%, 100%, 0.75)' }}>days strong 💪</p>
       </div>
 
-      <div className="w-full rounded-xl p-3" style={{ background: 'hsl(0, 0%, 0%, 0.18)', backdropFilter: 'blur(8px)' }}>
-        <div className="flex justify-around">
+      <div style={{
+        width: '100%', borderRadius: '12px', padding: '12px',
+        background: 'hsl(0, 0%, 0%, 0.18)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <div>
-            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
-            <p className="text-[10px] font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>tasks done</p>
+            <p style={{ fontSize: '20px', fontWeight: 900, color: 'hsl(0, 0%, 100%)' }}>{total}</p>
+            <p style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(0, 0%, 100%, 0.6)' }}>tasks done</p>
           </div>
-          <div className="w-px" style={{ background: 'hsl(0, 0%, 100%, 0.2)' }} />
+          <div style={{ width: '1px', background: 'hsl(0, 0%, 100%, 0.2)' }} />
           <div>
-            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
-            <p className="text-[10px] font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>best streak</p>
+            <p style={{ fontSize: '20px', fontWeight: 900, color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
+            <p style={{ fontSize: '10px', fontWeight: 500, color: 'hsl(0, 0%, 100%, 0.6)' }}>best streak</p>
           </div>
         </div>
-        <div className="mt-2 pt-2" style={{ borderTop: '1px solid hsl(0, 0%, 100%, 0.1)' }}>
-          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" userName={userName} userAvatar={userAvatar} />
+        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid hsl(0, 0%, 100%, 0.1)' }}>
+          <CardBrandingFooter color="hsl(0, 0%, 100%, 0.4)" userName={userName} userAvatar={userAvatar} />
         </div>
       </div>
     </div>
@@ -460,46 +485,53 @@ const GradientCard = ({ streak, total, longest, userName, userAvatar }: Shareabl
 
 /* ---- Card 5: Champion Trophy ---- */
 const TrophyCard = ({ streak, total, longest, milestones, userName, userAvatar }: ShareableCardProps) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'linear-gradient(170deg, hsl(43, 30%, 10%), hsl(40, 40%, 5%))' }}>
-    <div className="absolute top-0 left-0 right-0 h-1" 
-      style={{ background: 'linear-gradient(90deg, transparent, hsl(43, 100%, 50%), transparent)' }} />
-    <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full opacity-10 blur-2xl"
-      style={{ background: 'hsl(43, 100%, 50%)' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'linear-gradient(170deg, hsl(43, 30%, 10%), hsl(40, 40%, 5%))',
+  }}>
+    <div style={{
+      position: 'absolute', top: 0, left: 0, right: 0, height: '4px',
+      background: 'linear-gradient(90deg, transparent, hsl(43, 100%, 50%), transparent)',
+    }} />
 
-    <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-2 mt-2">
-        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
-        <Crown className="h-4 w-4" style={{ color: 'hsl(43, 100%, 50%)' }} />
-        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(43, 80%, 60%)' }}>
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px', textAlign: 'center',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+        <img src={npdLogo} alt="Npd" style={{ width: '20px', height: '20px', borderRadius: '4px' }} />
+        <Crown style={{ width: '16px', height: '16px', color: 'hsl(43, 100%, 50%)' }} />
+        <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'hsl(43, 80%, 60%)' }}>
           Champion
         </span>
       </div>
 
       <div>
-        <Trophy className="h-12 w-12 mx-auto mb-2" style={{ color: 'hsl(43, 100%, 50%)', fill: 'hsl(43, 100%, 50%, 0.2)' }} />
-        <p className="text-6xl font-black" style={{ color: 'hsl(43, 100%, 70%)', textShadow: '0 0 30px hsl(43, 100%, 50%, 0.3)' }}>{streak}</p>
-        <p className="text-sm font-semibold mt-1" style={{ color: 'hsl(43, 40%, 50%)' }}>day streak</p>
+        <Trophy style={{ width: '48px', height: '48px', margin: '0 auto 8px', color: 'hsl(43, 100%, 50%)', fill: 'hsl(43, 100%, 50%, 0.2)' }} />
+        <p style={{ fontSize: '60px', fontWeight: 900, color: 'hsl(43, 100%, 70%)', textShadow: '0 0 30px hsl(43, 100%, 50%, 0.3)' }}>{streak}</p>
+        <p style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'hsl(43, 40%, 50%)' }}>day streak</p>
       </div>
 
-      <div className="w-full">
-        <div className="flex justify-center gap-2 mb-3">
+      <div style={{ width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
           {[3, 7, 14, 30].map((m) => (
-            <div key={m} className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold"
-              style={{
-                background: milestones.includes(m) ? 'hsl(43, 100%, 50%, 0.15)' : 'hsl(0, 0%, 100%, 0.05)',
-                border: `1px solid ${milestones.includes(m) ? 'hsl(43, 100%, 50%, 0.4)' : 'hsl(0, 0%, 100%, 0.1)'}`,
-                color: milestones.includes(m) ? 'hsl(43, 100%, 60%)' : 'hsl(0, 0%, 100%, 0.2)',
-              }}>
+            <div key={m} style={{
+              width: '32px', height: '32px', borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '10px', fontWeight: 700,
+              background: milestones.includes(m) ? 'hsl(43, 100%, 50%, 0.15)' : 'hsl(0, 0%, 100%, 0.05)',
+              border: `1px solid ${milestones.includes(m) ? 'hsl(43, 100%, 50%, 0.4)' : 'hsl(0, 0%, 100%, 0.1)'}`,
+              color: milestones.includes(m) ? 'hsl(43, 100%, 60%)' : 'hsl(0, 0%, 100%, 0.2)',
+            }}>
               {m}
             </div>
           ))}
         </div>
-        <div className="flex justify-between text-xs px-2 mb-2">
-          <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
-          <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '0 8px', marginBottom: '8px' }}>
+          <span style={{ fontWeight: 500, color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
+          <span style={{ fontWeight: 500, color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
         </div>
-        <CardLogoFooter color="hsl(43, 20%, 25%)" userName={userName} userAvatar={userAvatar} />
+        <CardBrandingFooter color="hsl(43, 20%, 25%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
