@@ -13,6 +13,8 @@ import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
+import { StreakRepairDialog } from '@/components/StreakRepairDialog';
+import { canRepairStreak } from '@/utils/streakRepairStorage';
 
 const Progress = () => {
   const { t } = useTranslation();
