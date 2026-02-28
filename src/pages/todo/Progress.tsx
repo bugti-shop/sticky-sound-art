@@ -51,6 +51,10 @@ const Progress = () => {
         setRewardDay(rewardResult.currentDay);
         setRewardClaimed(!rewardResult.canClaim);
 
+        // Load completed cycles
+        const rewardData = await loadDailyRewardData();
+        setCompletedCycles(rewardData.completedCycles || 0);
+
         // Check for new certificate badges
         const newCerts = await hasNewCertificates(data?.longestStreak || 0);
         setHasNewCerts(newCerts);
