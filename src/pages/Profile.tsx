@@ -14,6 +14,7 @@ import { performSync, getLastSyncInfo, SyncMeta, SyncResult, SyncState, addSyncL
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { ProfileImageCropper } from '@/components/ProfileImageCropper';
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -30,6 +31,7 @@ export default function Profile() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   // Load last sync info
   useEffect(() => {
@@ -186,14 +188,13 @@ export default function Profile() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (e) => {
+              onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
                 const reader = new FileReader();
-                reader.onload = async (ev) => {
+                reader.onload = (ev) => {
                   const dataUrl = ev.target?.result as string;
-                  await updateProfile({ avatarUrl: dataUrl });
-                  toast({ title: t('profile.photoUpdated', 'Profile photo updated') });
+                  setCropImageSrc(dataUrl);
                 };
                 reader.readAsDataURL(file);
                 e.target.value = '';
@@ -362,6 +363,19 @@ export default function Profile() {
       </div>
 
       {lastDashboard === 'todo' ? <TodoBottomNavigation /> : <BottomNavigation />}
+
+      {/* Image Cropper Modal */}
+      {cropImageSrc && (
+        <ProfileImageCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={async (croppedUrl) => {
+            await updateProfile({ avatarUrl: croppedUrl });
+            setCropImageSrc(null);
+            toast({ title: t('profile.photoUpdated', 'Profile photo updated') });
+          }}
+          onCancel={() => setCropImageSrc(null)}
+        />
+      )}
     </div>
   );
 }
