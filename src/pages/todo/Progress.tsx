@@ -399,7 +399,7 @@ const Progress = () => {
                     "text-[8px] font-bold",
                     isCurrent ? "text-primary" : "text-muted-foreground"
                   )}>
-                    +{reward.xp}
+                    {reward.icon}
                   </span>
                 </motion.div>
               );
