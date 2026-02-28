@@ -286,9 +286,12 @@ export default function Profile() {
                   <span className="text-lg font-semibold text-foreground">{backupSize}</span>
                 )}
               </div>
-            </div>
           </div>
+
+          {/* Productivity Score */}
+          <ProductivityScoreGauge />
         </div>
+      </div>
       </div>
 
       {lastDashboard === 'todo' ? <TodoBottomNavigation /> : <BottomNavigation />}
