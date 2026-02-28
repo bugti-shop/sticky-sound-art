@@ -12,8 +12,7 @@
 import { loadStreakData, TASK_STREAK_KEY } from './streakStorage';
 import { loadTodoItems } from './todoItemsStorage';
 import { loadDailyChallenges } from './gamificationStorage';
-import { loadXpData } from './gamificationStorage';
-import { startOfWeek, endOfWeek, format } from 'date-fns';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 export interface ProductivityScore {
   total: number; // 0-100
