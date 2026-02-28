@@ -25,6 +25,7 @@ import { StreakMilestoneCelebration } from "@/components/StreakMilestoneCelebrat
 import { DailyLoginRewardDialog } from "@/components/DailyLoginRewardDialog";
 import { WelcomeBackCelebration } from "@/components/WelcomeBackCelebration";
 import { useRetentionLogo } from "@/hooks/useRetentionLogo";
+import { ComboOverlay } from "@/components/ComboOverlay";
 // Eager load only the two most critical pages for instant first render
 import Index from "./pages/Index";
 import Today from "./pages/todo/Today";
@@ -230,6 +231,7 @@ const AppContent = () => {
       <WhatsNewSheet />
       <StreakMilestoneCelebration />
       <DailyLoginRewardDialog />
+      <ComboOverlay />
       <WelcomeBackCelebration
         isOpen={isReturning}
         mood={mood}
