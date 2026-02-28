@@ -417,10 +417,9 @@ const NeonCard = ({ streak, total, longest, userName, userAvatar }: ShareableCar
 );
 
 /* ---- Card 4: Sunset Gradient ---- */
-const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
+const GradientCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(160deg, hsl(25, 100%, 55%), hsl(340, 80%, 50%), hsl(280, 70%, 45%))' }}>
-    {/* Decorative circles */}
     <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full opacity-10"
       style={{ background: 'hsl(0, 0%, 100%)' }} />
     <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-8"
@@ -452,7 +451,7 @@ const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
           </div>
         </div>
         <div className="mt-2 pt-2" style={{ borderTop: '1px solid hsl(0, 0%, 100%, 0.1)' }}>
-          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" />
+          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" userName={userName} userAvatar={userAvatar} />
         </div>
       </div>
     </div>
