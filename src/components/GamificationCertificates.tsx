@@ -150,29 +150,29 @@ interface UserProgress {
   longestStreak: number;
   notesCreated: number;
   foldersUsed: number;
-  xpLevel: number;
+  isAdmin: boolean;
 }
 
 const computeUnlockPercent = (progress: UserProgress, cert: CertificateLevel): number => {
+  if (progress.isAdmin) return 100;
   const r = cert.requirements;
   const parts = [
     Math.min(progress.tasksCompleted / r.tasksCompleted, 1),
     Math.min(progress.longestStreak / r.streakDays, 1),
     Math.min(progress.notesCreated / r.notesCreated, 1),
     Math.min(progress.foldersUsed / r.foldersUsed, 1),
-    Math.min(progress.xpLevel / r.xpLevel, 1),
   ];
   return Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100);
 };
 
 const isUnlocked = (progress: UserProgress, cert: CertificateLevel): boolean => {
+  if (progress.isAdmin) return true;
   const r = cert.requirements;
   return (
     progress.tasksCompleted >= r.tasksCompleted &&
     progress.longestStreak >= r.streakDays &&
     progress.notesCreated >= r.notesCreated &&
-    progress.foldersUsed >= r.foldersUsed &&
-    progress.xpLevel >= r.xpLevel
+    progress.foldersUsed >= r.foldersUsed
   );
 };
 
