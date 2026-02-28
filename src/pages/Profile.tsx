@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRevenueCat } from '@/contexts/RevenueCatContext';
-import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle, Camera, Pencil } from 'lucide-react';
+import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle, Camera, Pencil, Trash2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BottomNavigation } from '@/components/BottomNavigation';
