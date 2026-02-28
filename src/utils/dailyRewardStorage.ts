@@ -83,5 +83,5 @@ export const claimDailyReward = async (): Promise<{
 
   await setSetting(STORAGE_KEY, data);
 
-  return { xpEarned: reward.xp, day: currentDay, data };
+  return { day: currentDay, data };
 };

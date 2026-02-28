@@ -225,16 +225,16 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
                       >
-                        🏆 +{xpEarned} XP Bonus! 🏆
+                        🏆 7-Day Cycle Complete! 🏆
                       </motion.p>
                       <p className="text-xs text-warning/80 font-semibold mt-1">
-                        7-day cycle complete! You're amazing!
+                        You're amazing! Keep it up!
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="text-lg font-black text-success">
-                        +{xpEarned} XP Earned! ✨
+                        Reward Claimed! ✨
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Come back tomorrow for more!
