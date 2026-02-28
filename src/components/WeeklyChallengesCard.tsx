@@ -174,15 +174,6 @@ export const WeeklyChallengesCard = () => {
                 )}
               </div>
 
-              {/* XP Reward */}
-              <div className={cn(
-                "text-xs font-bold px-2 py-1 rounded-full flex-shrink-0",
-                challenge.completed
-                  ? "bg-success/15 text-success"
-                  : "bg-warning/15 text-warning"
-              )}>
-                +{challenge.xpReward} XP
-              </div>
             </motion.div>
           ))}
         </AnimatePresence>
