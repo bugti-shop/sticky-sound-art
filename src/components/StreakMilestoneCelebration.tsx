@@ -10,7 +10,7 @@ import { Share2, X, Instagram, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import Confetti from 'react-confetti';
-import appLogo from '@/assets/app-logo.png';
+import appLogo from '@/assets/npd-reminder-logo.png';
 import html2canvas from 'html2canvas';
 
 const MILESTONE_CONFIG: Record<number, { emoji: string; title: string; subtitle: string; gradient: string; glow: string }> = {
@@ -418,7 +418,7 @@ const ShareCard = ({
             letterSpacing: '4px',
           }}
         >
-          NPD
+          Npd
         </span>
       </div>
     </div>

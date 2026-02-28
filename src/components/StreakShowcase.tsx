@@ -1,6 +1,7 @@
 /**
  * Streak Showcase - Share streak achievements on social media
  * 5 shareable card designs with viral caption templates
+ * All cards include the Npd logo
  */
 
 import { useState, useRef, useCallback } from 'react';
@@ -15,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { triggerHaptic } from '@/utils/haptics';
 import html2canvas from 'html2canvas';
+import npdLogo from '@/assets/npd-reminder-logo.png';
 
 interface StreakShowcaseProps {
   isOpen: boolean;
@@ -74,7 +76,6 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
       triggerHaptic('light').catch(() => {});
       setTimeout(() => setCopiedCaption(null), 2000);
     } catch {
-      // Fallback
       const ta = document.createElement('textarea');
       ta.value = captions[index];
       document.body.appendChild(ta);
@@ -113,7 +114,6 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
             // User cancelled
           }
         } else {
-          // Fallback: download
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -278,42 +278,61 @@ const ShareableCard = (props: ShareableCardProps) => {
   }
 };
 
+/* ---- Logo Footer Component ---- */
+const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)' }: { color?: string }) => (
+  <div className="flex items-center justify-center gap-2 mt-1">
+    <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" style={{ objectFit: 'cover' }} />
+    <span className="text-[10px] font-bold tracking-wider" style={{ color }}>
+      Npd • task manager
+    </span>
+  </div>
+);
+
 /* ---- Card 1: Fire Streak ---- */
 const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(145deg, hsl(15, 90%, 8%), hsl(0, 85%, 12%), hsl(25, 95%, 15%))' }}>
-    {/* Glow effect */}
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full opacity-40"
-      style={{ background: 'radial-gradient(circle, hsl(25, 95%, 53%), transparent)' }} />
+    {/* Glow ring behind flame */}
+    <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full"
+      style={{ 
+        background: 'radial-gradient(circle, hsl(25, 95%, 53%, 0.35), hsl(25, 95%, 53%, 0.1) 50%, transparent 70%)',
+        boxShadow: '0 0 60px 20px hsl(25, 95%, 53%, 0.15)'
+      }} />
+    {/* Outer ring decoration */}
+    <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full"
+      style={{ border: '2px solid hsl(25, 95%, 53%, 0.15)' }} />
     
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-1.5 mt-2">
-        <Flame className="h-4 w-4" style={{ color: 'hsl(25, 95%, 53%)' }} />
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'hsl(25, 95%, 70%)' }}>
+      {/* Header with logo */}
+      <div className="flex items-center gap-2 mt-2">
+        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
+        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(25, 95%, 70%)' }}>
           Npd Streak
         </span>
       </div>
 
       <div>
-        <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }}>
-          <Flame className="h-16 w-16 mx-auto mb-2" style={{ color: 'hsl(25, 95%, 53%)', fill: 'hsl(25, 95%, 53%)' }} />
+        <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+          <Flame className="h-14 w-14 mx-auto mb-1" style={{ color: 'hsl(25, 95%, 53%)', fill: 'hsl(25, 95%, 53%)' }} />
         </motion.div>
-        <p className="text-6xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{streak}</p>
-        <p className="text-sm font-medium mt-1" style={{ color: 'hsl(25, 95%, 70%)' }}>days on fire</p>
+        <p className="text-7xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)', textShadow: '0 0 40px hsl(25, 95%, 53%, 0.4)' }}>{streak}</p>
+        <p className="text-sm font-semibold mt-1 tracking-wide" style={{ color: 'hsl(25, 95%, 65%)' }}>days on fire</p>
       </div>
 
-      <div className="flex gap-6 text-center">
-        <div>
-          <p className="text-lg font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
-          <p className="text-[10px] uppercase tracking-wider" style={{ color: 'hsl(0, 0%, 60%)' }}>tasks</p>
+      <div className="w-full">
+        <div className="flex gap-6 justify-center mb-4">
+          <div>
+            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
+            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>tasks</p>
+          </div>
+          <div className="w-px" style={{ background: 'hsl(0, 0%, 20%)' }} />
+          <div>
+            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
+            <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>best</p>
+          </div>
         </div>
-        <div>
-          <p className="text-lg font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
-          <p className="text-[10px] uppercase tracking-wider" style={{ color: 'hsl(0, 0%, 60%)' }}>best</p>
-        </div>
+        <CardLogoFooter color="hsl(0, 0%, 35%)" />
       </div>
-
-      <p className="text-[10px] font-medium tracking-wider" style={{ color: 'hsl(0, 0%, 40%)' }}>npd • task manager</p>
     </div>
   </div>
 );
@@ -322,27 +341,34 @@ const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
 const MinimalCard = ({ streak, total, longest }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'hsl(220, 15%, 8%)' }}>
-    <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10"
+    {/* Corner accent */}
+    <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-8"
       style={{ background: 'hsl(220, 85%, 59%)' }} />
+    {/* Subtle grid lines */}
+    <div className="absolute inset-0 opacity-[0.03]" 
+      style={{ backgroundImage: 'linear-gradient(hsl(220, 85%, 59%) 1px, transparent 1px), linear-gradient(90deg, hsl(220, 85%, 59%) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
     <div className="relative z-10 flex flex-col justify-between h-full p-6">
       <div>
-        <Zap className="h-5 w-5 mb-6" style={{ color: 'hsl(220, 85%, 59%)' }} />
-        <p className="text-xs tracking-widest uppercase mb-1" style={{ color: 'hsl(220, 15%, 50%)' }}>Current Streak</p>
+        <div className="flex items-center gap-2 mb-6">
+          <img src={npdLogo} alt="Npd" className="w-6 h-6 rounded" />
+          <Zap className="h-4 w-4" style={{ color: 'hsl(220, 85%, 59%)' }} />
+        </div>
+        <p className="text-[10px] tracking-[0.3em] uppercase mb-2 font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Current Streak</p>
         <p className="text-7xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)' }}>{streak}</p>
-        <p className="text-lg font-light mt-1" style={{ color: 'hsl(220, 15%, 60%)' }}>consecutive days</p>
+        <p className="text-base font-light mt-1" style={{ color: 'hsl(220, 15%, 55%)' }}>consecutive days</p>
       </div>
 
       <div className="space-y-3">
-        <div className="flex justify-between items-center py-2 border-t" style={{ borderColor: 'hsl(220, 15%, 18%)' }}>
-          <span className="text-xs" style={{ color: 'hsl(220, 15%, 50%)' }}>Tasks Done</span>
+        <div className="flex justify-between items-center py-2.5 border-t" style={{ borderColor: 'hsl(220, 15%, 15%)' }}>
+          <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Tasks Done</span>
           <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</span>
         </div>
-        <div className="flex justify-between items-center py-2 border-t" style={{ borderColor: 'hsl(220, 15%, 18%)' }}>
-          <span className="text-xs" style={{ color: 'hsl(220, 15%, 50%)' }}>Best Streak</span>
+        <div className="flex justify-between items-center py-2.5 border-t" style={{ borderColor: 'hsl(220, 15%, 15%)' }}>
+          <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Best Streak</span>
           <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest} days</span>
         </div>
-        <p className="text-[10px] text-center pt-2" style={{ color: 'hsl(220, 15%, 30%)' }}>npd • task manager</p>
+        <CardLogoFooter color="hsl(220, 15%, 28%)" />
       </div>
     </div>
   </div>
@@ -353,16 +379,16 @@ const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(180deg, hsl(270, 50%, 6%), hsl(260, 60%, 10%))' }}>
     {/* Neon glow orbs */}
-    <div className="absolute bottom-10 left-6 w-20 h-20 rounded-full opacity-20 blur-xl"
+    <div className="absolute bottom-10 left-6 w-24 h-24 rounded-full opacity-20 blur-2xl"
       style={{ background: 'hsl(280, 100%, 60%)' }} />
-    <div className="absolute top-16 right-4 w-16 h-16 rounded-full opacity-15 blur-xl"
+    <div className="absolute top-16 right-4 w-20 h-20 rounded-full opacity-15 blur-2xl"
       style={{ background: 'hsl(200, 100%, 60%)' }} />
 
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full" 
-        style={{ border: '1px solid hsl(280, 80%, 50%, 0.3)', background: 'hsl(280, 80%, 50%, 0.05)' }}>
-        <Sparkles className="h-3 w-3" style={{ color: 'hsl(280, 80%, 70%)' }} />
-        <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'hsl(280, 80%, 70%)' }}>
+      <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-full" 
+        style={{ border: '1px solid hsl(280, 80%, 50%, 0.3)', background: 'hsl(280, 80%, 50%, 0.08)' }}>
+        <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
+        <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(280, 80%, 70%)' }}>
           Streak Mode
         </span>
       </div>
@@ -375,19 +401,19 @@ const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
           }}>
           {streak}
         </p>
-        <p className="text-sm font-medium mt-2" style={{ color: 'hsl(280, 60%, 70%)' }}>day streak</p>
+        <p className="text-sm font-semibold mt-2 tracking-wide" style={{ color: 'hsl(280, 60%, 70%)' }}>day streak</p>
       </div>
 
-      <div className="w-full space-y-2">
-        <div className="flex justify-between">
-          <span className="text-xs" style={{ color: 'hsl(260, 30%, 50%)' }}>Total completed</span>
+      <div className="w-full space-y-2.5">
+        <div className="flex justify-between px-2">
+          <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Total completed</span>
           <span className="text-xs font-bold" style={{ color: 'hsl(200, 100%, 70%)' }}>{total}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-xs" style={{ color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
+        <div className="flex justify-between px-2">
+          <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
           <span className="text-xs font-bold" style={{ color: 'hsl(280, 100%, 70%)' }}>{longest} days</span>
         </div>
-        <p className="text-[10px] pt-2" style={{ color: 'hsl(260, 30%, 30%)' }}>npd • task manager</p>
+        <CardLogoFooter color="hsl(260, 30%, 30%)" />
       </div>
     </div>
   </div>
@@ -397,36 +423,40 @@ const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
 const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(160deg, hsl(25, 100%, 55%), hsl(340, 80%, 50%), hsl(280, 70%, 45%))' }}>
-    {/* White overlay shape */}
+    {/* Decorative circles */}
     <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full opacity-10"
+      style={{ background: 'hsl(0, 0%, 100%)' }} />
+    <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-8"
       style={{ background: 'hsl(0, 0%, 100%)' }} />
 
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-1.5 mt-2">
-        <Target className="h-4 w-4" style={{ color: 'hsl(0, 0%, 100%, 0.8)' }} />
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'hsl(0, 0%, 100%, 0.8)' }}>
+      <div className="flex items-center gap-2 mt-2">
+        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded shadow-lg" />
+        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(0, 0%, 100%, 0.85)' }}>
           Npd Streak
         </span>
       </div>
 
       <div>
-        <p className="text-8xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)' }}>{streak}</p>
-        <p className="text-lg font-medium mt-1" style={{ color: 'hsl(0, 0%, 100%, 0.7)' }}>days strong 💪</p>
+        <p className="text-8xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)', textShadow: '0 4px 20px hsl(0, 0%, 0%, 0.3)' }}>{streak}</p>
+        <p className="text-lg font-semibold mt-1" style={{ color: 'hsl(0, 0%, 100%, 0.75)' }}>days strong 💪</p>
       </div>
 
-      <div className="w-full rounded-xl p-3" style={{ background: 'hsl(0, 0%, 0%, 0.15)', backdropFilter: 'blur(8px)' }}>
+      <div className="w-full rounded-xl p-3" style={{ background: 'hsl(0, 0%, 0%, 0.18)', backdropFilter: 'blur(8px)' }}>
         <div className="flex justify-around">
           <div>
-            <p className="text-xl font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
-            <p className="text-[10px]" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>tasks done</p>
+            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{total}</p>
+            <p className="text-[10px] font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>tasks done</p>
           </div>
           <div className="w-px" style={{ background: 'hsl(0, 0%, 100%, 0.2)' }} />
           <div>
-            <p className="text-xl font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
-            <p className="text-[10px]" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>best streak</p>
+            <p className="text-xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest}</p>
+            <p className="text-[10px] font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.6)' }}>best streak</p>
           </div>
         </div>
-        <p className="text-[10px] mt-2" style={{ color: 'hsl(0, 0%, 100%, 0.3)' }}>npd • task manager</p>
+        <div className="mt-2 pt-2" style={{ borderTop: '1px solid hsl(0, 0%, 100%, 0.1)' }}>
+          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" />
+        </div>
       </div>
     </div>
   </div>
@@ -436,22 +466,26 @@ const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
 const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(170deg, hsl(43, 30%, 10%), hsl(40, 40%, 5%))' }}>
-    {/* Gold shimmer */}
+    {/* Gold shimmer line */}
     <div className="absolute top-0 left-0 right-0 h-1" 
       style={{ background: 'linear-gradient(90deg, transparent, hsl(43, 100%, 50%), transparent)' }} />
+    {/* Gold glow */}
+    <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full opacity-10 blur-2xl"
+      style={{ background: 'hsl(43, 100%, 50%)' }} />
 
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      <div className="flex items-center gap-1.5 mt-2">
+      <div className="flex items-center gap-2 mt-2">
+        <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
         <Crown className="h-4 w-4" style={{ color: 'hsl(43, 100%, 50%)' }} />
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'hsl(43, 80%, 60%)' }}>
+        <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(43, 80%, 60%)' }}>
           Champion
         </span>
       </div>
 
       <div>
-        <Trophy className="h-14 w-14 mx-auto mb-3" style={{ color: 'hsl(43, 100%, 50%)', fill: 'hsl(43, 100%, 50%, 0.2)' }} />
-        <p className="text-6xl font-black" style={{ color: 'hsl(43, 100%, 70%)' }}>{streak}</p>
-        <p className="text-sm font-medium mt-1" style={{ color: 'hsl(43, 40%, 50%)' }}>day streak</p>
+        <Trophy className="h-12 w-12 mx-auto mb-2" style={{ color: 'hsl(43, 100%, 50%)', fill: 'hsl(43, 100%, 50%, 0.2)' }} />
+        <p className="text-6xl font-black" style={{ color: 'hsl(43, 100%, 70%)', textShadow: '0 0 30px hsl(43, 100%, 50%, 0.3)' }}>{streak}</p>
+        <p className="text-sm font-semibold mt-1" style={{ color: 'hsl(43, 40%, 50%)' }}>day streak</p>
       </div>
 
       {/* Milestone badges */}
@@ -468,11 +502,11 @@ const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) 
             </div>
           ))}
         </div>
-        <div className="flex justify-between text-xs px-2">
-          <span style={{ color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
-          <span style={{ color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
+        <div className="flex justify-between text-xs px-2 mb-2">
+          <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
+          <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
         </div>
-        <p className="text-[10px] mt-3" style={{ color: 'hsl(43, 20%, 25%)' }}>npd • task manager</p>
+        <CardLogoFooter color="hsl(43, 20%, 25%)" />
       </div>
     </div>
   </div>
