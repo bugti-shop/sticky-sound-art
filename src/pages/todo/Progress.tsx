@@ -7,6 +7,7 @@ import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
+import { checkDailyReward, DAILY_REWARDS, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
@@ -21,6 +22,8 @@ const Progress = () => {
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showCertificates, setShowCertificates] = useState(false);
   const [showStreakDetail, setShowStreakDetail] = useState(false);
+  const [rewardDay, setRewardDay] = useState(1);
+  const [rewardClaimed, setRewardClaimed] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -40,6 +43,11 @@ const Progress = () => {
           completed: thisWeekTasks.length,
           total: tasks.filter(t => t.completed).length,
         });
+
+        // Load daily reward state
+        const rewardResult = await checkDailyReward();
+        setRewardDay(rewardResult.currentDay);
+        setRewardClaimed(!rewardResult.canClaim);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
@@ -295,6 +303,65 @@ const Progress = () => {
         </div>
         
         
+        {/* Daily Reward Cycle */}
+        <div className="bg-card rounded-xl p-4 border">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Gift className="h-4 w-4 text-primary" />
+              Daily Rewards
+            </h3>
+            <span className={cn(
+              "text-xs font-bold px-2 py-0.5 rounded-full",
+              rewardClaimed 
+                ? "bg-success/15 text-success" 
+                : "bg-primary/15 text-primary"
+            )}>
+              {rewardClaimed ? '✓ Claimed' : `Day ${rewardDay}/7`}
+            </span>
+          </div>
+          <div className="flex gap-1.5">
+            {DAILY_REWARDS.map((reward) => {
+              const isPast = reward.day < rewardDay || (reward.day === rewardDay && rewardClaimed);
+              const isCurrent = reward.day === rewardDay && !rewardClaimed;
+              const isFuture = reward.day > rewardDay || (reward.day > rewardDay);
+
+              return (
+                <motion.div
+                  key={reward.day}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: reward.day * 0.04 }}
+                  className={cn(
+                    "flex-1 flex flex-col items-center rounded-lg py-2 border transition-all",
+                    isPast && "bg-success/10 border-success/25",
+                    isCurrent && "bg-primary/10 border-primary shadow-sm ring-1 ring-primary/20",
+                    isFuture && "bg-muted/40 border-transparent opacity-50"
+                  )}
+                >
+                  {isPast ? (
+                    <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center mb-0.5">
+                      <Check className="h-3 w-3 text-success" />
+                    </div>
+                  ) : (
+                    <span className="text-base leading-none mb-0.5">{reward.icon}</span>
+                  )}
+                  <span className={cn(
+                    "text-[8px] font-bold",
+                    isCurrent ? "text-primary" : "text-muted-foreground"
+                  )}>
+                    +{reward.xp}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+          {!rewardClaimed && (
+            <p className="text-[10px] text-muted-foreground text-center mt-2">
+              Open the app daily to claim rewards · Missing a day resets the cycle
+            </p>
+          )}
+        </div>
+
         {/* Milestones */}
         <div className="bg-card rounded-xl p-4 border">
           <h3 className="font-semibold mb-4">{t('streak.milestones', 'Milestones')}</h3>
