@@ -485,6 +485,8 @@ const CertificateDetail = ({
 }: CertificateDetailProps) => {
   const Icon = cert.icon;
   const r = cert.requirements;
+  const [editingName, setEditingName] = useState(false);
+  const [cardName, setCardName] = useState(userName || '');
 
   const reqRows = [
     { label: 'Tasks completed', current: progress.tasksCompleted, required: r.tasksCompleted, icon: <Check className="h-3 w-3" /> },
