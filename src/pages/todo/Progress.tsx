@@ -433,6 +433,13 @@ const Progress = () => {
         onClose={() => setShowWeeklyReport(false)}
         streakData={data}
       />
+
+      {/* Certificates Modal */}
+      <GamificationCertificates
+        isOpen={showCertificates}
+        onClose={() => setShowCertificates(false)}
+        streakData={data}
+      />
     </TodoLayout>
   );
 };
