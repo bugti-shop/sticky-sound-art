@@ -271,6 +271,8 @@ interface ShareableCardProps {
   longest: number;
   freezes: number;
   milestones: number[];
+  userName?: string;
+  userAvatar?: string;
 }
 
 const ShareableCard = (props: ShareableCardProps) => {
@@ -284,13 +286,8 @@ const ShareableCard = (props: ShareableCardProps) => {
 };
 
 /* ---- Logo Footer Component ---- */
-const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)' }: { color?: string }) => (
-  <div className="flex items-center justify-center gap-2 mt-1">
-    <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" style={{ objectFit: 'cover' }} />
-    <span className="text-[10px] font-bold tracking-wider" style={{ color }}>
-      Npd • task manager
-    </span>
-  </div>
+const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)', userName, userAvatar }: { color?: string; userName?: string; userAvatar?: string }) => (
+  <CardBrandingFooter color={color} userName={userName} userAvatar={userAvatar} />
 );
 
 /* ---- Card 1: Fire Streak ---- */
