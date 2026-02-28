@@ -23,6 +23,8 @@ import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
 import Confetti from 'react-confetti';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import npdLogo from '@/assets/npd-reminder-logo.png';
 
 /* ============================================
    CERTIFICATE DEFINITIONS
