@@ -199,9 +199,19 @@ const Progress = () => {
               )}>
                 {t('streak.dayStreak', 'day streak')}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {t('streak.tapForDetails', 'Tap for details')}
-              </p>
+              {(data?.currentStreak || 0) > 0 && (data?.currentStreak || 0) >= (data?.longestStreak || 0) ? (
+                <motion.p
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-xs font-bold text-warning mt-1"
+                >
+                  New Personal Best! 🎉
+                </motion.p>
+              ) : (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('streak.tapForDetails', 'Tap for details')}
+                </p>
+              )}
             </motion.div>
           </div>
         </motion.button>
