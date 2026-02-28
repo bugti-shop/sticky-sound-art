@@ -504,7 +504,7 @@ const CertificateDetail = ({
       {/* Certificate Card */}
       <div className="flex justify-center">
         <div ref={cardRef}>
-          <CertificateCard cert={cert} unlocked={unlocked} />
+          <CertificateCard cert={cert} unlocked={unlocked} userName={userName} userAvatar={userAvatar} />
         </div>
       </div>
 
