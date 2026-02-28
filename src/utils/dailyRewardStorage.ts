@@ -7,6 +7,7 @@ export interface DailyRewardData {
   currentDay: number;       // 1-7
   lastClaimDate: string | null; // 'yyyy-MM-dd'
   totalClaimed: number;
+  completedCycles: number;  // full 7-day cycles completed
 }
 
 export const DAILY_REWARDS = [
