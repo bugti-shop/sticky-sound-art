@@ -2,6 +2,7 @@
  * Gamification Certificate System
  * 5 certificate levels from Beginner to Master
  * Shareable cards with LinkedIn-ready descriptions
+ * Includes confetti celebration for first-time unlocks
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -12,14 +13,16 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { triggerHaptic } from '@/utils/haptics';
+import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { loadNotesFromDB } from '@/utils/noteStorage';
 import { loadFolders } from '@/utils/folderStorage';
 import { loadXpData, XpData } from '@/utils/gamificationStorage';
 import { StreakData } from '@/utils/streakStorage';
+import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
+import Confetti from 'react-confetti';
 
 /* ============================================
    CERTIFICATE DEFINITIONS
@@ -188,18 +191,27 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
   const [copiedLinkedIn, setCopiedLinkedIn] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [celebratingCert, setCelebratingCert] = useState<CertificateLevel | null>(null);
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
     const load = async () => {
       setIsLoading(true);
       try {
-        const [tasks, notes, folders, xpData] = await Promise.all([
+        const [tasks, notes, folders, xpData, seenCerts] = await Promise.all([
           loadTodoItems(),
           loadNotesFromDB(),
           loadFolders(),
           loadXpData(),
+          getSetting<string[]>('npd_seen_certificates', []),
         ]);
 
         const completedTasks = tasks.filter(t => t.completed).length;
@@ -208,13 +220,30 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
           ...tasks.filter(t => t.sectionId).map(t => t.sectionId),
         ]);
 
-        setProgress({
+        const userProgress: UserProgress = {
           tasksCompleted: completedTasks,
           longestStreak: streakData?.longestStreak || 0,
           notesCreated: notes.length,
           foldersUsed: usedFolderIds.size,
           xpLevel: xpData.currentLevel,
-        });
+        };
+        setProgress(userProgress);
+
+        // Check for newly unlocked certificates
+        const newlyUnlocked = CERTIFICATE_LEVELS.filter(
+          cert => isUnlocked(userProgress, cert) && !seenCerts.includes(cert.id)
+        );
+
+        if (newlyUnlocked.length > 0) {
+          // Celebrate the highest new unlock
+          const highest = newlyUnlocked.reduce((a, b) => a.level > b.level ? a : b);
+          setCelebratingCert(highest);
+          triggerNotificationHaptic('success').catch(() => {});
+
+          // Mark all newly unlocked as seen
+          const updatedSeen = [...seenCerts, ...newlyUnlocked.map(c => c.id)];
+          await setSetting('npd_seen_certificates', updatedSeen);
+        }
       } catch (e) {
         console.error('Failed to load certificate data:', e);
       } finally {
@@ -279,15 +308,29 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
         className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md overflow-y-auto"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center justify-between">
+         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <Award className="h-5 w-5 text-warning" />
             Certificates
           </h2>
-          <button onClick={() => { setSelectedCert(null); onClose(); }} className="p-2 rounded-full hover:bg-muted">
+          <button onClick={() => { setSelectedCert(null); setCelebratingCert(null); onClose(); }} className="p-2 rounded-full hover:bg-muted">
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Certificate Celebration Overlay */}
+        <AnimatePresence>
+          {celebratingCert && (
+            <CertificateCelebration
+              cert={celebratingCert}
+              windowSize={windowSize}
+              onDismiss={() => {
+                setSelectedCert(celebratingCert);
+                setCelebratingCert(null);
+              }}
+            />
+          )}
+        </AnimatePresence>
 
         {isLoading || !progress ? (
           <div className="flex items-center justify-center h-64">
@@ -568,3 +611,149 @@ const CertStat = ({ value, label, accent }: { value: string; label: string; acce
     <p className="text-[9px]" style={{ color: `${accent}90` }}>{label}</p>
   </div>
 );
+
+/* ============================================
+   CERTIFICATE CELEBRATION OVERLAY
+   ============================================ */
+
+interface CertificateCelebrationProps {
+  cert: CertificateLevel;
+  windowSize: { width: number; height: number };
+  onDismiss: () => void;
+}
+
+const CertificateCelebration = ({ cert, windowSize, onDismiss }: CertificateCelebrationProps) => {
+  const Icon = cert.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ background: cert.colors.bg }}
+    >
+      {/* Confetti */}
+      <Confetti
+        width={windowSize.width}
+        height={windowSize.height}
+        recycle={true}
+        numberOfPieces={200}
+        gravity={0.12}
+        colors={[cert.colors.accent, '#FFD700', '#FF6B35', '#44FF44', '#FFFFFF', '#FF44FF']}
+      />
+
+      {/* Radial glow */}
+      <motion.div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{ width: 280, height: 280, background: cert.colors.accent, opacity: 0.12 }}
+        animate={{ scale: [1, 1.4, 1], opacity: [0.08, 0.2, 0.08] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center text-center px-6 w-full max-w-sm">
+        {/* Congratulations text */}
+        <motion.p
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-xs font-bold tracking-[0.3em] uppercase mb-6"
+          style={{ color: cert.colors.text }}
+        >
+          🎉 Certificate Unlocked!
+        </motion.p>
+
+        {/* Animated Icon */}
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 150, damping: 12, delay: 0.3 }}
+          className="relative mb-4"
+        >
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{ boxShadow: `0 0 50px 15px ${cert.colors.accent}40, 0 0 100px 30px ${cert.colors.accent}20` }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"
+            style={{ background: `${cert.colors.accent}20`, border: `3px solid ${cert.colors.accent}60` }}
+          >
+            <motion.div
+              animate={{ y: [0, -4, 0], rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Icon className="h-10 w-10" style={{ color: cert.colors.accent }} />
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Certificate Title */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 180, delay: 0.5 }}
+        >
+          <h2
+            className="text-4xl font-black"
+            style={{ color: 'hsl(0,0%,100%)', textShadow: `0 0 30px ${cert.colors.accent}50` }}
+          >
+            {cert.title}
+          </h2>
+          <p className="text-sm font-medium mt-1" style={{ color: cert.colors.text }}>
+            {cert.subtitle}
+          </p>
+        </motion.div>
+
+        {/* Mini Certificate Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-6 w-full rounded-xl overflow-hidden border"
+          style={{ borderColor: `${cert.colors.accent}40` }}
+        >
+          <div className="p-4 text-center" style={{ background: `${cert.colors.accent}08` }}>
+            <div className="h-0.5 w-12 mx-auto rounded-full mb-3" style={{ background: cert.colors.accent }} />
+            <p className="text-[10px] tracking-[0.2em] uppercase font-bold" style={{ color: cert.colors.text }}>
+              Certificate of Achievement
+            </p>
+            <p className="text-xs mt-2 leading-relaxed" style={{ color: 'hsl(0,0%,100%,0.6)' }}>
+              {cert.requirements.tasksCompleted}+ tasks · {cert.requirements.streakDays}d streak · {cert.requirements.notesCreated}+ notes
+            </p>
+            <div className="h-0.5 w-12 mx-auto rounded-full mt-3" style={{ background: cert.colors.accent }} />
+          </div>
+        </motion.div>
+
+        {/* Congratulations Message */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+          className="text-xs mt-5 leading-relaxed"
+          style={{ color: 'hsl(0,0%,100%,0.5)' }}
+        >
+          Your dedication has paid off. You've earned the <span style={{ color: cert.colors.accent }} className="font-bold">{cert.title}</span> certificate!
+        </motion.p>
+
+        {/* Action Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="mt-8 w-full"
+        >
+          <Button
+            onClick={onDismiss}
+            size="lg"
+            className="w-full font-bold"
+            style={{ background: cert.colors.accent, color: 'hsl(0,0%,5%)' }}
+          >
+            View Certificate
+          </Button>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
