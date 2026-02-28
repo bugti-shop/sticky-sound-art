@@ -22,6 +22,8 @@ const Progress = () => {
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showCertificates, setShowCertificates] = useState(false);
   const [showStreakDetail, setShowStreakDetail] = useState(false);
+  const [rewardDay, setRewardDay] = useState(1);
+  const [rewardClaimed, setRewardClaimed] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
