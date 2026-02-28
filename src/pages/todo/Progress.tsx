@@ -10,7 +10,7 @@ import { startOfWeek, endOfWeek } from 'date-fns';
 import Confetti from 'react-confetti';
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
-
+import { GamificationCertificates } from '@/components/GamificationCertificates';
 
 const Progress = () => {
   const { t } = useTranslation();
