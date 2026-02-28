@@ -18,7 +18,7 @@ import { canRepairStreak } from '@/utils/streakRepairStorage';
 
 const Progress = () => {
   const { t } = useTranslation();
-  const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
+  const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining, refresh } = useStreak();
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
