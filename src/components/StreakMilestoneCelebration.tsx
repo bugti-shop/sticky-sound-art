@@ -302,7 +302,7 @@ export const StreakMilestoneCelebration = () => {
         {/* Hidden shareable card for html2canvas */}
         <div className="fixed -left-[9999px] top-0">
           <div ref={shareCardRef}>
-            <ShareCard milestone={milestone} config={config} />
+            <ShareCard milestone={milestone} config={config} userName={profile.name} userAvatar={profile.avatarUrl} />
           </div>
         </div>
       </motion.div>
