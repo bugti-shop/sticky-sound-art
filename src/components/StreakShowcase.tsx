@@ -338,13 +338,11 @@ const FireCard = ({ streak, total, longest, userName, userAvatar }: ShareableCar
 );
 
 /* ---- Card 2: Clean Minimal ---- */
-const MinimalCard = ({ streak, total, longest }: ShareableCardProps) => (
+const MinimalCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'hsl(220, 15%, 8%)' }}>
-    {/* Corner accent */}
     <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-8"
       style={{ background: 'hsl(220, 85%, 59%)' }} />
-    {/* Subtle grid lines */}
     <div className="absolute inset-0 opacity-[0.03]" 
       style={{ backgroundImage: 'linear-gradient(hsl(220, 85%, 59%) 1px, transparent 1px), linear-gradient(90deg, hsl(220, 85%, 59%) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
@@ -368,7 +366,7 @@ const MinimalCard = ({ streak, total, longest }: ShareableCardProps) => (
           <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Best Streak</span>
           <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(220, 15%, 28%)" />
+        <CardLogoFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
