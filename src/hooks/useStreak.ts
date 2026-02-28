@@ -83,6 +83,11 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
   const recordTaskCompletion = useCallback(async (): Promise<{ newMilestone: number | null; usedFreeze: boolean; earnedFreeze: boolean; usedGracePeriod: boolean }> => {
     const result = await recordCompletion(storageKey);
     setData(result.data);
+    // Track behavior for smart notifications
+    try {
+      const { recordCompletionEvent } = await import('@/utils/smartNotifications');
+      await recordCompletionEvent();
+    } catch (e) { /* ignore on web */ }
     
     // Award XP for task completion
     await addXp(XP_REWARDS.TASK_COMPLETE, 'Task completed');
