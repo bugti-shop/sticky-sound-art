@@ -4,6 +4,7 @@ import { Check, Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { triggerHaptic } from '@/utils/haptics';
+import Confetti from 'react-confetti';
 import {
   DAILY_REWARDS,
   checkDailyReward,
@@ -36,13 +37,12 @@ export const DailyLoginRewardDialog = () => {
   }, []);
 
   const handleClaim = useCallback(async () => {
-    triggerHaptic('medium').catch(() => {});
+    triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
     const result = await claimDailyReward();
     setXpEarned(result.xpEarned);
     setClaimed(true);
-    // Auto-close after showing reward
-    setTimeout(() => setIsOpen(false), 2000);
-  }, []);
+    setTimeout(() => setIsOpen(false), currentDay === 7 ? 3500 : 2000);
+  }, [currentDay]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -60,6 +60,18 @@ export const DailyLoginRewardDialog = () => {
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
+
+          {/* Day 7 Confetti */}
+          {claimed && currentDay === 7 && (
+            <Confetti
+              width={window.innerWidth}
+              height={window.innerHeight}
+              recycle={false}
+              numberOfPieces={300}
+              gravity={0.2}
+              colors={['#FFD700', '#FF6B35', '#FF4444', '#44FF44', '#4488FF', '#FF44FF', '#FFFFFF']}
+            />
+          )}
 
           {/* Dialog */}
           <motion.div
@@ -187,12 +199,29 @@ export const DailyLoginRewardDialog = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   className="text-center py-2"
                 >
-                  <p className="text-lg font-black text-success">
-                    +{xpEarned} XP Earned! ✨
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Come back tomorrow for more!
-                  </p>
+                  {currentDay === 7 ? (
+                    <>
+                      <motion.p
+                        className="text-2xl font-black text-warning"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        🏆 +{xpEarned} XP Bonus! 🏆
+                      </motion.p>
+                      <p className="text-xs text-warning/80 font-semibold mt-1">
+                        7-day cycle complete! You're amazing!
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-lg font-black text-success">
+                        +{xpEarned} XP Earned! ✨
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Come back tomorrow for more!
+                      </p>
+                    </>
+                  )}
                 </motion.div>
               )}
             </div>
