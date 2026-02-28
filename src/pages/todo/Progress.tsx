@@ -444,33 +444,13 @@ const Progress = () => {
           </div>
         </div>
 
-        {/* Share Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Certificates Button */}
+        <div>
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            onClick={() => {
-              setShowWeeklyReport(true);
-              setHasNewReport(false);
-              const weekKey = `npd_report_seen_${format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd')}`;
-              localStorage.setItem(weekKey, 'true');
-            }}
-            className="relative bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 font-semibold text-[10px] active:scale-[0.98] transition-transform"
-            style={{ color: 'hsl(var(--accent-purple))' }}
-          >
-            {hasNewReport && (
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
-            )}
-            <BarChart3 className="h-4 w-4" />
-            Weekly Report
-          </motion.button>
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
             onClick={() => setShowCertificates(true)}
-            className="relative bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
+            className="relative w-full bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
           >
             {hasNewCerts && (
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
