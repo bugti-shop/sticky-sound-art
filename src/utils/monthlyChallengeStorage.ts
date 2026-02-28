@@ -188,10 +188,6 @@ export const updateMonthlyChallengeProgress = async (
     // Award 500 XP bonus
     if (!data.bonusXpClaimed) {
       data.bonusXpClaimed = true;
-      try {
-        const { addXp } = await import('./gamificationStorage');
-        await addXp(500, `Monthly Challenge Bonus: ${data.theme}`);
-      } catch (e) { /* ignore */ }
     }
 
     // Save badge

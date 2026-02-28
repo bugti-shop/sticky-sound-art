@@ -492,7 +492,6 @@ const CertificateDetail = ({
     { label: 'Streak days', current: progress.longestStreak, required: r.streakDays, icon: <Flame className="h-3 w-3" /> },
     { label: 'Notes created', current: progress.notesCreated, required: r.notesCreated, icon: <FileText className="h-3 w-3" /> },
     { label: 'Folders used', current: progress.foldersUsed, required: r.foldersUsed, icon: <FolderOpen className="h-3 w-3" /> },
-    { label: 'XP level', current: progress.xpLevel, required: r.xpLevel, icon: <Star className="h-3 w-3" /> },
   ];
 
   return (

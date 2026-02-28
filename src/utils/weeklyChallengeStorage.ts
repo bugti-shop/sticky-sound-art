@@ -96,11 +96,6 @@ export const updateWeeklyChallengeProgress = async (
         challenge.completed = true;
         completedChallenge = challenge;
 
-        // Award XP
-        try {
-          const { addXp } = await import('./gamificationStorage');
-          await addXp(challenge.xpReward, `Weekly Challenge: ${challenge.title}`);
-        } catch (e) { /* ignore */ }
 
         window.dispatchEvent(new CustomEvent('weeklyChallengeCompleted', { detail: { challenge } }));
       }

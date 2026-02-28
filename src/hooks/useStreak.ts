@@ -87,37 +87,11 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
       await recordCompletionEvent();
     } catch (e) { /* ignore on web */ }
     
-    // Record combo and award XP (with bonus)
+    // Record combo
     const { recordComboCompletion } = await import('@/utils/comboSystem');
     const combo = recordComboCompletion();
-    await addXp(XP_REWARDS.TASK_COMPLETE, 'Task completed');
-    if (combo.bonusXp > 0) {
-      await addXp(combo.bonusXp, `Combo x${combo.multiplier} bonus`);
-    }
     if (combo.isNewCombo) {
       window.dispatchEvent(new CustomEvent('comboHit', { detail: combo }));
-    }
-    
-    // Award XP for streak day if streak incremented
-    if (result.streakIncremented) {
-      await addXp(XP_REWARDS.STREAK_DAY, 'Streak maintained');
-    }
-    
-    // Award XP for milestones
-    if (result.newMilestone) {
-      const milestoneXp = {
-        3: XP_REWARDS.MILESTONE_3,
-        7: XP_REWARDS.MILESTONE_7,
-        14: XP_REWARDS.MILESTONE_14,
-        30: XP_REWARDS.MILESTONE_30,
-        60: XP_REWARDS.MILESTONE_60,
-        100: XP_REWARDS.MILESTONE_100,
-        365: XP_REWARDS.MILESTONE_365,
-      };
-      const xp = milestoneXp[result.newMilestone as keyof typeof milestoneXp];
-      if (xp) {
-        await addXp(xp, `Milestone: ${result.newMilestone} days`);
-      }
     }
     
     // Update daily challenges
