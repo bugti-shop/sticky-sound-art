@@ -7,7 +7,7 @@ import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
-import Confetti from 'react-confetti';
+
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates } from '@/components/GamificationCertificates';
