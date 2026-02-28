@@ -244,8 +244,10 @@ export const scheduleSmartNotifications = async (): Promise<void> => {
   }
 };
 
-// ─── Re-engagement Notifications ───────────────────────────
+// ─── Streak Buddy + Re-engagement Notifications ───────────
 
+const BUDDY_SAD_ID = 998008;
+const BUDDY_ANGRY_ID = 998009;
 const REENGAGEMENT_2D_ID = 998010;
 const REENGAGEMENT_5D_ID = 998011;
 const REENGAGEMENT_7D_ID = 998012;
@@ -253,7 +255,7 @@ const LAST_OPEN_KEY = 'npd_last_app_open';
 
 /**
  * Record that the user opened the app right now.
- * Also cancels any pending re-engagement notifications and reschedules fresh ones.
+ * Cancels and reschedules all re-engagement + buddy notifications.
  */
 export const recordAppOpen = async (): Promise<void> => {
   await setSetting(LAST_OPEN_KEY, new Date().toISOString());
@@ -268,6 +270,8 @@ const cancelReengagementNotifications = async (): Promise<void> => {
   try {
     await LocalNotifications.cancel({
       notifications: [
+        { id: BUDDY_SAD_ID },
+        { id: BUDDY_ANGRY_ID },
         { id: REENGAGEMENT_2D_ID },
         { id: REENGAGEMENT_5D_ID },
         { id: REENGAGEMENT_7D_ID },
@@ -279,8 +283,14 @@ const cancelReengagementNotifications = async (): Promise<void> => {
 };
 
 /**
- * Schedule re-engagement notifications at 2, 5, and 7 days from now.
- * Each app open resets these timers.
+ * Schedule Streak Buddy + re-engagement notifications.
+ * 
+ * Streak Buddy (logo-aware):
+ *   1 day:  😢 sad notification
+ *   2 days: 😠 angry notification
+ * 
+ * Re-engagement:
+ *   2 days, 5 days, 7 days
  */
 const scheduleReengagementNotifications = async (): Promise<void> => {
   if (!Capacitor.isNativePlatform()) return;
@@ -297,6 +307,29 @@ const scheduleReengagementNotifications = async (): Promise<void> => {
     };
 
     const notifications = [
+      // Streak Buddy — 1 day (sad)
+      {
+        id: BUDDY_SAD_ID,
+        title: 'I miss you 😢',
+        body: "It's been a whole day! Your tasks are getting lonely. Come back and check on them!",
+        schedule: { at: makeDate(1), allowWhileIdle: true },
+        channelId: CHANNEL_GENTLE,
+        smallIcon: 'npd_notification_icon',
+        iconColor: '#60A5FA',
+        sound: 'default',
+      },
+      // Streak Buddy — 2 days (angry)
+      {
+        id: BUDDY_ANGRY_ID,
+        title: "I'm not happy 😠",
+        body: "2 days without you! Your streak buddy is upset. Open the app before it's too late!",
+        schedule: { at: makeDate(2), allowWhileIdle: true },
+        channelId: CHANNEL_URGENT,
+        smallIcon: 'npd_notification_icon',
+        iconColor: '#EF4444',
+        sound: 'default',
+      },
+      // Re-engagement — 2 days
       {
         id: REENGAGEMENT_2D_ID,
         title: 'Your tasks miss you! 📝',
@@ -307,6 +340,7 @@ const scheduleReengagementNotifications = async (): Promise<void> => {
         iconColor: '#3B82F6',
         sound: 'default',
       },
+      // Re-engagement — 5 days
       {
         id: REENGAGEMENT_5D_ID,
         title: "It's been a while! 🔥",
@@ -317,6 +351,7 @@ const scheduleReengagementNotifications = async (): Promise<void> => {
         iconColor: '#F97316',
         sound: 'default',
       },
+      // Re-engagement — 7 days
       {
         id: REENGAGEMENT_7D_ID,
         title: 'We saved everything for you ✨',
@@ -330,7 +365,7 @@ const scheduleReengagementNotifications = async (): Promise<void> => {
     ];
 
     await LocalNotifications.schedule({ notifications });
-    console.log('[SmartNotif] Scheduled 3 re-engagement notifications');
+    console.log('[SmartNotif] Scheduled 5 buddy + re-engagement notifications');
   } catch (e) {
     console.warn('[SmartNotif] Re-engagement schedule failed:', e);
   }
