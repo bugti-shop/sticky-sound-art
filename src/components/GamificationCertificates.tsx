@@ -229,6 +229,7 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
   const [celebratingCert, setCelebratingCert] = useState<CertificateLevel | null>(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
