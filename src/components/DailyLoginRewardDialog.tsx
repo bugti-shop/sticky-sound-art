@@ -46,13 +46,22 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
     check();
   }, [loadRewardState]);
 
-  // Handle forceOpen from parent
+  // Handle forceOpen from parent or global event
   useEffect(() => {
     if (forceOpen) {
       loadRewardState().then(() => setIsOpen(true));
       onForceOpenHandled?.();
     }
   }, [forceOpen, loadRewardState, onForceOpenHandled]);
+
+  // Listen for global open event
+  useEffect(() => {
+    const handler = () => {
+      loadRewardState().then(() => setIsOpen(true));
+    };
+    window.addEventListener('openDailyReward', handler);
+    return () => window.removeEventListener('openDailyReward', handler);
+  }, [loadRewardState]);
 
   const handleClaim = useCallback(async () => {
     triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
