@@ -82,6 +82,7 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
   const [stats, setStats] = useState<WeeklyStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   // Load weekly stats
   useEffect(() => {
