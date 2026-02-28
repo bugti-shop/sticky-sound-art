@@ -231,6 +231,7 @@ const AppContent = () => {
       <PremiumPaywall />
       <WhatsNewSheet />
       <StreakMilestoneCelebration />
+      <StreakTierCelebration />
       <DailyLoginRewardDialog />
       <ComboOverlay />
       <WelcomeBackCelebration

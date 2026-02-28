@@ -170,6 +170,18 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
     // Dispatch event for other components
     window.dispatchEvent(new CustomEvent('streakUpdated'));
     
+    // Check for tier-up in Streak Society
+    if (result.streakIncremented) {
+      try {
+        const { getStreakTier } = await import('@/components/StreakSocietyBadge');
+        const prevTier = getStreakTier(result.data.currentStreak - 1);
+        const newTier = getStreakTier(result.data.currentStreak);
+        if (newTier && (!prevTier || prevTier.id !== newTier.id)) {
+          window.dispatchEvent(new CustomEvent('streakTierUp', { detail: { tier: newTier } }));
+        }
+      } catch (e) { /* ignore */ }
+    }
+    
     // Play milestone sound and haptic feedback
     if (result.newMilestone) {
       playStreakMilestoneSound();
