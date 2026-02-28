@@ -59,6 +59,11 @@ const Progress = () => {
         // Check for new certificate badges
         const newCerts = await hasNewCertificates(data?.longestStreak || 0);
         setHasNewCerts(newCerts);
+
+        // Check if weekly report has unseen data
+        const weekKey = `npd_report_seen_${format(weekStart, 'yyyy-MM-dd')}`;
+        const reportSeen = localStorage.getItem(weekKey);
+        setHasNewReport(thisWeekTasks.length > 0 && !reportSeen);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
