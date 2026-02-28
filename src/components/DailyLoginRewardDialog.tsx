@@ -65,8 +65,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
 
   const handleClaim = useCallback(async () => {
     triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
-    const result = await claimDailyReward();
-    setXpEarned(result.xpEarned);
+    await claimDailyReward();
     setClaimed(true);
     window.dispatchEvent(new Event('dailyRewardClaimed'));
     setTimeout(() => setIsOpen(false), currentDay === 7 ? 3500 : 2000);
