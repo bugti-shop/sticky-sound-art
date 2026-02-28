@@ -29,16 +29,24 @@ export const WeeklyChallengesCard = () => {
     load();
 
     const handler = () => load();
+    const handleComplete = (e: CustomEvent<{ challenge: WeeklyChallenge }>) => {
+      setCelebratingChallenge(e.detail.challenge);
+      playChallengeCompleteSound();
+      setShowConfetti(true);
+      setTimeout(() => setCelebratingChallenge(null), 3000);
+      setTimeout(() => setShowConfetti(false), 4000);
+      load();
+    };
+
     window.addEventListener('weeklyChallengesUpdated', handler);
-    window.addEventListener('weeklyChallengeCompleted', handler);
+    window.addEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
     window.addEventListener('xpUpdated', handler);
 
-    // Update countdown every minute
     const timer = setInterval(() => setDeadline(getWeekDeadline()), 60000);
 
     return () => {
       window.removeEventListener('weeklyChallengesUpdated', handler);
-      window.removeEventListener('weeklyChallengeCompleted', handler);
+      window.removeEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
       window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
