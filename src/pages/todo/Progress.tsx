@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
-import { startOfWeek, endOfWeek } from 'date-fns';
+import { startOfWeek, endOfWeek, format } from 'date-fns';
 import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 import { StreakShowcase } from '@/components/StreakShowcase';
@@ -26,6 +26,7 @@ const Progress = () => {
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [hasNewCerts, setHasNewCerts] = useState(false);
   const [completedCycles, setCompletedCycles] = useState(0);
+  const [hasNewReport, setHasNewReport] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -58,6 +59,11 @@ const Progress = () => {
         // Check for new certificate badges
         const newCerts = await hasNewCertificates(data?.longestStreak || 0);
         setHasNewCerts(newCerts);
+
+        // Check if weekly report has unseen data
+        const weekKey = `npd_report_seen_${format(weekStart, 'yyyy-MM-dd')}`;
+        const reportSeen = localStorage.getItem(weekKey);
+        setHasNewReport(thisWeekTasks.length > 0 && !reportSeen);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
@@ -423,10 +429,18 @@ const Progress = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            onClick={() => setShowWeeklyReport(true)}
-            className="bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 font-semibold text-[10px] active:scale-[0.98] transition-transform"
+            onClick={() => {
+              setShowWeeklyReport(true);
+              setHasNewReport(false);
+              const weekKey = `npd_report_seen_${format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd')}`;
+              localStorage.setItem(weekKey, 'true');
+            }}
+            className="relative bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 font-semibold text-[10px] active:scale-[0.98] transition-transform"
             style={{ color: 'hsl(var(--accent-purple))' }}
           >
+            {hasNewReport && (
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
+            )}
             <BarChart3 className="h-4 w-4" />
             Weekly Report
           </motion.button>
