@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { TodoLayout } from './TodoLayout';
 import { useStreak } from '@/hooks/useStreak';
 import { cn } from '@/lib/utils';
-import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2 } from 'lucide-react';
+import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import Confetti from 'react-confetti';
 import { StreakShowcase } from '@/components/StreakShowcase';
+import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 
 
 const Progress = () => {
@@ -18,6 +19,7 @@ const Progress = () => {
   const [celebratingMilestone, setCelebratingMilestone] = useState<number | null>(null);
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   // Handle window resize for confetti
@@ -363,18 +365,31 @@ const Progress = () => {
           </div>
         </div>
 
-        {/* Share Streak Button */}
-        {(data?.currentStreak || 0) > 0 && (
+        {/* Share Buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          {(data?.currentStreak || 0) > 0 && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => setShowShowcase(true)}
+              className="bg-primary/10 border border-primary/20 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-xs active:scale-[0.98] transition-transform"
+            >
+              <Share2 className="h-4 w-4" />
+              Share Streak
+            </motion.button>
+          )}
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            onClick={() => setShowShowcase(true)}
-            className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center justify-center gap-2 text-primary font-semibold text-sm active:scale-[0.98] transition-transform"
+            transition={{ delay: 0.05 }}
+            onClick={() => setShowWeeklyReport(true)}
+            className="bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 font-semibold text-xs active:scale-[0.98] transition-transform"
+            style={{ color: 'hsl(var(--accent-purple))' }}
           >
-            <Share2 className="h-4 w-4" />
-            Share Your Streak
+            <BarChart3 className="h-4 w-4" />
+            Weekly Report
           </motion.button>
-        )}
+        </div>
         
         {/* At Risk Warning */}
         <AnimatePresence>
@@ -398,6 +413,13 @@ const Progress = () => {
       <StreakShowcase
         isOpen={showShowcase}
         onClose={() => setShowShowcase(false)}
+        streakData={data}
+      />
+
+      {/* Weekly Report Modal */}
+      <WeeklyReportCard
+        isOpen={showWeeklyReport}
+        onClose={() => setShowWeeklyReport(false)}
         streakData={data}
       />
     </TodoLayout>
