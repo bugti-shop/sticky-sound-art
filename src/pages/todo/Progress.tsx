@@ -99,43 +99,6 @@ const Progress = () => {
 
   return (
     <TodoLayout title={t('nav.progress', 'Progress')}>
-      {/* Confetti for milestones */}
-      {showConfetti && (
-        <Confetti
-          width={windowSize.width}
-          height={windowSize.height}
-          recycle={false}
-          numberOfPieces={200}
-          gravity={0.3}
-        />
-      )}
-      
-      {/* Milestone celebration overlay */}
-      <AnimatePresence>
-        {celebratingMilestone && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ y: 50 }}
-              animate={{ y: 0 }}
-              className="text-center"
-            >
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -10, 0] }}
-                transition={{ duration: 0.5, repeat: 2 }}
-              >
-                <Flame className="h-24 w-24 text-streak fill-streak/80 mx-auto" />
-              </motion.div>
-              <h2 className="text-4xl font-bold mt-4 text-foreground">{celebratingMilestone} {t('streak.days', 'days')}!</h2>
-              <p className="text-muted-foreground mt-2">{t('streak.milestoneReached', 'Milestone reached!')}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         
