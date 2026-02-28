@@ -7,6 +7,7 @@ export interface DailyRewardData {
   currentDay: number;       // 1-7
   lastClaimDate: string | null; // 'yyyy-MM-dd'
   totalClaimed: number;
+  completedCycles: number;  // full 7-day cycles completed
 }
 
 export const DAILY_REWARDS = [
@@ -23,6 +24,7 @@ const getDefault = (): DailyRewardData => ({
   currentDay: 1,
   lastClaimDate: null,
   totalClaimed: 0,
+  completedCycles: 0,
 });
 
 export const loadDailyRewardData = async (): Promise<DailyRewardData> => {
@@ -75,6 +77,11 @@ export const claimDailyReward = async (): Promise<{
   data.currentDay = currentDay;
   data.lastClaimDate = format(new Date(), 'yyyy-MM-dd');
   data.totalClaimed += 1;
+
+  // Track completed cycles when Day 7 is claimed
+  if (currentDay === 7) {
+    data.completedCycles = (data.completedCycles || 0) + 1;
+  }
 
   await setSetting(STORAGE_KEY, data);
 

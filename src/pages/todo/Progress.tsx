@@ -7,7 +7,7 @@ import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
-import { checkDailyReward, DAILY_REWARDS, type DailyRewardData } from '@/utils/dailyRewardStorage';
+import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
@@ -25,6 +25,7 @@ const Progress = () => {
   const [rewardDay, setRewardDay] = useState(1);
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [hasNewCerts, setHasNewCerts] = useState(false);
+  const [completedCycles, setCompletedCycles] = useState(0);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -49,6 +50,10 @@ const Progress = () => {
         const rewardResult = await checkDailyReward();
         setRewardDay(rewardResult.currentDay);
         setRewardClaimed(!rewardResult.canClaim);
+
+        // Load completed cycles
+        const rewardData = await loadDailyRewardData();
+        setCompletedCycles(rewardData.completedCycles || 0);
 
         // Check for new certificate badges
         const newCerts = await hasNewCertificates(data?.longestStreak || 0);
@@ -317,6 +322,11 @@ const Progress = () => {
             <h3 className="font-semibold flex items-center gap-2">
               <Gift className="h-4 w-4 text-primary" />
               Daily Rewards
+              {completedCycles > 0 && (
+                <span className="text-[9px] font-bold bg-warning/15 text-warning px-1.5 py-0.5 rounded-full">
+                  🔁 {completedCycles} {completedCycles === 1 ? 'cycle' : 'cycles'}
+                </span>
+              )}
             </h3>
             <span className={cn(
               "text-xs font-bold px-2 py-0.5 rounded-full",
