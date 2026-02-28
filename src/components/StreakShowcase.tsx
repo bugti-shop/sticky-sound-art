@@ -17,6 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { triggerHaptic } from '@/utils/haptics';
 import html2canvas from 'html2canvas';
 import npdLogo from '@/assets/npd-reminder-logo.png';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooter } from '@/components/CardBranding';
 
 interface StreakShowcaseProps {
   isOpen: boolean;
