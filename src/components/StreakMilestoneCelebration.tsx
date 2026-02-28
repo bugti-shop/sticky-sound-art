@@ -317,9 +317,13 @@ export const StreakMilestoneCelebration = () => {
 const ShareCard = ({
   milestone,
   config,
+  userName,
+  userAvatar,
 }: {
   milestone: number;
   config: typeof MILESTONE_CONFIG[number];
+  userName?: string;
+  userAvatar?: string;
 }) => (
   <div
     className="w-[1080px] h-[1920px] relative overflow-hidden flex flex-col items-center justify-center"
