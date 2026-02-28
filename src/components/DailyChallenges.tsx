@@ -69,7 +69,7 @@ export const DailyChallenges = () => {
           >
             <Sparkles className="h-5 w-5" />
             <span className="font-semibold">{completedChallenge.title} Complete!</span>
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">+{completedChallenge.xpReward} XP</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">Done!</span>
           </motion.div>
         )}
       </AnimatePresence>
