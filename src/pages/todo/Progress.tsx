@@ -310,7 +310,10 @@ const Progress = () => {
         
         
         {/* Daily Reward Cycle */}
-        <div className="bg-card rounded-xl p-4 border">
+        <div
+          className="bg-card rounded-xl p-4 border cursor-pointer active:scale-[0.98] transition-transform"
+          onClick={() => setForceOpenReward(true)}
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold flex items-center gap-2">
               <Gift className="h-4 w-4 text-primary" />
