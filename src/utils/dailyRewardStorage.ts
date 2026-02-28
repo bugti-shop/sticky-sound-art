@@ -78,6 +78,11 @@ export const claimDailyReward = async (): Promise<{
   data.lastClaimDate = format(new Date(), 'yyyy-MM-dd');
   data.totalClaimed += 1;
 
+  // Track completed cycles when Day 7 is claimed
+  if (currentDay === 7) {
+    data.completedCycles = (data.completedCycles || 0) + 1;
+  }
+
   await setSetting(STORAGE_KEY, data);
 
   // Award XP
