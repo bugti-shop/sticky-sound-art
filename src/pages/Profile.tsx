@@ -26,6 +26,10 @@ export default function Profile() {
   const [isCalculatingSize, setIsCalculatingSize] = useState(false);
   const [syncState, setSyncState] = useState<SyncState>('idle');
   const [lastSync, setLastSync] = useState<SyncMeta | null>(null);
+  const { profile, updateProfile } = useUserProfile();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load last sync info
   useEffect(() => {
