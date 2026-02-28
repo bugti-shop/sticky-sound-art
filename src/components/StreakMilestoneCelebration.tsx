@@ -72,6 +72,7 @@ export const StreakMilestoneCelebration = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [isSharing, setIsSharing] = useState(false);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   // Listen for milestone events globally
   useEffect(() => {
