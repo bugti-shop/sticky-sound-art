@@ -244,6 +244,98 @@ export const scheduleSmartNotifications = async (): Promise<void> => {
   }
 };
 
+// ─── Re-engagement Notifications ───────────────────────────
+
+const REENGAGEMENT_2D_ID = 998010;
+const REENGAGEMENT_5D_ID = 998011;
+const REENGAGEMENT_7D_ID = 998012;
+const LAST_OPEN_KEY = 'npd_last_app_open';
+
+/**
+ * Record that the user opened the app right now.
+ * Also cancels any pending re-engagement notifications and reschedules fresh ones.
+ */
+export const recordAppOpen = async (): Promise<void> => {
+  await setSetting(LAST_OPEN_KEY, new Date().toISOString());
+
+  if (!Capacitor.isNativePlatform()) return;
+  await cancelReengagementNotifications();
+  await scheduleReengagementNotifications();
+};
+
+const cancelReengagementNotifications = async (): Promise<void> => {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await LocalNotifications.cancel({
+      notifications: [
+        { id: REENGAGEMENT_2D_ID },
+        { id: REENGAGEMENT_5D_ID },
+        { id: REENGAGEMENT_7D_ID },
+      ],
+    });
+  } catch (e) {
+    console.warn('[SmartNotif] Cancel re-engagement failed:', e);
+  }
+};
+
+/**
+ * Schedule re-engagement notifications at 2, 5, and 7 days from now.
+ * Each app open resets these timers.
+ */
+const scheduleReengagementNotifications = async (): Promise<void> => {
+  if (!Capacitor.isNativePlatform()) return;
+
+  try {
+    const now = new Date();
+    const preferredHour = await getUserPreferredHour();
+
+    const makeDate = (daysFromNow: number): Date => {
+      const d = new Date(now);
+      d.setDate(d.getDate() + daysFromNow);
+      d.setHours(preferredHour, 0, 0, 0);
+      return d;
+    };
+
+    const notifications = [
+      {
+        id: REENGAGEMENT_2D_ID,
+        title: 'Your tasks miss you! 📝',
+        body: 'Come back and keep your productivity going. Your to-do list is waiting!',
+        schedule: { at: makeDate(2), allowWhileIdle: true },
+        channelId: CHANNEL_GENTLE,
+        smallIcon: 'npd_notification_icon',
+        iconColor: '#3B82F6',
+        sound: 'default',
+      },
+      {
+        id: REENGAGEMENT_5D_ID,
+        title: "It's been a while! 🔥",
+        body: 'Your streak is waiting to be rebuilt. Jump back in and start fresh today!',
+        schedule: { at: makeDate(5), allowWhileIdle: true },
+        channelId: CHANNEL_URGENT,
+        smallIcon: 'npd_notification_icon',
+        iconColor: '#F97316',
+        sound: 'default',
+      },
+      {
+        id: REENGAGEMENT_7D_ID,
+        title: 'We saved everything for you ✨',
+        body: 'Pick up where you left off — all your tasks, notes, and progress are right here.',
+        schedule: { at: makeDate(7), allowWhileIdle: true },
+        channelId: CHANNEL_GENTLE,
+        smallIcon: 'npd_notification_icon',
+        iconColor: '#8B5CF6',
+        sound: 'default',
+      },
+    ];
+
+    await LocalNotifications.schedule({ notifications });
+    console.log('[SmartNotif] Scheduled 3 re-engagement notifications');
+  } catch (e) {
+    console.warn('[SmartNotif] Re-engagement schedule failed:', e);
+  }
+};
+
 // ─── Initialization ────────────────────────────────────────
 
 /**
@@ -255,6 +347,9 @@ export const initializeSmartNotifications = async (): Promise<void> => {
 
   await createSmartChannels();
   await scheduleSmartNotifications();
+
+  // Record app open and schedule re-engagement notifications
+  await recordAppOpen();
 
   // When streak is updated (task completed), cancel smart notifs and record behavior
   window.addEventListener('streakUpdated', async () => {
