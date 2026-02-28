@@ -53,7 +53,6 @@ export const WeeklyChallengesCard = () => {
   if (!data) return null;
 
   const completedCount = data.challenges.filter(c => c.completed).length;
-  const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0);
 
   return (
     <>
