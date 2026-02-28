@@ -579,7 +579,7 @@ const CertificateDetail = ({
    CERTIFICATE CARD (SHAREABLE IMAGE)
    ============================================ */
 
-const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked: boolean }) => {
+const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: CertificateLevel; unlocked: boolean; userName?: string; userAvatar?: string }) => {
   const Icon = cert.icon;
   const dateStr = format(new Date(), 'MMMM d, yyyy');
 
@@ -623,6 +623,16 @@ const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked:
           </p>
         </div>
 
+        {/* User name + avatar */}
+        {userName && (
+          <div className="flex items-center gap-2 mt-1">
+            {userAvatar && (
+              <img src={userAvatar} alt="" className="w-6 h-6 rounded-full object-cover" style={{ border: `1.5px solid ${cert.colors.accent}50` }} />
+            )}
+            <p className="text-xs font-semibold" style={{ color: 'hsl(0,0%,85%)' }}>{userName}</p>
+          </div>
+        )}
+
         {/* Stats summary */}
         <div className="w-full">
           <div className="grid grid-cols-3 gap-2 mb-4">
@@ -635,9 +645,12 @@ const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked:
             <p className="text-[9px]" style={{ color: `${cert.colors.text}60` }}>
               {unlocked ? dateStr : 'Not yet achieved'}
             </p>
-            <p className="text-[9px] font-bold tracking-wider" style={{ color: `${cert.colors.text}40` }}>
-              NPD
-            </p>
+            <div className="flex items-center gap-1">
+              <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
+              <p className="text-[9px] font-bold tracking-wider" style={{ color: `${cert.colors.text}40` }}>
+                NPD
+              </p>
+            </div>
           </div>
         </div>
       </div>
