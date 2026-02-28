@@ -43,6 +43,11 @@ const Progress = () => {
           completed: thisWeekTasks.length,
           total: tasks.filter(t => t.completed).length,
         });
+
+        // Load daily reward state
+        const rewardResult = await checkDailyReward();
+        setRewardDay(rewardResult.currentDay);
+        setRewardClaimed(!rewardResult.canClaim);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
