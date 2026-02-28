@@ -75,6 +75,13 @@ const Progress = () => {
         const longestStreak = data?.longestStreak || 0;
         const lastSharedBest = parseInt(localStorage.getItem('npd_last_shared_best_streak') || '0', 10);
         setIsPersonalBest(currentStreak > 0 && currentStreak >= longestStreak && currentStreak > lastSharedBest);
+
+        // Check if streak repair is available
+        const repairResult = await canRepairStreak(false); // isPro checked in dialog
+        if (repairResult.canRepair && repairResult.lostStreak > 0 && currentStreak === 0) {
+          setLostStreakValue(repairResult.lostStreak);
+          setShowRepairDialog(true);
+        }
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
