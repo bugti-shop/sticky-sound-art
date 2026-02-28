@@ -62,6 +62,7 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
   const [copiedCaption, setCopiedCaption] = useState<number | null>(null);
   const [isSharing, setIsSharing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   const streak = streakData?.currentStreak || 0;
   const total = streakData?.totalCompletions || 0;
