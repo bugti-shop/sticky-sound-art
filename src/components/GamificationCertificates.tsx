@@ -41,7 +41,6 @@ export interface CertificateLevel {
     streakDays: number;
     notesCreated: number;
     foldersUsed: number;
-    xpLevel: number;
   };
   certificateText: string;
   linkedInDescription: string;
