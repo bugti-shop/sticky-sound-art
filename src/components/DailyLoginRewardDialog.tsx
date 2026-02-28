@@ -22,7 +22,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
   const [currentDay, setCurrentDay] = useState(1);
   const [data, setData] = useState<DailyRewardData | null>(null);
   const [claimed, setClaimed] = useState(false);
-  const [xpEarned, setXpEarned] = useState(0);
+  
 
   const loadRewardState = useCallback(async () => {
     try {
