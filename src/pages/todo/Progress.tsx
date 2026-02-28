@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { TodoLayout } from './TodoLayout';
 import { useStreak } from '@/hooks/useStreak';
 import { cn } from '@/lib/utils';
-import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3, Award } from 'lucide-react';
+import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, BarChart3, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
 import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
-import { StreakShowcase } from '@/components/StreakShowcase';
+
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
@@ -21,7 +21,7 @@ const Progress = () => {
   const { t } = useTranslation();
   const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
-  const [showShowcase, setShowShowcase] = useState(false);
+  
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showCertificates, setShowCertificates] = useState(false);
   const [showStreakDetail, setShowStreakDetail] = useState(false);
@@ -445,27 +445,7 @@ const Progress = () => {
         </div>
 
         {/* Share Buttons */}
-        <div className="grid grid-cols-3 gap-2">
-          {(data?.currentStreak || 0) > 0 && (
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => {
-                setShowShowcase(true);
-                if (isPersonalBest) {
-                  localStorage.setItem('npd_last_shared_best_streak', String(data?.currentStreak || 0));
-                  setIsPersonalBest(false);
-                }
-              }}
-              className="relative bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-[10px] active:scale-[0.98] transition-transform"
-            >
-              {isPersonalBest && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
-              )}
-              <Share2 className="h-4 w-4" />
-              Share Streak
-            </motion.button>
-          )}
+        <div className="grid grid-cols-2 gap-2">
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -518,12 +498,6 @@ const Progress = () => {
         </AnimatePresence>
       </div>
 
-      {/* Streak Showcase Modal */}
-      <StreakShowcase
-        isOpen={showShowcase}
-        onClose={() => setShowShowcase(false)}
-        streakData={data}
-      />
 
       {/* Weekly Report Modal */}
       <WeeklyReportCard
