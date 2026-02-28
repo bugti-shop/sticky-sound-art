@@ -475,11 +475,13 @@ interface CertificateDetailProps {
   onBack: () => void;
   onCopyLinkedIn: (text: string) => void;
   onShare: () => void;
+  userName?: string;
+  userAvatar?: string;
 }
 
 const CertificateDetail = ({
   cert, progress, unlocked, cardRef, copiedLinkedIn, isSharing,
-  onBack, onCopyLinkedIn, onShare,
+  onBack, onCopyLinkedIn, onShare, userName, userAvatar,
 }: CertificateDetailProps) => {
   const Icon = cert.icon;
   const r = cert.requirements;
