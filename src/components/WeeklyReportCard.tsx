@@ -552,10 +552,9 @@ const ScoreRow = ({ icon, label, value, color }: { icon: React.ReactNode; label:
 );
 
 /* ---- Card 5: Postcard ---- */
-const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
+const PostcardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'hsl(0, 0%, 100%)' }}>
-    {/* Accent strip */}
     <div className="h-1.5" style={{ background: 'linear-gradient(90deg, hsl(220, 85%, 59%), hsl(271, 70%, 60%), hsl(330, 80%, 60%))' }} />
 
     <div className="flex flex-col h-full p-5">
@@ -564,7 +563,7 @@ const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
           Week of {stats.weekLabel}
         </p>
         <h3 className="text-xl font-black mt-1" style={{ color: 'hsl(220, 20%, 12%)' }}>
-          My Weekly<br />Productivity
+          {userName ? `${userName}'s` : 'My'} Weekly<br />Productivity
         </h3>
       </div>
 
@@ -583,7 +582,10 @@ const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
       )}
 
       <div className="flex items-center justify-between mt-3">
-        <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
+        <div className="flex items-center gap-1.5">
+          <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
+          <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
+        </div>
         {stats.previousWeekTasks > 0 && (
           <p className="text-[9px] font-medium" style={{ color: stats.tasksCompleted >= stats.previousWeekTasks ? 'hsl(142, 71%, 45%)' : 'hsl(0, 84%, 60%)' }}>
             {stats.tasksCompleted >= stats.previousWeekTasks ? '↑' : '↓'} {Math.abs(stats.tasksCompleted - stats.previousWeekTasks)} vs last week
