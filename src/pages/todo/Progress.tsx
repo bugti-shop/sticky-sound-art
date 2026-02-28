@@ -25,6 +25,7 @@ const Progress = () => {
   const [rewardDay, setRewardDay] = useState(1);
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [hasNewCerts, setHasNewCerts] = useState(false);
+  const [completedCycles, setCompletedCycles] = useState(0);
 
   useEffect(() => {
     const loadStats = async () => {
