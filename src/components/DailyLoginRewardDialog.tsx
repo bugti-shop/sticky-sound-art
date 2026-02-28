@@ -37,13 +37,12 @@ export const DailyLoginRewardDialog = () => {
   }, []);
 
   const handleClaim = useCallback(async () => {
-    triggerHaptic('medium').catch(() => {});
+    triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
     const result = await claimDailyReward();
     setXpEarned(result.xpEarned);
     setClaimed(true);
-    // Auto-close after showing reward
-    setTimeout(() => setIsOpen(false), 2000);
-  }, []);
+    setTimeout(() => setIsOpen(false), currentDay === 7 ? 3500 : 2000);
+  }, [currentDay]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
