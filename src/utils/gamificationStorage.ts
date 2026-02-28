@@ -430,11 +430,15 @@ export const updateChallengeProgress = async (
   
   await setSetting(CHALLENGES_STORAGE_KEY, data);
   
-  // Check if all daily challenges completed → update weekly challenge
+  // Check if all daily challenges completed → update weekly + monthly
   if (data.challenges.every(c => c.completed)) {
     try {
       const { updateWeeklyChallengeProgress } = await import('./weeklyChallengeStorage');
       await updateWeeklyChallengeProgress('daily_challenges', 1);
+    } catch (e) { /* ignore */ }
+    try {
+      const { updateMonthlyChallengeProgress } = await import('./monthlyChallengeStorage');
+      await updateMonthlyChallengeProgress('daily_challenges', 1);
     } catch (e) { /* ignore */ }
   }
   
