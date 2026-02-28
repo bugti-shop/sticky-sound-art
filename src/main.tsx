@@ -38,6 +38,9 @@ const AppWithMigration = () => {
         // Initialize streak risk notifications
         initializeStreakNotifications().catch(console.warn);
         
+        // Initialize smart adaptive notifications
+        initializeSmartNotifications().catch(console.warn);
+        
         // Configure status bar for native apps
         const theme = await getSetting<string>('theme', 'light');
         const isDarkMode = theme !== 'light';
