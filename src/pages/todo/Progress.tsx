@@ -30,6 +30,8 @@ const Progress = () => {
   const [completedCycles, setCompletedCycles] = useState(0);
   const [hasNewReport, setHasNewReport] = useState(false);
   const [isPersonalBest, setIsPersonalBest] = useState(false);
+  const [showRepairDialog, setShowRepairDialog] = useState(false);
+  const [lostStreakValue, setLostStreakValue] = useState(0);
 
   useEffect(() => {
     const loadStats = async () => {
