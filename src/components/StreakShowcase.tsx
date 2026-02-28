@@ -373,10 +373,9 @@ const MinimalCard = ({ streak, total, longest, userName, userAvatar }: Shareable
 );
 
 /* ---- Card 3: Neon Glow ---- */
-const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
+const NeonCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(180deg, hsl(270, 50%, 6%), hsl(260, 60%, 10%))' }}>
-    {/* Neon glow orbs */}
     <div className="absolute bottom-10 left-6 w-24 h-24 rounded-full opacity-20 blur-2xl"
       style={{ background: 'hsl(280, 100%, 60%)' }} />
     <div className="absolute top-16 right-4 w-20 h-20 rounded-full opacity-15 blur-2xl"
@@ -411,7 +410,7 @@ const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
           <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
           <span className="text-xs font-bold" style={{ color: 'hsl(280, 100%, 70%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(260, 30%, 30%)" />
+        <CardLogoFooter color="hsl(260, 30%, 30%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
