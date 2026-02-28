@@ -445,27 +445,7 @@ const Progress = () => {
         </div>
 
         {/* Share Buttons */}
-        <div className="grid grid-cols-3 gap-2">
-          {(data?.currentStreak || 0) > 0 && (
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => {
-                setShowShowcase(true);
-                if (isPersonalBest) {
-                  localStorage.setItem('npd_last_shared_best_streak', String(data?.currentStreak || 0));
-                  setIsPersonalBest(false);
-                }
-              }}
-              className="relative bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-[10px] active:scale-[0.98] transition-transform"
-            >
-              {isPersonalBest && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
-              )}
-              <Share2 className="h-4 w-4" />
-              Share Streak
-            </motion.button>
-          )}
+        <div className="grid grid-cols-2 gap-2">
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
