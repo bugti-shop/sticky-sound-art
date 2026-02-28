@@ -199,6 +199,8 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
                     longest={longest}
                     freezes={freezes}
                     milestones={milestones}
+                    userName={profile.name}
+                    userAvatar={profile.avatarUrl}
                   />
                 </div>
               </div>
