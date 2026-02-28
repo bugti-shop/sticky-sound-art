@@ -308,15 +308,29 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
         className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md overflow-y-auto"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center justify-between">
+         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <Award className="h-5 w-5 text-warning" />
             Certificates
           </h2>
-          <button onClick={() => { setSelectedCert(null); onClose(); }} className="p-2 rounded-full hover:bg-muted">
+          <button onClick={() => { setSelectedCert(null); setCelebratingCert(null); onClose(); }} className="p-2 rounded-full hover:bg-muted">
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Certificate Celebration Overlay */}
+        <AnimatePresence>
+          {celebratingCert && (
+            <CertificateCelebration
+              cert={celebratingCert}
+              windowSize={windowSize}
+              onDismiss={() => {
+                setSelectedCert(celebratingCert);
+                setCelebratingCert(null);
+              }}
+            />
+          )}
+        </AnimatePresence>
 
         {isLoading || !progress ? (
           <div className="flex items-center justify-center h-64">
