@@ -658,50 +658,97 @@ interface CertificateCelebrationProps {
 const CertificateCelebration = ({ cert, windowSize, onDismiss }: CertificateCelebrationProps) => {
   const Icon = cert.icon;
 
-  // Play triumphant fanfare on mount
+  // Play level-specific celebration sound on mount
   useEffect(() => {
     try {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      // Triumphant fanfare: C5 → E5 → G5 → C6 chord
-      const fanfare = [
-        { freq: 523.25, delay: 0, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
-        { freq: 659.25, delay: 0.12, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
-        { freq: 783.99, delay: 0.24, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
-        { freq: 1046.50, delay: 0.36, dur: 0.5, type: 'triangle' as OscillatorType, vol: 0.3 },
-      ];
-      fanfare.forEach(({ freq, delay, dur, type, vol }) => {
+      const t = ctx.currentTime;
+
+      const playNote = (freq: number, delay: number, dur: number, type: OscillatorType, vol: number) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+        osc.frequency.setValueAtTime(freq, t + delay);
         osc.type = type;
-        gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + delay + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + dur);
-        osc.start(ctx.currentTime + delay);
-        osc.stop(ctx.currentTime + delay + dur);
-      });
-      // Final triumphant chord
-      setTimeout(() => {
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.frequency.setValueAtTime(freq, ctx.currentTime);
-          osc.type = 'sine';
-          gain.gain.setValueAtTime(0.15, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
-          osc.start(ctx.currentTime);
-          osc.stop(ctx.currentTime + 1);
+        gain.gain.setValueAtTime(0, t + delay);
+        gain.gain.linearRampToValueAtTime(vol, t + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + delay + dur);
+        osc.start(t + delay);
+        osc.stop(t + delay + dur);
+      };
+
+      const playChord = (freqs: number[], delay: number, dur: number, type: OscillatorType, vol: number) => {
+        freqs.forEach(f => playNote(f, delay, dur, type, vol));
+      };
+
+      const level = cert.level;
+
+      if (level === 1) {
+        // Beginner: Simple bright chime - two ascending notes
+        playNote(659.25, 0, 0.3, 'sine', 0.2);
+        playNote(880, 0.15, 0.4, 'sine', 0.25);
+        setTimeout(() => ctx.close(), 1000);
+      } else if (level === 2) {
+        // Achiever: Cheerful arpeggio - C E G
+        playNote(523.25, 0, 0.3, 'triangle', 0.2);
+        playNote(659.25, 0.12, 0.3, 'triangle', 0.22);
+        playNote(783.99, 0.24, 0.4, 'triangle', 0.25);
+        playChord([523.25, 783.99], 0.45, 0.6, 'sine', 0.12);
+        setTimeout(() => ctx.close(), 1500);
+      } else if (level === 3) {
+        // Expert: Triumphant fanfare with harmonics
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+          playNote(f, i * 0.1, 0.35, 'triangle', 0.22);
         });
-      }, 500);
-      setTimeout(() => ctx.close(), 2000);
+        setTimeout(() => {
+          playChord([523.25, 659.25, 783.99, 1046.50], 0, 0.8, 'sine', 0.12);
+        }, 500);
+        setTimeout(() => ctx.close(), 1800);
+      } else if (level === 4) {
+        // Master: Grand orchestral feel - layered arpeggios + power chord
+        // Low foundation
+        playNote(261.63, 0, 0.5, 'sawtooth', 0.08);
+        // Rising arpeggio
+        [392, 523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+          playNote(f, i * 0.09, 0.35, 'triangle', 0.2);
+        });
+        // Shimmer
+        [1318.51, 1567.98, 1760].forEach((f, i) => {
+          playNote(f, 0.5 + i * 0.07, 0.2, 'sine', 0.1);
+        });
+        // Power chord
+        setTimeout(() => {
+          playChord([261.63, 523.25, 659.25, 783.99, 1046.50], 0, 1.2, 'sine', 0.1);
+        }, 700);
+        setTimeout(() => ctx.close(), 2500);
+      } else {
+        // Legend (level 5): Epic orchestral with bass, layered harmonics, and finale
+        // Deep bass rumble
+        playNote(130.81, 0, 0.8, 'sawtooth', 0.06);
+        playNote(196, 0, 0.6, 'sawtooth', 0.05);
+        // Dramatic ascending scale
+        [261.63, 329.63, 392, 523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+          playNote(f, 0.05 + i * 0.08, 0.3, 'triangle', 0.18 + i * 0.01);
+        });
+        // Sparkle layer
+        [1567.98, 1760, 2093, 2349.32, 2637.02].forEach((f, i) => {
+          playNote(f, 0.7 + i * 0.06, 0.15, 'sine', 0.08);
+        });
+        // First chord hit
+        setTimeout(() => {
+          playChord([261.63, 523.25, 659.25, 783.99, 1046.50], 0, 0.6, 'triangle', 0.12);
+        }, 900);
+        // Final epic sustained chord
+        setTimeout(() => {
+          playChord([130.81, 261.63, 392, 523.25, 659.25, 783.99, 1046.50, 1318.51], 0, 1.5, 'sine', 0.08);
+        }, 1300);
+        setTimeout(() => ctx.close(), 3500);
+      }
     } catch (e) {
       console.error('Certificate sound error:', e);
     }
-  }, []);
+  }, [cert.level]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
