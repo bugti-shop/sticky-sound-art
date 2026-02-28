@@ -352,7 +352,7 @@ const ReportCard = ({ design, stats, userName, userAvatar }: ReportCardProps) =>
 };
 
 /* ---- Card 1: Dashboard ---- */
-const DashboardCard = ({ stats }: { stats: WeeklyStats }) => (
+const DashboardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden"
     style={{ background: 'linear-gradient(160deg, hsl(220, 20%, 10%), hsl(220, 25%, 14%))' }}>
     <div className="flex flex-col h-full p-5">
@@ -399,7 +399,7 @@ const DashboardCard = ({ stats }: { stats: WeeklyStats }) => (
           label="Top folder" value={stats.topFolder?.name || '—'} bg="hsl(271, 70%, 60%, 0.1)" small />
       </div>
 
-      <p className="text-[9px] text-center mt-3" style={{ color: 'hsl(220, 15%, 28%)' }}>npd • task manager</p>
+      <CardBrandingFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );
