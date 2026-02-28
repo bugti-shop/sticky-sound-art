@@ -366,7 +366,7 @@ const Progress = () => {
           </div>
           {!rewardClaimed && (
             <p className="text-[10px] text-muted-foreground text-center mt-2">
-              Open the app daily to claim rewards · Missing a day resets the cycle
+              Tap to claim your daily reward · Missing a day resets the cycle
             </p>
           )}
         </div>
