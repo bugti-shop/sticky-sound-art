@@ -38,10 +38,8 @@ export const DailyChallenges = () => {
     const handleUpdate = () => loadData();
 
     window.addEventListener('challengeCompleted', handleComplete as EventListener);
-    window.addEventListener('xpUpdated', handleUpdate);
     return () => {
       window.removeEventListener('challengeCompleted', handleComplete as EventListener);
-      window.removeEventListener('xpUpdated', handleUpdate);
     };
   }, []);
 
