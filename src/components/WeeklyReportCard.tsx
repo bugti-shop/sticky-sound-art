@@ -20,6 +20,9 @@ import { loadFolders, Folder } from '@/utils/folderStorage';
 import { StreakData } from '@/utils/streakStorage';
 import { startOfWeek, endOfWeek, format, subWeeks, isWithinInterval } from 'date-fns';
 import html2canvas from 'html2canvas';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooter } from '@/components/CardBranding';
+import npdLogo from '@/assets/npd-reminder-logo.png';
 
 interface WeeklyReportCardProps {
   isOpen: boolean;
