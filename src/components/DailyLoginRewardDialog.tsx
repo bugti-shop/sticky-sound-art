@@ -68,6 +68,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
     const result = await claimDailyReward();
     setXpEarned(result.xpEarned);
     setClaimed(true);
+    window.dispatchEvent(new Event('dailyRewardClaimed'));
     setTimeout(() => setIsOpen(false), currentDay === 7 ? 3500 : 2000);
   }, [currentDay]);
 
