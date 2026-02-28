@@ -362,6 +362,19 @@ const Progress = () => {
             })}
           </div>
         </div>
+
+        {/* Share Streak Button */}
+        {streak > 0 && (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => setShowShowcase(true)}
+            className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center justify-center gap-2 text-primary font-semibold text-sm active:scale-[0.98] transition-transform"
+          >
+            <Share2 className="h-4 w-4" />
+            Share Your Streak
+          </motion.button>
+        )}
         
         {/* At Risk Warning */}
         <AnimatePresence>
@@ -380,6 +393,13 @@ const Progress = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Streak Showcase Modal */}
+      <StreakShowcase
+        isOpen={showShowcase}
+        onClose={() => setShowShowcase(false)}
+        streakData={data}
+      />
     </TodoLayout>
   );
 };
