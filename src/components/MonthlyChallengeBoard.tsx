@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Calendar, Check, Crown, Sparkles, Lock } from 'lucide-react';
+import { Calendar, Check, Crown, Sparkles, Lock, Trophy } from 'lucide-react';
 import {
   loadMonthlyChallenges,
   getMonthDeadline,
@@ -24,6 +24,8 @@ export const MonthlyChallengeBoard = () => {
   const [celebratingChallenge, setCelebratingChallenge] = useState<MonthlyChallenge | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showBoardConfetti, setShowBoardConfetti] = useState(false);
+  const [showBadgeUnlock, setShowBadgeUnlock] = useState(false);
+  const [unlockedBadge, setUnlockedBadge] = useState<MonthlyBadge | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -44,10 +46,12 @@ export const MonthlyChallengeBoard = () => {
       setTimeout(() => setShowConfetti(false), 4000);
       load();
     };
-    const handleBoardComplete = () => {
+    const handleBoardComplete = (e: CustomEvent<{ badge: MonthlyBadge }>) => {
       setShowBoardConfetti(true);
+      setUnlockedBadge(e.detail.badge);
+      setShowBadgeUnlock(true);
       playChallengeCompleteSound();
-      setTimeout(() => setShowBoardConfetti(false), 6000);
+      setTimeout(() => setShowBoardConfetti(false), 8000);
       load();
     };
 
@@ -100,6 +104,81 @@ export const MonthlyChallengeBoard = () => {
           style={{ position: 'fixed', top: 0, left: 0, zIndex: 100, pointerEvents: 'none' }}
         />
       )}
+
+      {/* Full-screen badge unlock celebration */}
+      <AnimatePresence>
+        {showBadgeUnlock && unlockedBadge && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            onClick={() => setShowBadgeUnlock(false)}
+          >
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: 'spring', damping: 12, stiffness: 150, delay: 0.2 }}
+              className="flex flex-col items-center gap-4 p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Glowing ring */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [0, 1.2, 1] }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="relative"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -inset-4 rounded-full border-2 border-dashed border-warning/40"
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-24 h-24 rounded-full bg-gradient-to-br from-warning/30 to-primary/20 flex items-center justify-center shadow-lg border-2 border-warning/30"
+                >
+                  <span className="text-5xl">{unlockedBadge.icon}</span>
+                </motion.div>
+              </motion.div>
+
+              {/* Trophy icon */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Trophy className="h-6 w-6 text-warning" />
+              </motion.div>
+
+              {/* Text */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className="text-center"
+              >
+                <p className="text-lg font-black text-warning">Badge Unlocked!</p>
+                <p className="text-sm font-bold text-foreground mt-1">{unlockedBadge.name}</p>
+                <p className="text-xs text-muted-foreground mt-1">All monthly challenges completed · +500 XP bonus 🎉</p>
+              </motion.div>
+
+              {/* Dismiss button */}
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+                onClick={() => setShowBadgeUnlock(false)}
+                className="mt-2 px-6 py-2 rounded-full bg-warning/15 text-warning text-xs font-bold border border-warning/30 hover:bg-warning/25 transition-colors"
+              >
+                Awesome!
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Celebration toast */}
       <AnimatePresence>
