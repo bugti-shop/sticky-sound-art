@@ -36,17 +36,32 @@ export const MonthlyChallengeBoard = () => {
     load();
 
     const handler = () => load();
+    const handleComplete = (e: CustomEvent<{ challenge: MonthlyChallenge }>) => {
+      setCelebratingChallenge(e.detail.challenge);
+      playChallengeCompleteSound();
+      setShowConfetti(true);
+      setTimeout(() => setCelebratingChallenge(null), 3000);
+      setTimeout(() => setShowConfetti(false), 4000);
+      load();
+    };
+    const handleBoardComplete = () => {
+      setShowBoardConfetti(true);
+      playChallengeCompleteSound();
+      setTimeout(() => setShowBoardConfetti(false), 6000);
+      load();
+    };
+
     window.addEventListener('monthlyChallengesUpdated', handler);
-    window.addEventListener('monthlyChallengeCompleted', handler);
-    window.addEventListener('monthlyBoardCompleted', handler);
+    window.addEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
+    window.addEventListener('monthlyBoardCompleted', handleBoardComplete);
     window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getMonthDeadline()), 60000 * 60);
 
     return () => {
       window.removeEventListener('monthlyChallengesUpdated', handler);
-      window.removeEventListener('monthlyChallengeCompleted', handler);
-      window.removeEventListener('monthlyBoardCompleted', handler);
+      window.removeEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
+      window.removeEventListener('monthlyBoardCompleted', handleBoardComplete);
       window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
