@@ -58,7 +58,6 @@ export const MonthlyChallengeBoard = () => {
     window.addEventListener('monthlyChallengesUpdated', handler);
     window.addEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
     window.addEventListener('monthlyBoardCompleted', handleBoardComplete);
-    window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getMonthDeadline()), 60000 * 60);
 
@@ -66,7 +65,6 @@ export const MonthlyChallengeBoard = () => {
       window.removeEventListener('monthlyChallengesUpdated', handler);
       window.removeEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
       window.removeEventListener('monthlyBoardCompleted', handleBoardComplete);
-      window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
   }, []);
