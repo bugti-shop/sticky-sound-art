@@ -40,14 +40,12 @@ export const WeeklyChallengesCard = () => {
 
     window.addEventListener('weeklyChallengesUpdated', handler);
     window.addEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
-    window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getWeekDeadline()), 60000);
 
     return () => {
       window.removeEventListener('weeklyChallengesUpdated', handler);
       window.removeEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
-      window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
   }, []);
