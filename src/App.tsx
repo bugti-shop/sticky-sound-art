@@ -223,6 +223,7 @@ const AppContent = () => {
       <SyncConflictSheet />
       <PremiumPaywall />
       <WhatsNewSheet />
+      <StreakMilestoneCelebration />
       <AppRoutes />
     </>
   );
