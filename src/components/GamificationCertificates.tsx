@@ -650,15 +650,20 @@ const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: Certi
           </p>
         </div>
 
-        {/* User name + avatar */}
-        {userName && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+        {/* Awarded to name */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: cert.colors.text, opacity: 0.7 }}>
+            Awarded to
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {userAvatar && (
               <img src={userAvatar} alt="" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: `1.5px solid ${cert.colors.accent}50` }} />
             )}
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'hsl(0,0%,85%)' }}>{userName}</p>
+            <p style={{ fontSize: '14px', fontWeight: 700, color: 'hsl(0,0%,95%)', borderBottom: `1.5px solid ${cert.colors.accent}60`, paddingBottom: '2px', minWidth: '80px', textAlign: 'center' }}>
+              {userName || 'Your Name'}
+            </p>
           </div>
-        )}
+        </div>
 
         {/* Stats summary */}
         <div style={{ width: '100%' }}>
