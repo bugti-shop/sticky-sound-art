@@ -328,7 +328,8 @@ export const checkAndUpdateStreak = async (storageKey: string): Promise<StreakDa
       data.weekHistory[yesterday] = true; // Mark as "saved"
       await saveStreakData(storageKey, data);
     } else {
-      // Streak is lost
+      // Streak is lost - mark for potential repair
+      await markStreakLost(data.currentStreak);
       data.currentStreak = 0;
       await saveStreakData(storageKey, data);
     }
