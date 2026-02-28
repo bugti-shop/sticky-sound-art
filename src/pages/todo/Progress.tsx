@@ -15,6 +15,7 @@ import { GamificationCertificates, hasNewCertificates } from '@/components/Gamif
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 import { WeeklyChallengesCard } from '@/components/WeeklyChallengesCard';
 import { MonthlyChallengeBoard } from '@/components/MonthlyChallengeBoard';
+import { StreakSocietyBadge } from '@/components/StreakSocietyBadge';
 
 const Progress = () => {
   const { t } = useTranslation();
