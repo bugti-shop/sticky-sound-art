@@ -4,6 +4,7 @@ import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCir
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BottomNavigation } from '@/components/BottomNavigation';
+import { StreakSocietyBadge } from '@/components/StreakSocietyBadge';
 import { TodoBottomNavigation } from '@/components/TodoBottomNavigation';
 import { getSetting } from '@/utils/settingsStorage';
 import { createBackup } from '@/utils/dataBackup';
@@ -162,6 +163,9 @@ export default function Profile() {
               </div>
             )}
           </div>
+
+          {/* Streak Society Badge */}
+          <StreakSocietyBadge />
 
           <h2 className="text-xl font-semibold text-foreground text-center">
             {user ? user.name : t('profile.guest', 'Guest User')}
