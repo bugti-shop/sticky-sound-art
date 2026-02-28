@@ -384,6 +384,8 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
             onBack={() => setSelectedCert(null)}
             onCopyLinkedIn={handleCopyLinkedIn}
             onShare={handleShareCard}
+            userName={profile.name}
+            userAvatar={profile.avatarUrl}
           />
         ) : (
           /* Certificate List */
