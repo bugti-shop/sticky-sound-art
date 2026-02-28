@@ -11,6 +11,7 @@ import { startOfWeek, endOfWeek } from 'date-fns';
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates } from '@/components/GamificationCertificates';
+import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 
 const Progress = () => {
   const { t } = useTranslation();
