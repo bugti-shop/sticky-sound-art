@@ -485,6 +485,8 @@ const CertificateDetail = ({
 }: CertificateDetailProps) => {
   const Icon = cert.icon;
   const r = cert.requirements;
+  const [editingName, setEditingName] = useState(false);
+  const [cardName, setCardName] = useState(userName || '');
 
   const reqRows = [
     { label: 'Tasks completed', current: progress.tasksCompleted, required: r.tasksCompleted, icon: <Check className="h-3 w-3" /> },
@@ -504,8 +506,24 @@ const CertificateDetail = ({
       {/* Certificate Card */}
       <div className="flex justify-center">
         <div ref={cardRef}>
-          <CertificateCard cert={cert} unlocked={unlocked} userName={userName} userAvatar={userAvatar} />
+          <CertificateCard cert={cert} unlocked={unlocked} userName={cardName} userAvatar={userAvatar} />
         </div>
+      </div>
+
+      {/* Editable name for card */}
+      <div className="bg-card border rounded-xl p-4">
+        <h3 className="text-sm font-bold mb-2">Your Name on Certificate</h3>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={cardName}
+            onChange={(e) => setCardName(e.target.value)}
+            placeholder="Enter your name"
+            className="flex-1 text-sm bg-muted rounded-lg px-3 py-2 border border-border focus:outline-none focus:ring-2 focus:ring-primary/40"
+            maxLength={40}
+          />
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-1.5">This name will appear on the shared certificate image</p>
       </div>
 
       {/* Requirements */}
@@ -551,10 +569,18 @@ const CertificateDetail = ({
       {/* Share actions */}
       {unlocked && (
         <>
-          <Button onClick={onShare} disabled={isSharing} className="w-full" size="lg">
-            <Share2 className="h-4 w-4 mr-2" />
-            {isSharing ? 'Generating...' : 'Share Certificate'}
-          </Button>
+          <div className="bg-card border-2 rounded-xl p-5 space-y-3" style={{ borderColor: cert.colors.accent + '60' }}>
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              <Share2 className="h-4 w-4" style={{ color: cert.colors.accent }} />
+              Share on Social Media
+            </h3>
+            <p className="text-xs text-muted-foreground">Download your certificate image and share it on LinkedIn, Instagram, Twitter, or any platform!</p>
+            <Button onClick={onShare} disabled={isSharing} className="w-full font-bold" size="lg"
+              style={{ background: cert.colors.accent, color: 'hsl(0,0%,5%)' }}>
+              <Share2 className="h-4 w-4 mr-2" />
+              {isSharing ? 'Generating Image...' : 'Share Certificate'}
+            </Button>
+          </div>
 
           <div className="bg-card border rounded-xl p-4">
             <h3 className="text-sm font-bold mb-2 flex items-center gap-2">
@@ -570,6 +596,13 @@ const CertificateDetail = ({
             </button>
           </div>
         </>
+      )}
+
+      {!unlocked && (
+        <div className="bg-muted/50 border border-dashed rounded-xl p-5 text-center">
+          <Lock className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground font-medium">Complete all requirements to unlock sharing</p>
+        </div>
       )}
     </div>
   );
@@ -617,15 +650,20 @@ const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: Certi
           </p>
         </div>
 
-        {/* User name + avatar */}
-        {userName && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+        {/* Awarded to name */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: cert.colors.text, opacity: 0.7 }}>
+            Awarded to
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {userAvatar && (
               <img src={userAvatar} alt="" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: `1.5px solid ${cert.colors.accent}50` }} />
             )}
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'hsl(0,0%,85%)' }}>{userName}</p>
+            <p style={{ fontSize: '14px', fontWeight: 700, color: 'hsl(0,0%,95%)', borderBottom: `1.5px solid ${cert.colors.accent}60`, paddingBottom: '2px', minWidth: '80px', textAlign: 'center' }}>
+              {userName || 'Your Name'}
+            </p>
           </div>
-        )}
+        </div>
 
         {/* Stats summary */}
         <div style={{ width: '100%' }}>
