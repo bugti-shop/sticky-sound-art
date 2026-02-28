@@ -5,6 +5,7 @@ import "./index.css";
 import "./i18n";
 import { migrateLocalStorageToIndexedDB, getSetting } from "./utils/settingsStorage";
 import { initializeReminders } from "./utils/reminderScheduler";
+import { initializeStreakNotifications } from "./utils/streakNotifications";
 import { migrateNotesToIndexedDB } from "./utils/noteStorage";
 import { startBackgroundScheduler } from "./utils/backgroundScheduler";
 import { initializeTaskOrder } from "./utils/taskOrderStorage";
