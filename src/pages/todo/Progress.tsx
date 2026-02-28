@@ -9,6 +9,7 @@ import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import Confetti from 'react-confetti';
 import { StreakShowcase } from '@/components/StreakShowcase';
+import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 
 
 const Progress = () => {
