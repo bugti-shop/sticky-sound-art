@@ -104,33 +104,44 @@ const Progress = () => {
 
       <div className="container mx-auto px-4 py-6 space-y-6">
         
-        {/* Streak Card */}
-
-        {/* Streak Card */}
-        <div className="bg-card rounded-2xl p-6 border shadow-sm">
+        {/* Tappable Streak Counter Widget */}
+        <motion.button
+          onClick={() => setShowStreakDetail(true)}
+          whileTap={{ scale: 0.97 }}
+          className="w-full bg-card rounded-2xl p-6 border shadow-sm text-left active:bg-muted/50 transition-colors"
+        >
           {/* Message Bubble */}
           <div className="relative bg-muted rounded-xl p-4 mb-6">
             <p className="text-sm text-foreground">{getMessage()}</p>
             <div className="absolute -bottom-2 left-8 w-4 h-4 bg-muted rotate-45" />
           </div>
           
-          {/* Flame Icon and Streak Count */}
+          {/* Animated Fire + Streak Count */}
           <div className="flex flex-col items-center py-6">
             <motion.div
-              animate={{ 
-                scale: completedToday ? [1, 1.1, 1] : 1,
-              }}
-              transition={{ duration: 0.5, repeat: completedToday ? 0 : undefined }}
               className="relative"
+              animate={{
+                scale: completedToday ? [1, 1.12, 1] : [1, 1.04, 1],
+                rotate: completedToday ? [0, -2, 2, 0] : 0,
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
+              {/* Glow behind flame */}
+              {completedToday && (
+                <motion.div
+                  className="absolute inset-0 rounded-full blur-xl bg-streak/30"
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                />
+              )}
               <Flame 
                 className={cn(
-                  "h-24 w-24 transition-colors",
+                  "h-24 w-24 transition-colors relative z-10",
                   completedToday ? "text-streak fill-streak/80" : "text-muted-foreground/30"
                 )} 
               />
               {data?.currentStreak !== undefined && data.currentStreak > 0 && (
-                <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-streak-foreground drop-shadow-md mt-2">
+                <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-streak-foreground drop-shadow-md mt-2 z-20">
                   {data.currentStreak}
                 </span>
               )}
@@ -153,8 +164,12 @@ const Progress = () => {
               )}>
                 {t('streak.dayStreak', 'day streak')}
               </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('streak.tapForDetails', 'Tap for details')}
+              </p>
             </motion.div>
           </div>
+        </motion.button>
           
           {/* Week Progress */}
           <div className="flex justify-between items-center gap-1 mt-6 overflow-hidden">
