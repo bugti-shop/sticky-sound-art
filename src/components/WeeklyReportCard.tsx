@@ -455,10 +455,9 @@ const ReceiptLine = ({ label, value, bold }: { label: string; value: string; bol
 );
 
 /* ---- Card 3: Wrapped (Spotify-inspired) ---- */
-const WrappedCard = ({ stats }: { stats: WeeklyStats }) => (
+const WrappedCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(170deg, hsl(142, 70%, 35%), hsl(180, 60%, 25%), hsl(220, 60%, 30%))' }}>
-    {/* Abstract shapes */}
     <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-20" style={{ background: 'hsl(60, 100%, 70%)' }} />
     <div className="absolute bottom-20 -left-6 w-24 h-24 rounded-full opacity-15" style={{ background: 'hsl(330, 100%, 70%)' }} />
 
@@ -492,7 +491,7 @@ const WrappedCard = ({ stats }: { stats: WeeklyStats }) => (
         )}
       </div>
 
-      <p className="text-[9px]" style={{ color: 'hsl(0, 0%, 100%, 0.25)' }}>npd • task manager</p>
+      <CardBrandingFooter color="hsl(0, 0%, 100%, 0.3)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );
