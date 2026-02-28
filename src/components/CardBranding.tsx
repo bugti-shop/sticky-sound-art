@@ -1,6 +1,9 @@
 /**
  * Shared branding and user profile components for all shareable cards.
  * Includes Npd logo footer and user avatar + name strip.
+ * 
+ * IMPORTANT: All styles use inline CSS for html2canvas compatibility.
+ * Do NOT use Tailwind classes here — they can break when rendering to image.
  */
 import npdLogo from '@/assets/npd-reminder-logo.png';
 
@@ -21,18 +24,18 @@ export const CardBrandingFooter = ({
   userName,
   userAvatar,
 }: CardBrandingFooterProps) => (
-  <div className="flex flex-col items-center gap-1.5 mt-1">
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
     {showUserProfile && userName && (
-      <div className="flex items-center gap-1.5">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
         {userAvatar ? (
-          <img src={userAvatar} alt="" className="w-4 h-4 rounded-full object-cover" />
+          <img src={userAvatar} alt="" style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover' }} />
         ) : null}
-        <span className="text-[9px] font-semibold" style={{ color }}>{userName}</span>
+        <span style={{ fontSize: '9px', fontWeight: 600, color }}>{userName}</span>
       </div>
     )}
-    <div className="flex items-center justify-center gap-1.5">
-      <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" style={{ objectFit: 'cover' }} />
-      <span className="text-[10px] font-bold tracking-wider" style={{ color }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+      <img src={npdLogo} alt="Npd" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'cover' }} />
+      <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em', color }}>
         Npd • task manager
       </span>
     </div>

@@ -1,7 +1,8 @@
 /**
  * Weekly Productivity Report Card
- * Shareable social media card showing weekly stats:
- * tasks completed, streak, notes created, top folder
+ * Shareable social media card showing weekly stats
+ * 
+ * IMPORTANT: Shareable cards use INLINE STYLES ONLY for html2canvas compatibility.
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -65,13 +66,9 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const generateCaptions = (stats: WeeklyStats): string[] => [
   `My Npd weekly report is in 📊\n\n✅ ${stats.tasksCompleted} tasks crushed\n🔥 ${stats.streakDays}-day streak\n📝 ${stats.notesCreated} notes created\n${stats.topFolder ? `📁 Top folder: ${stats.topFolder.name}` : ''}\n\nWhat did YOUR week look like?\n\n#Npd #WeeklyWrap #Productivity`,
-
   `Week. Done. Dominated. 💪\n\n${stats.tasksCompleted} tasks ✅ | ${stats.streakDays}-day streak 🔥\nCompletion rate: ${stats.completionRate}%\n\nNpd keeps the receipts.\n\n#ProductivityReport #Npd #GrindDontStop`,
-
   `POV: You actually tracked your productivity this week 📈\n\n${stats.tasksCompleted} tasks done\n${stats.notesCreated} notes captured\n${stats.streakDays} days straight\n\nNpd really makes you accountable.\n\n#Npd #WeekInReview #AccountabilityPartner`,
-
   `${stats.completionRate >= 80 ? 'Elite' : stats.completionRate >= 50 ? 'Solid' : 'Building momentum'} week on Npd 🎯\n\n📊 ${stats.tasksCompleted}/${stats.totalTasks} tasks (${stats.completionRate}%)\n🔥 Streak: ${stats.streakDays} days\n📝 ${stats.notesCreated} new notes\n⭐ Most productive: ${stats.productiveDay}\n\nDrop your stats below 👇\n\n#Npd #WeeklyReport`,
-
   `Weekly productivity unlocked 🔓\n\nThis week with Npd:\n→ ${stats.tasksCompleted} tasks completed\n→ ${stats.streakDays}-day streak maintained\n→ ${stats.notesCreated} ideas captured\n→ ${stats.completionRate}% completion rate\n\n${stats.previousWeekTasks > 0 ? `That's ${stats.tasksCompleted > stats.previousWeekTasks ? '📈' : '📉'} ${Math.abs(stats.tasksCompleted - stats.previousWeekTasks)} ${stats.tasksCompleted > stats.previousWeekTasks ? 'more' : 'fewer'} than last week` : 'First week tracking!'}\n\n#Npd #Productivity #WeeklySummary`,
 ];
 
@@ -104,43 +101,35 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
         const weekInterval = { start: weekStart, end: weekEnd };
         const prevWeekInterval = { start: prevWeekStart, end: prevWeekEnd };
 
-        // Tasks completed this week
         const completedThisWeek = tasks.filter(t =>
           t.completed && t.completedAt &&
           isWithinInterval(new Date(t.completedAt), weekInterval)
         );
 
-        // Tasks created this week
         const createdThisWeek = tasks.filter(t =>
           t.dueDate && isWithinInterval(new Date(t.dueDate), weekInterval)
         );
 
-        // Previous week completed
         const prevWeekCompleted = tasks.filter(t =>
           t.completed && t.completedAt &&
           isWithinInterval(new Date(t.completedAt), prevWeekInterval)
         ).length;
 
-        // Notes created this week
         const notesThisWeek = notes.filter(n =>
           n.createdAt && isWithinInterval(new Date(n.createdAt), weekInterval)
         );
 
-        // Notes edited this week
         const notesEditedThisWeek = notes.filter(n =>
           n.updatedAt && isWithinInterval(new Date(n.updatedAt), weekInterval) &&
           n.createdAt && !isWithinInterval(new Date(n.createdAt), weekInterval)
         );
 
-        // Top folder by tasks completed
         const folderCounts: Record<string, number> = {};
         completedThisWeek.forEach(t => {
           if (t.sectionId) {
             folderCounts[t.sectionId] = (folderCounts[t.sectionId] || 0) + 1;
           }
         });
-
-        // Also count by note folders
         notesThisWeek.forEach(n => {
           if (n.folderId) {
             folderCounts[n.folderId] = (folderCounts[n.folderId] || 0) + 1;
@@ -156,7 +145,6 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
           }
         }
 
-        // Most productive day
         const dayTaskCounts = new Array(7).fill(0);
         completedThisWeek.forEach(t => {
           if (t.completedAt) {
@@ -332,6 +320,7 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
 
 /* ============================================
    REPORT CARD DESIGNS
+   All use INLINE STYLES for html2canvas compatibility.
    ============================================ */
 
 interface ReportCardProps {
@@ -353,49 +342,52 @@ const ReportCard = ({ design, stats, userName, userAvatar }: ReportCardProps) =>
 
 /* ---- Card 1: Dashboard ---- */
 const DashboardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden"
-    style={{ background: 'linear-gradient(160deg, hsl(220, 20%, 10%), hsl(220, 25%, 14%))' }}>
-    <div className="flex flex-col h-full p-5">
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden',
+    background: 'linear-gradient(160deg, hsl(220, 20%, 10%), hsl(220, 25%, 14%))',
+  }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' }}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5">
-          <BarChart3 className="h-3.5 w-3.5" style={{ color: 'hsl(220, 85%, 65%)' }} />
-          <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'hsl(220, 85%, 65%)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <BarChart3 style={{ width: '14px', height: '14px', color: 'hsl(220, 85%, 65%)' }} />
+          <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'hsl(220, 85%, 65%)' }}>
             Weekly Report
           </span>
         </div>
-        <span className="text-[9px]" style={{ color: 'hsl(220, 15%, 40%)' }}>{stats.weekLabel}</span>
+        <span style={{ fontSize: '9px', color: 'hsl(220, 15%, 40%)' }}>{stats.weekLabel}</span>
       </div>
 
       {/* Main stat */}
-      <div className="text-center mb-4">
-        <p className="text-5xl font-black" style={{ color: 'hsl(0, 0%, 100%)' }}>{stats.tasksCompleted}</p>
-        <p className="text-xs mt-1" style={{ color: 'hsl(220, 15%, 55%)' }}>tasks completed</p>
+      <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+        <p style={{ fontSize: '48px', fontWeight: 900, color: 'hsl(0, 0%, 100%)' }}>{stats.tasksCompleted}</p>
+        <p style={{ fontSize: '12px', marginTop: '4px', color: 'hsl(220, 15%, 55%)' }}>tasks completed</p>
       </div>
 
       {/* Completion bar */}
-      <div className="mb-4">
-        <div className="flex justify-between mb-1">
-          <span className="text-[10px]" style={{ color: 'hsl(220, 15%, 45%)' }}>Completion rate</span>
-          <span className="text-[10px] font-bold" style={{ color: 'hsl(142, 71%, 55%)' }}>{stats.completionRate}%</span>
+      <div style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+          <span style={{ fontSize: '10px', color: 'hsl(220, 15%, 45%)' }}>Completion rate</span>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(142, 71%, 55%)' }}>{stats.completionRate}%</span>
         </div>
-        <div className="h-1.5 rounded-full" style={{ background: 'hsl(220, 20%, 18%)' }}>
-          <div className="h-full rounded-full" style={{
+        <div style={{ height: '6px', borderRadius: '999px', background: 'hsl(220, 20%, 18%)' }}>
+          <div style={{
+            height: '100%', borderRadius: '999px',
             width: `${stats.completionRate}%`,
-            background: `linear-gradient(90deg, hsl(142, 71%, 45%), hsl(172, 66%, 50%))`,
+            background: 'linear-gradient(90deg, hsl(142, 71%, 45%), hsl(172, 66%, 50%))',
           }} />
         </div>
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-2 flex-1">
-        <StatBox icon={<Flame className="h-3 w-3" style={{ color: 'hsl(25, 95%, 55%)' }} />}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', flex: 1 }}>
+        <StatBox icon={<Flame style={{ width: '12px', height: '12px', color: 'hsl(25, 95%, 55%)' }} />}
           label="Streak" value={`${stats.streakDays}d`} bg="hsl(25, 95%, 55%, 0.1)" />
-        <StatBox icon={<FileText className="h-3 w-3" style={{ color: 'hsl(217, 91%, 65%)' }} />}
+        <StatBox icon={<FileText style={{ width: '12px', height: '12px', color: 'hsl(217, 91%, 65%)' }} />}
           label="Notes" value={String(stats.notesCreated)} bg="hsl(217, 91%, 60%, 0.1)" />
-        <StatBox icon={<TrendingUp className="h-3 w-3" style={{ color: 'hsl(142, 71%, 55%)' }} />}
+        <StatBox icon={<TrendingUp style={{ width: '12px', height: '12px', color: 'hsl(142, 71%, 55%)' }} />}
           label="vs last week" value={stats.previousWeekTasks > 0 ? `${stats.tasksCompleted >= stats.previousWeekTasks ? '+' : ''}${stats.tasksCompleted - stats.previousWeekTasks}` : '—'} bg="hsl(142, 71%, 45%, 0.1)" />
-        <StatBox icon={<FolderOpen className="h-3 w-3" style={{ color: 'hsl(271, 70%, 65%)' }} />}
+        <StatBox icon={<FolderOpen style={{ width: '12px', height: '12px', color: 'hsl(271, 70%, 65%)' }} />}
           label="Top folder" value={stats.topFolder?.name || '—'} bg="hsl(271, 70%, 60%, 0.1)" small />
       </div>
 
@@ -405,25 +397,28 @@ const DashboardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; us
 );
 
 const StatBox = ({ icon, label, value, bg, small }: { icon: React.ReactNode; label: string; value: string; bg: string; small?: boolean }) => (
-  <div className="rounded-lg p-2.5 flex flex-col justify-between" style={{ background: bg }}>
-    <div className="flex items-center gap-1 mb-1">{icon}<span className="text-[9px]" style={{ color: 'hsl(220, 15%, 50%)' }}>{label}</span></div>
-    <span className={cn("font-bold", small ? "text-xs" : "text-lg")} style={{ color: 'hsl(0, 0%, 95%)' }}>{value}</span>
+  <div style={{ borderRadius: '8px', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: bg }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+      {icon}
+      <span style={{ fontSize: '9px', color: 'hsl(220, 15%, 50%)' }}>{label}</span>
+    </div>
+    <span style={{ fontWeight: 700, fontSize: small ? '12px' : '18px', color: 'hsl(0, 0%, 95%)' }}>{value}</span>
   </div>
 );
 
 /* ---- Card 2: Receipt ---- */
 const ReceiptCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
-  <div className="w-72 rounded-2xl overflow-hidden" style={{ background: 'hsl(40, 30%, 96%)', minHeight: '360px' }}>
-    <div className="p-5 font-mono">
-      <div className="text-center border-b-2 border-dashed pb-3 mb-3" style={{ borderColor: 'hsl(40, 10%, 80%)' }}>
-        <img src={npdLogo} alt="Npd" className="w-8 h-8 rounded mx-auto mb-1" />
-        <p className="text-sm font-bold tracking-wider" style={{ color: 'hsl(40, 10%, 15%)' }}>NPD PRODUCTIVITY</p>
-        <p className="text-[10px] mt-0.5" style={{ color: 'hsl(40, 10%, 50%)' }}>WEEKLY RECEIPT</p>
-        <p className="text-[9px] mt-1" style={{ color: 'hsl(40, 10%, 60%)' }}>{stats.weekLabel}</p>
-        {userName && <p className="text-[9px] mt-1 font-bold" style={{ color: 'hsl(40, 10%, 35%)' }}>{userName}</p>}
+  <div style={{ width: '288px', borderRadius: '16px', overflow: 'hidden', background: 'hsl(40, 30%, 96%)', minHeight: '360px' }}>
+    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+      <div style={{ textAlign: 'center', borderBottom: '2px dashed hsl(40, 10%, 80%)', paddingBottom: '12px', marginBottom: '12px' }}>
+        <img src={npdLogo} alt="Npd" style={{ width: '32px', height: '32px', borderRadius: '4px', margin: '0 auto 4px', display: 'block' }} />
+        <p style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '0.05em', color: 'hsl(40, 10%, 15%)' }}>NPD PRODUCTIVITY</p>
+        <p style={{ fontSize: '10px', marginTop: '2px', color: 'hsl(40, 10%, 50%)' }}>WEEKLY RECEIPT</p>
+        <p style={{ fontSize: '9px', marginTop: '4px', color: 'hsl(40, 10%, 60%)' }}>{stats.weekLabel}</p>
+        {userName && <p style={{ fontSize: '9px', marginTop: '4px', fontWeight: 700, color: 'hsl(40, 10%, 35%)' }}>{userName}</p>}
       </div>
 
-      <div className="space-y-1.5 mb-3 text-xs" style={{ color: 'hsl(40, 10%, 20%)' }}>
+      <div style={{ marginBottom: '12px' }}>
         <ReceiptLine label="TASKS DONE" value={String(stats.tasksCompleted)} />
         <ReceiptLine label="TASKS CREATED" value={String(stats.tasksCreated)} />
         <ReceiptLine label="NOTES WRITTEN" value={String(stats.notesCreated)} />
@@ -433,22 +428,22 @@ const ReceiptCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; user
         <ReceiptLine label="BEST DAY" value={stats.productiveDay} />
       </div>
 
-      <div className="border-t-2 border-dashed py-2 space-y-1" style={{ borderColor: 'hsl(40, 10%, 80%)' }}>
+      <div style={{ borderTop: '2px dashed hsl(40, 10%, 80%)', padding: '8px 0' }}>
         <ReceiptLine label="COMPLETION" value={`${stats.completionRate}%`} bold />
         <ReceiptLine label="VS LAST WEEK" value={stats.previousWeekTasks > 0 ? `${stats.tasksCompleted >= stats.previousWeekTasks ? '↑' : '↓'} ${Math.abs(stats.tasksCompleted - stats.previousWeekTasks)}` : 'N/A'} bold />
       </div>
 
-      <div className="border-t-2 border-dashed pt-3 mt-2 text-center" style={{ borderColor: 'hsl(40, 10%, 80%)' }}>
-        <p className="text-[10px]" style={{ color: 'hsl(40, 10%, 50%)' }}>THANK YOU FOR BEING</p>
-        <p className="text-[10px] font-bold" style={{ color: 'hsl(40, 10%, 30%)' }}>PRODUCTIVE ♥</p>
-        <p className="text-[8px] mt-2" style={{ color: 'hsl(40, 10%, 70%)' }}>npd • task manager</p>
+      <div style={{ borderTop: '2px dashed hsl(40, 10%, 80%)', paddingTop: '12px', marginTop: '8px', textAlign: 'center' }}>
+        <p style={{ fontSize: '10px', color: 'hsl(40, 10%, 50%)' }}>THANK YOU FOR BEING</p>
+        <p style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(40, 10%, 30%)' }}>PRODUCTIVE ♥</p>
+        <p style={{ fontSize: '8px', marginTop: '8px', color: 'hsl(40, 10%, 70%)' }}>npd • task manager</p>
       </div>
     </div>
   </div>
 );
 
 const ReceiptLine = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <div className={cn("flex justify-between text-xs", bold && "font-bold")}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: bold ? 700 : 400, color: 'hsl(40, 10%, 20%)', marginBottom: '6px' }}>
     <span>{label}</span>
     <span>{value}</span>
   </div>
@@ -456,37 +451,43 @@ const ReceiptLine = ({ label, value, bold }: { label: string; value: string; bol
 
 /* ---- Card 3: Wrapped (Spotify-inspired) ---- */
 const WrappedCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'linear-gradient(170deg, hsl(142, 70%, 35%), hsl(180, 60%, 25%), hsl(220, 60%, 30%))' }}>
-    <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-20" style={{ background: 'hsl(60, 100%, 70%)' }} />
-    <div className="absolute bottom-20 -left-6 w-24 h-24 rounded-full opacity-15" style={{ background: 'hsl(330, 100%, 70%)' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'linear-gradient(170deg, hsl(142, 70%, 35%), hsl(180, 60%, 25%), hsl(220, 60%, 30%))',
+  }}>
+    <div style={{
+      position: 'absolute', top: '-32px', right: '-32px', width: '128px', height: '128px',
+      borderRadius: '50%', opacity: 0.2, background: 'hsl(60, 100%, 70%)',
+    }} />
 
-    <div className="relative z-10 flex flex-col h-full p-6">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Sparkles className="h-3.5 w-3.5" style={{ color: 'hsl(60, 100%, 75%)' }} />
-        <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'hsl(60, 100%, 75%)' }}>
+    <div style={{
+      position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%', padding: '24px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+        <Sparkles style={{ width: '14px', height: '14px', color: 'hsl(60, 100%, 75%)' }} />
+        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'hsl(60, 100%, 75%)' }}>
           Your Week, Wrapped
         </span>
       </div>
-      <p className="text-[9px] mb-6" style={{ color: 'hsl(0, 0%, 100%, 0.5)' }}>{stats.weekLabel}</p>
+      <p style={{ fontSize: '9px', marginBottom: '24px', color: 'hsl(0, 0%, 100%, 0.5)' }}>{stats.weekLabel}</p>
 
-      <div className="flex-1 flex flex-col justify-center space-y-4">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '16px' }}>
         <div>
-          <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'hsl(0, 0%, 100%, 0.5)' }}>You completed</p>
-          <p className="text-5xl font-black leading-none" style={{ color: 'hsl(0, 0%, 100%)' }}>{stats.tasksCompleted}</p>
-          <p className="text-sm font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.7)' }}>tasks this week</p>
+          <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px', color: 'hsl(0, 0%, 100%, 0.5)' }}>You completed</p>
+          <p style={{ fontSize: '48px', fontWeight: 900, lineHeight: 1, color: 'hsl(0, 0%, 100%)' }}>{stats.tasksCompleted}</p>
+          <p style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(0, 0%, 100%, 0.7)' }}>tasks this week</p>
         </div>
 
         <div>
-          <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'hsl(0, 0%, 100%, 0.5)' }}>And kept a</p>
-          <p className="text-3xl font-black" style={{ color: 'hsl(60, 100%, 75%)' }}>{stats.streakDays}-day</p>
-          <p className="text-sm font-medium" style={{ color: 'hsl(0, 0%, 100%, 0.7)' }}>streak going 🔥</p>
+          <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px', color: 'hsl(0, 0%, 100%, 0.5)' }}>And kept a</p>
+          <p style={{ fontSize: '30px', fontWeight: 900, color: 'hsl(60, 100%, 75%)' }}>{stats.streakDays}-day</p>
+          <p style={{ fontSize: '14px', fontWeight: 500, color: 'hsl(0, 0%, 100%, 0.7)' }}>streak going 🔥</p>
         </div>
 
         {stats.topFolder && (
           <div>
-            <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: 'hsl(0, 0%, 100%, 0.5)' }}>Top folder</p>
-            <p className="text-lg font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{stats.topFolder.name}</p>
+            <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px', color: 'hsl(0, 0%, 100%, 0.5)' }}>Top folder</p>
+            <p style={{ fontSize: '18px', fontWeight: 700, color: 'hsl(0, 0%, 100%)' }}>{stats.topFolder.name}</p>
           </div>
         )}
       </div>
@@ -502,36 +503,45 @@ const ScorecardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; us
   const gradeColor = grade === 'S' ? 'hsl(43, 100%, 55%)' : grade === 'A' ? 'hsl(142, 71%, 50%)' : grade === 'B' ? 'hsl(217, 91%, 60%)' : 'hsl(25, 95%, 55%)';
   
   return (
-    <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-      style={{ background: 'linear-gradient(160deg, hsl(250, 40%, 10%), hsl(260, 50%, 15%))' }}>
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-15 blur-2xl" style={{ background: gradeColor }} />
-
-      <div className="relative z-10 flex flex-col items-center h-full p-5">
-        <div className="flex items-center gap-1.5 mt-1 mb-6">
-          <Crown className="h-3.5 w-3.5" style={{ color: gradeColor }} />
-          <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: gradeColor }}>
+    <div style={{
+      width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+      background: 'linear-gradient(160deg, hsl(250, 40%, 10%), hsl(260, 50%, 15%))',
+    }}>
+      <div style={{
+        position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', height: '100%', padding: '20px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', marginBottom: '24px' }}>
+          <Crown style={{ width: '14px', height: '14px', color: gradeColor }} />
+          <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: gradeColor }}>
             Weekly Score
           </span>
         </div>
 
-        <div className="relative mb-4">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center"
-            style={{ border: `3px solid ${gradeColor}`, background: `${gradeColor}15` }}>
-            <span className="text-5xl font-black" style={{ color: gradeColor }}>{grade}</span>
+        <div style={{ position: 'relative', marginBottom: '16px' }}>
+          <div style={{
+            width: '96px', height: '96px', borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: `3px solid ${gradeColor}`, background: `${gradeColor}15`,
+          }}>
+            <span style={{ fontSize: '48px', fontWeight: 900, color: gradeColor }}>{grade}</span>
           </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[9px] font-bold"
-            style={{ background: gradeColor, color: 'hsl(0, 0%, 5%)' }}>
+          <div style={{
+            position: 'absolute', bottom: '-4px', left: '50%', marginLeft: '-16px',
+            padding: '2px 8px', borderRadius: '999px', fontSize: '9px', fontWeight: 700,
+            background: gradeColor, color: 'hsl(0, 0%, 5%)',
+          }}>
             {stats.completionRate}%
           </div>
         </div>
 
-        <div className="w-full space-y-2 flex-1">
-          <ScoreRow icon={<Target className="h-3 w-3" />} label="Tasks" value={`${stats.tasksCompleted}/${stats.totalTasks}`} color="hsl(142, 71%, 55%)" />
-          <ScoreRow icon={<Flame className="h-3 w-3" />} label="Streak" value={`${stats.streakDays} days`} color="hsl(25, 95%, 55%)" />
-          <ScoreRow icon={<FileText className="h-3 w-3" />} label="Notes" value={String(stats.notesCreated)} color="hsl(217, 91%, 65%)" />
-          <ScoreRow icon={<Star className="h-3 w-3" />} label="Best day" value={stats.productiveDay} color="hsl(43, 100%, 55%)" />
+        <div style={{ width: '100%', flex: 1 }}>
+          <ScoreRow icon={<Target style={{ width: '12px', height: '12px' }} />} label="Tasks" value={`${stats.tasksCompleted}/${stats.totalTasks}`} color="hsl(142, 71%, 55%)" />
+          <ScoreRow icon={<Flame style={{ width: '12px', height: '12px' }} />} label="Streak" value={`${stats.streakDays} days`} color="hsl(25, 95%, 55%)" />
+          <ScoreRow icon={<FileText style={{ width: '12px', height: '12px' }} />} label="Notes" value={String(stats.notesCreated)} color="hsl(217, 91%, 65%)" />
+          <ScoreRow icon={<Star style={{ width: '12px', height: '12px' }} />} label="Best day" value={stats.productiveDay} color="hsl(43, 100%, 55%)" />
           {stats.topFolder && (
-            <ScoreRow icon={<FolderOpen className="h-3 w-3" />} label="Top folder" value={stats.topFolder.name} color="hsl(271, 70%, 65%)" />
+            <ScoreRow icon={<FolderOpen style={{ width: '12px', height: '12px' }} />} label="Top folder" value={stats.topFolder.name} color="hsl(271, 70%, 65%)" />
           )}
         </div>
 
@@ -542,32 +552,37 @@ const ScorecardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; us
 };
 
 const ScoreRow = ({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: string }) => (
-  <div className="flex items-center justify-between px-3 py-1.5 rounded-lg" style={{ background: `${color}10` }}>
-    <div className="flex items-center gap-1.5">
+  <div style={{
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    padding: '6px 12px', borderRadius: '8px', marginBottom: '8px', background: `${color}10`,
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
       <span style={{ color }}>{icon}</span>
-      <span className="text-[10px]" style={{ color: 'hsl(260, 15%, 55%)' }}>{label}</span>
+      <span style={{ fontSize: '10px', color: 'hsl(260, 15%, 55%)' }}>{label}</span>
     </div>
-    <span className="text-xs font-bold" style={{ color: 'hsl(0, 0%, 95%)' }}>{value}</span>
+    <span style={{ fontSize: '12px', fontWeight: 700, color: 'hsl(0, 0%, 95%)' }}>{value}</span>
   </div>
 );
 
 /* ---- Card 5: Postcard ---- */
 const PostcardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
-  <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
-    style={{ background: 'hsl(0, 0%, 100%)' }}>
-    <div className="h-1.5" style={{ background: 'linear-gradient(90deg, hsl(220, 85%, 59%), hsl(271, 70%, 60%), hsl(330, 80%, 60%))' }} />
+  <div style={{
+    width: '288px', aspectRatio: '4/5', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+    background: 'hsl(0, 0%, 100%)',
+  }}>
+    <div style={{ height: '6px', background: 'linear-gradient(90deg, hsl(220, 85%, 59%), hsl(271, 70%, 60%), hsl(330, 80%, 60%))' }} />
 
-    <div className="flex flex-col h-full p-5">
-      <div className="mb-4">
-        <p className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'hsl(220, 15%, 60%)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' }}>
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'hsl(220, 15%, 60%)' }}>
           Week of {stats.weekLabel}
         </p>
-        <h3 className="text-xl font-black mt-1" style={{ color: 'hsl(220, 20%, 12%)' }}>
-          {userName ? `${userName}'s` : 'My'} Weekly<br />Productivity
+        <h3 style={{ fontSize: '20px', fontWeight: 900, marginTop: '4px', color: 'hsl(220, 20%, 12%)' }}>
+          {userName ? `${userName}'s` : 'My'} Weekly Productivity
         </h3>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-3">
+      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         <PostcardStat value={String(stats.tasksCompleted)} label="Tasks Done" accent="hsl(220, 85%, 59%)" />
         <PostcardStat value={`${stats.streakDays}d`} label="Streak" accent="hsl(25, 95%, 53%)" />
         <PostcardStat value={String(stats.notesCreated)} label="Notes" accent="hsl(271, 70%, 60%)" />
@@ -575,19 +590,19 @@ const PostcardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; use
       </div>
 
       {stats.topFolder && (
-        <div className="mt-3 px-3 py-2 rounded-lg" style={{ background: 'hsl(220, 30%, 96%)' }}>
-          <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 55%)' }}>Most active folder</p>
-          <p className="text-xs font-bold" style={{ color: 'hsl(220, 20%, 15%)' }}>{stats.topFolder.name}</p>
+        <div style={{ marginTop: '12px', padding: '8px 12px', borderRadius: '8px', background: 'hsl(220, 30%, 96%)' }}>
+          <p style={{ fontSize: '9px', color: 'hsl(220, 15%, 55%)' }}>Most active folder</p>
+          <p style={{ fontSize: '12px', fontWeight: 700, color: 'hsl(220, 20%, 15%)' }}>{stats.topFolder.name}</p>
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-3">
-        <div className="flex items-center gap-1.5">
-          <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
-          <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <img src={npdLogo} alt="Npd" style={{ width: '16px', height: '16px', borderRadius: '4px' }} />
+          <p style={{ fontSize: '9px', color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
         </div>
         {stats.previousWeekTasks > 0 && (
-          <p className="text-[9px] font-medium" style={{ color: stats.tasksCompleted >= stats.previousWeekTasks ? 'hsl(142, 71%, 45%)' : 'hsl(0, 84%, 60%)' }}>
+          <p style={{ fontSize: '9px', fontWeight: 500, color: stats.tasksCompleted >= stats.previousWeekTasks ? 'hsl(142, 71%, 45%)' : 'hsl(0, 84%, 60%)' }}>
             {stats.tasksCompleted >= stats.previousWeekTasks ? '↑' : '↓'} {Math.abs(stats.tasksCompleted - stats.previousWeekTasks)} vs last week
           </p>
         )}
@@ -597,8 +612,8 @@ const PostcardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; use
 );
 
 const PostcardStat = ({ value, label, accent }: { value: string; label: string; accent: string }) => (
-  <div className="rounded-xl p-3" style={{ background: `${accent}08`, border: `1px solid ${accent}15` }}>
-    <p className="text-2xl font-black" style={{ color: accent }}>{value}</p>
-    <p className="text-[10px] mt-0.5" style={{ color: 'hsl(220, 15%, 50%)' }}>{label}</p>
+  <div style={{ borderRadius: '12px', padding: '12px', background: `${accent}08`, border: `1px solid ${accent}15` }}>
+    <p style={{ fontSize: '24px', fontWeight: 900, color: accent }}>{value}</p>
+    <p style={{ fontSize: '10px', marginTop: '2px', color: 'hsl(220, 15%, 50%)' }}>{label}</p>
   </div>
 );
