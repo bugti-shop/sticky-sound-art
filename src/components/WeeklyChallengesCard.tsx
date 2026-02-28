@@ -193,10 +193,9 @@ export const WeeklyChallengesCard = () => {
         </motion.div>
       )}
 
-      {/* Total XP info */}
       {!data.allCompleted && (
         <p className="text-[10px] text-muted-foreground text-center mt-3">
-          Complete all for up to {totalXp} XP · Resets every Saturday
+          Resets every Saturday
         </p>
       )}
     </div>
