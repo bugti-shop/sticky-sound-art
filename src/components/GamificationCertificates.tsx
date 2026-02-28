@@ -191,18 +191,27 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
   const [copiedLinkedIn, setCopiedLinkedIn] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [celebratingCert, setCelebratingCert] = useState<CertificateLevel | null>(null);
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
     const load = async () => {
       setIsLoading(true);
       try {
-        const [tasks, notes, folders, xpData] = await Promise.all([
+        const [tasks, notes, folders, xpData, seenCerts] = await Promise.all([
           loadTodoItems(),
           loadNotesFromDB(),
           loadFolders(),
           loadXpData(),
+          getSetting<string[]>('npd_seen_certificates', []),
         ]);
 
         const completedTasks = tasks.filter(t => t.completed).length;
@@ -211,13 +220,30 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
           ...tasks.filter(t => t.sectionId).map(t => t.sectionId),
         ]);
 
-        setProgress({
+        const userProgress: UserProgress = {
           tasksCompleted: completedTasks,
           longestStreak: streakData?.longestStreak || 0,
           notesCreated: notes.length,
           foldersUsed: usedFolderIds.size,
           xpLevel: xpData.currentLevel,
-        });
+        };
+        setProgress(userProgress);
+
+        // Check for newly unlocked certificates
+        const newlyUnlocked = CERTIFICATE_LEVELS.filter(
+          cert => isUnlocked(userProgress, cert) && !seenCerts.includes(cert.id)
+        );
+
+        if (newlyUnlocked.length > 0) {
+          // Celebrate the highest new unlock
+          const highest = newlyUnlocked.reduce((a, b) => a.level > b.level ? a : b);
+          setCelebratingCert(highest);
+          triggerNotificationHaptic('success').catch(() => {});
+
+          // Mark all newly unlocked as seen
+          const updatedSeen = [...seenCerts, ...newlyUnlocked.map(c => c.id)];
+          await setSetting('npd_seen_certificates', updatedSeen);
+        }
       } catch (e) {
         console.error('Failed to load certificate data:', e);
       } finally {
