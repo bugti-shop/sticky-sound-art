@@ -506,8 +506,24 @@ const CertificateDetail = ({
       {/* Certificate Card */}
       <div className="flex justify-center">
         <div ref={cardRef}>
-          <CertificateCard cert={cert} unlocked={unlocked} userName={userName} userAvatar={userAvatar} />
+          <CertificateCard cert={cert} unlocked={unlocked} userName={cardName} userAvatar={userAvatar} />
         </div>
+      </div>
+
+      {/* Editable name for card */}
+      <div className="bg-card border rounded-xl p-4">
+        <h3 className="text-sm font-bold mb-2">Your Name on Certificate</h3>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={cardName}
+            onChange={(e) => setCardName(e.target.value)}
+            placeholder="Enter your name"
+            className="flex-1 text-sm bg-muted rounded-lg px-3 py-2 border border-border focus:outline-none focus:ring-2 focus:ring-primary/40"
+            maxLength={40}
+          />
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-1.5">This name will appear on the shared certificate image</p>
       </div>
 
       {/* Requirements */}
