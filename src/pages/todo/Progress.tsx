@@ -29,7 +29,7 @@ const Progress = () => {
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [hasNewCerts, setHasNewCerts] = useState(false);
   const [completedCycles, setCompletedCycles] = useState(0);
-  const [hasNewReport, setHasNewReport] = useState(false);
+  
   const [isPersonalBest, setIsPersonalBest] = useState(false);
 
   useEffect(() => {
