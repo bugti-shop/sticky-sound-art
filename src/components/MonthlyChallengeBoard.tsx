@@ -274,14 +274,6 @@ export const MonthlyChallengeBoard = () => {
                       )}>
                         {challenge.title}
                       </p>
-                      <span className={cn(
-                        "text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0",
-                        challenge.completed
-                          ? "bg-success/15 text-success"
-                          : "bg-warning/10 text-warning"
-                      )}>
-                        +{challenge.xpReward}
-                      </span>
                     </div>
                     <p className="text-[10px] text-muted-foreground truncate mt-0.5">
                       {challenge.description}
