@@ -291,7 +291,7 @@ const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)', userName, userAvatar }: { c
 );
 
 /* ---- Card 1: Fire Streak ---- */
-const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
+const FireCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(145deg, hsl(15, 90%, 8%), hsl(0, 85%, 12%), hsl(25, 95%, 15%))' }}>
     {/* Glow ring behind flame */}
@@ -300,12 +300,10 @@ const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
         background: 'radial-gradient(circle, hsl(25, 95%, 53%, 0.35), hsl(25, 95%, 53%, 0.1) 50%, transparent 70%)',
         boxShadow: '0 0 60px 20px hsl(25, 95%, 53%, 0.15)'
       }} />
-    {/* Outer ring decoration */}
     <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full"
       style={{ border: '2px solid hsl(25, 95%, 53%, 0.15)' }} />
     
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      {/* Header with logo */}
       <div className="flex items-center gap-2 mt-2">
         <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
         <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(25, 95%, 70%)' }}>
@@ -333,7 +331,7 @@ const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
             <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>best</p>
           </div>
         </div>
-        <CardLogoFooter color="hsl(0, 0%, 35%)" />
+        <CardLogoFooter color="hsl(0, 0%, 35%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
