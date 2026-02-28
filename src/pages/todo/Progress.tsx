@@ -13,12 +13,10 @@ import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
-import { StreakRepairDialog } from '@/components/StreakRepairDialog';
-import { canRepairStreak } from '@/utils/streakRepairStorage';
 
 const Progress = () => {
   const { t } = useTranslation();
-  const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining, refresh } = useStreak();
+  const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
@@ -30,8 +28,6 @@ const Progress = () => {
   const [completedCycles, setCompletedCycles] = useState(0);
   const [hasNewReport, setHasNewReport] = useState(false);
   const [isPersonalBest, setIsPersonalBest] = useState(false);
-  const [showRepairDialog, setShowRepairDialog] = useState(false);
-  const [lostStreakValue, setLostStreakValue] = useState(0);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -75,13 +71,6 @@ const Progress = () => {
         const longestStreak = data?.longestStreak || 0;
         const lastSharedBest = parseInt(localStorage.getItem('npd_last_shared_best_streak') || '0', 10);
         setIsPersonalBest(currentStreak > 0 && currentStreak >= longestStreak && currentStreak > lastSharedBest);
-
-        // Check if streak repair is available
-        const repairResult = await canRepairStreak(false); // isPro checked in dialog
-        if (repairResult.canRepair && repairResult.lostStreak > 0 && currentStreak === 0) {
-          setLostStreakValue(repairResult.lostStreak);
-          setShowRepairDialog(true);
-        }
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
@@ -549,14 +538,6 @@ const Progress = () => {
         totalCompletions={data?.totalCompletions || 0}
         weekData={weekData}
         completedToday={completedToday}
-      />
-
-      {/* Streak Repair Dialog */}
-      <StreakRepairDialog
-        isOpen={showRepairDialog}
-        onClose={() => setShowRepairDialog(false)}
-        onRepaired={() => refresh()}
-        lostStreak={lostStreakValue}
       />
     </TodoLayout>
   );

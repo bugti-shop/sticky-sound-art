@@ -4,7 +4,6 @@
 
 import { getSetting, setSetting } from './settingsStorage';
 import { startOfDay, differenceInDays, differenceInHours, format, subDays } from 'date-fns';
-import { markStreakLost } from './streakRepairStorage';
 
 export interface StreakData {
   currentStreak: number;
@@ -328,8 +327,7 @@ export const checkAndUpdateStreak = async (storageKey: string): Promise<StreakDa
       data.weekHistory[yesterday] = true; // Mark as "saved"
       await saveStreakData(storageKey, data);
     } else {
-      // Streak is lost - mark for potential repair
-      await markStreakLost(data.currentStreak);
+      // Streak is lost
       data.currentStreak = 0;
       await saveStreakData(storageKey, data);
     }
