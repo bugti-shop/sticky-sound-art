@@ -46,10 +46,12 @@ export const MonthlyChallengeBoard = () => {
       setTimeout(() => setShowConfetti(false), 4000);
       load();
     };
-    const handleBoardComplete = () => {
+    const handleBoardComplete = (e: CustomEvent<{ badge: MonthlyBadge }>) => {
       setShowBoardConfetti(true);
+      setUnlockedBadge(e.detail.badge);
+      setShowBadgeUnlock(true);
       playChallengeCompleteSound();
-      setTimeout(() => setShowBoardConfetti(false), 6000);
+      setTimeout(() => setShowBoardConfetti(false), 8000);
       load();
     };
 
