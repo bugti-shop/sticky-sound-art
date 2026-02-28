@@ -307,5 +307,6 @@ export const MonthlyChallengeBoard = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
