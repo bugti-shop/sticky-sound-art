@@ -226,6 +226,7 @@ const AppContent = () => {
       <PremiumPaywall />
       <WhatsNewSheet />
       <StreakMilestoneCelebration />
+      <DailyLoginRewardDialog />
       <AppRoutes />
     </>
   );
