@@ -17,7 +17,7 @@ import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { loadNotesFromDB } from '@/utils/noteStorage';
 import { loadFolders } from '@/utils/folderStorage';
-import { loadXpData, XpData } from '@/utils/gamificationStorage';
+import { getSetting as getSettingForAdmin } from '@/utils/settingsStorage';
 import { StreakData } from '@/utils/streakStorage';
 import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
