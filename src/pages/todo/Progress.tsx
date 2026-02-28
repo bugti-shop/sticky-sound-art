@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { TodoLayout } from './TodoLayout';
 import { useStreak } from '@/hooks/useStreak';
 import { cn } from '@/lib/utils';
-import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, BarChart3, Award } from 'lucide-react';
+import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
 import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 
-import { WeeklyReportCard } from '@/components/WeeklyReportCard';
+
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 import { WeeklyChallengesCard } from '@/components/WeeklyChallengesCard';
@@ -22,14 +22,14 @@ const Progress = () => {
   const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   
-  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  
   const [showCertificates, setShowCertificates] = useState(false);
   const [showStreakDetail, setShowStreakDetail] = useState(false);
   const [rewardDay, setRewardDay] = useState(1);
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [hasNewCerts, setHasNewCerts] = useState(false);
   const [completedCycles, setCompletedCycles] = useState(0);
-  const [hasNewReport, setHasNewReport] = useState(false);
+  
   const [isPersonalBest, setIsPersonalBest] = useState(false);
 
   useEffect(() => {
@@ -65,9 +65,6 @@ const Progress = () => {
         setHasNewCerts(newCerts);
 
         // Check if weekly report has unseen data
-        const weekKey = `npd_report_seen_${format(weekStart, 'yyyy-MM-dd')}`;
-        const reportSeen = localStorage.getItem(weekKey);
-        setHasNewReport(thisWeekTasks.length > 0 && !reportSeen);
 
         // Check for personal best streak
         const currentStreak = data?.currentStreak || 0;
@@ -444,33 +441,13 @@ const Progress = () => {
           </div>
         </div>
 
-        {/* Share Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Certificates Button */}
+        <div>
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            onClick={() => {
-              setShowWeeklyReport(true);
-              setHasNewReport(false);
-              const weekKey = `npd_report_seen_${format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd')}`;
-              localStorage.setItem(weekKey, 'true');
-            }}
-            className="relative bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 font-semibold text-[10px] active:scale-[0.98] transition-transform"
-            style={{ color: 'hsl(var(--accent-purple))' }}
-          >
-            {hasNewReport && (
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
-            )}
-            <BarChart3 className="h-4 w-4" />
-            Weekly Report
-          </motion.button>
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
             onClick={() => setShowCertificates(true)}
-            className="relative bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
+            className="relative w-full bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
           >
             {hasNewCerts && (
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
@@ -499,12 +476,6 @@ const Progress = () => {
       </div>
 
 
-      {/* Weekly Report Modal */}
-      <WeeklyReportCard
-        isOpen={showWeeklyReport}
-        onClose={() => setShowWeeklyReport(false)}
-        streakData={data}
-      />
 
       {/* Certificates Modal */}
       <GamificationCertificates
