@@ -140,6 +140,12 @@ export const addXp = async (amount: number, reason?: string): Promise<{ data: Xp
     // Weekly goals may not be loaded yet
   }
   
+  // Update monthly XP challenge
+  try {
+    const { updateMonthlyChallengeProgress } = await import('./monthlyChallengeStorage');
+    await updateMonthlyChallengeProgress('earn_xp', amount);
+  } catch (e) { /* ignore */ }
+  
   return { data, leveledUp, newLevel: leveledUp ? level : null };
 };
 
