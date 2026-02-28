@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { StreakSocietyBadge } from '@/components/StreakSocietyBadge';
+import { ProductivityScoreGauge } from '@/components/ProductivityScoreGauge';
 import { TodoBottomNavigation } from '@/components/TodoBottomNavigation';
 import { getSetting } from '@/utils/settingsStorage';
 import { createBackup } from '@/utils/dataBackup';
