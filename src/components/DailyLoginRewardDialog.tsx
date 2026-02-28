@@ -120,7 +120,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
               </motion.div>
               <h2 className="text-xl font-black text-foreground">Daily Reward</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Log in every day to earn bonus XP!
+                Log in every day to earn rewards!
               </p>
             </div>
 
