@@ -161,6 +161,9 @@ const Upcoming = () => {
         if (streakResult.earnedFreeze) {
           toast.success(t('todayPage.earnedStreakFreeze'), { description: t('todayPage.earnedStreakFreezeDesc') });
         }
+        if (streakResult.streakIncremented) {
+          window.dispatchEvent(new CustomEvent('streakChallengeShow', { detail: { currentStreak: streakResult.data.currentStreak } }));
+        }
         window.dispatchEvent(new CustomEvent('streakUpdated'));
       } catch (e) { console.warn('Failed to record streak:', e); }
     }
