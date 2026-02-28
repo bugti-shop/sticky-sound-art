@@ -21,6 +21,7 @@ import { getSetting, setSetting } from "@/utils/settingsStorage";
 import { shouldAppBeLocked, updateLastUnlockTime } from "@/utils/appLockStorage";
 import { AppLockScreen } from "@/components/AppLockScreen";
 import { WhatsNewSheet } from "@/components/WhatsNewSheet";
+import { StreakMilestoneCelebration } from "@/components/StreakMilestoneCelebration";
 // Eager load only the two most critical pages for instant first render
 import Index from "./pages/Index";
 import Today from "./pages/todo/Today";
@@ -223,6 +224,7 @@ const AppContent = () => {
       <SyncConflictSheet />
       <PremiumPaywall />
       <WhatsNewSheet />
+      <StreakMilestoneCelebration />
       <AppRoutes />
     </>
   );
