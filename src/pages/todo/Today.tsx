@@ -3552,6 +3552,13 @@ const Today = () => {
         </SheetContent>
       </Sheet>
       
+      {/* Streak Challenge Dialog */}
+      <StreakChallengeDialog
+        isOpen={showStreakChallenge}
+        onClose={closeStreakChallenge}
+        currentStreak={streakData?.currentStreak || 0}
+        weekData={streakWeekData}
+      />
     </TodoLayout>
   );
 };
