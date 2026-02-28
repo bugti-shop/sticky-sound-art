@@ -14,6 +14,7 @@ import { performSync, getLastSyncInfo, SyncMeta, SyncResult, SyncState, addSyncL
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { ProfileImageCropper } from '@/components/ProfileImageCropper';
 
 export default function Profile() {
   const { t } = useTranslation();
