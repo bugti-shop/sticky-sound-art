@@ -212,5 +212,6 @@ export const WeeklyChallengesCard = () => {
         </p>
       )}
     </div>
+    </>
   );
 };
