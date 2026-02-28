@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRevenueCat } from '@/contexts/RevenueCatContext';
-import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle, Camera, Pencil } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BottomNavigation } from '@/components/BottomNavigation';
@@ -13,6 +13,7 @@ import { useGoogleAuth } from '@/contexts/GoogleAuthContext';
 import { performSync, getLastSyncInfo, SyncMeta, SyncResult, SyncState, addSyncListener } from '@/utils/driveSyncManager';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 export default function Profile() {
   const { t } = useTranslation();
