@@ -584,70 +584,64 @@ const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: Certi
   const dateStr = format(new Date(), 'MMMM d, yyyy');
 
   return (
-    <div className="w-80 rounded-2xl overflow-hidden relative" style={{ background: cert.colors.bg, aspectRatio: '4/5' }}>
+    <div style={{ width: '320px', borderRadius: '16px', overflow: 'hidden', position: 'relative', background: cert.colors.bg, aspectRatio: '4/5' }}>
       {/* Top accent line */}
-      <div className="h-1" style={{ background: cert.colors.accent }} />
-
-      {/* Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full opacity-20 blur-2xl"
-        style={{ background: cert.colors.accent }} />
+      <div style={{ height: '4px', background: cert.colors.accent }} />
 
       {/* Corner ornaments */}
-      <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 rounded-tl-sm" style={{ borderColor: `${cert.colors.accent}40` }} />
-      <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: `${cert.colors.accent}40` }} />
-      <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 rounded-bl-sm" style={{ borderColor: `${cert.colors.accent}40` }} />
-      <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: `${cert.colors.accent}40` }} />
+      <div style={{ position: 'absolute', top: '16px', left: '16px', width: '24px', height: '24px', borderTop: `2px solid ${cert.colors.accent}40`, borderLeft: `2px solid ${cert.colors.accent}40` }} />
+      <div style={{ position: 'absolute', top: '16px', right: '16px', width: '24px', height: '24px', borderTop: `2px solid ${cert.colors.accent}40`, borderRight: `2px solid ${cert.colors.accent}40` }} />
+      <div style={{ position: 'absolute', bottom: '16px', left: '16px', width: '24px', height: '24px', borderBottom: `2px solid ${cert.colors.accent}40`, borderLeft: `2px solid ${cert.colors.accent}40` }} />
+      <div style={{ position: 'absolute', bottom: '16px', right: '16px', width: '24px', height: '24px', borderBottom: `2px solid ${cert.colors.accent}40`, borderRight: `2px solid ${cert.colors.accent}40` }} />
 
-      <div className="relative z-10 flex flex-col items-center justify-between h-full px-6 py-8 text-center">
+      <div style={{
+        position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '32px 24px', textAlign: 'center',
+      }}>
         {/* Header */}
         <div>
-          <p className="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: cert.colors.text }}>
+          <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: cert.colors.text }}>
             Certificate of Achievement
           </p>
-          <div className="w-12 h-px mx-auto mt-2" style={{ background: cert.colors.accent }} />
+          <div style={{ width: '48px', height: '1px', margin: '8px auto 0', background: cert.colors.accent }} />
         </div>
 
         {/* Icon & Title */}
         <div>
-          <motion.div
-            animate={unlocked ? { scale: [1, 1.05, 1] } : {}}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Icon className="h-16 w-16 mx-auto mb-3" style={{ color: cert.colors.accent }} />
-          </motion.div>
-          <h3 className="text-3xl font-black tracking-tight" style={{ color: 'hsl(0,0%,100%)' }}>
+          <Icon style={{ width: '64px', height: '64px', margin: '0 auto 12px', color: cert.colors.accent }} />
+          <h3 style={{ fontSize: '30px', fontWeight: 900, letterSpacing: '-0.02em', color: 'hsl(0,0%,100%)' }}>
             {cert.title}
           </h3>
-          <p className="text-sm font-medium mt-1" style={{ color: cert.colors.text }}>
+          <p style={{ fontSize: '14px', fontWeight: 500, marginTop: '4px', color: cert.colors.text }}>
             {cert.subtitle}
           </p>
         </div>
 
         {/* User name + avatar */}
         {userName && (
-          <div className="flex items-center gap-2 mt-1">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
             {userAvatar && (
-              <img src={userAvatar} alt="" className="w-6 h-6 rounded-full object-cover" style={{ border: `1.5px solid ${cert.colors.accent}50` }} />
+              <img src={userAvatar} alt="" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: `1.5px solid ${cert.colors.accent}50` }} />
             )}
-            <p className="text-xs font-semibold" style={{ color: 'hsl(0,0%,85%)' }}>{userName}</p>
+            <p style={{ fontSize: '12px', fontWeight: 600, color: 'hsl(0,0%,85%)' }}>{userName}</p>
           </div>
         )}
 
         {/* Stats summary */}
-        <div className="w-full">
-          <div className="grid grid-cols-3 gap-2 mb-4">
+        <div style={{ width: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '16px' }}>
             <CertStat value={`${cert.requirements.tasksCompleted}+`} label="Tasks" accent={cert.colors.accent} />
             <CertStat value={`${cert.requirements.streakDays}d`} label="Streak" accent={cert.colors.accent} />
             <CertStat value={`${cert.requirements.notesCreated}+`} label="Notes" accent={cert.colors.accent} />
           </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-[9px]" style={{ color: `${cert.colors.text}60` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <p style={{ fontSize: '9px', color: cert.colors.text }}>
               {unlocked ? dateStr : 'Not yet achieved'}
             </p>
-            <div className="flex items-center gap-1">
-              <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
-              <p className="text-[9px] font-bold tracking-wider" style={{ color: `${cert.colors.text}40` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={npdLogo} alt="Npd" style={{ width: '16px', height: '16px', borderRadius: '4px' }} />
+              <p style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.05em', color: cert.colors.text }}>
                 NPD
               </p>
             </div>
@@ -659,9 +653,9 @@ const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: Certi
 };
 
 const CertStat = ({ value, label, accent }: { value: string; label: string; accent: string }) => (
-  <div className="rounded-lg py-2 px-1" style={{ background: `${accent}10`, border: `1px solid ${accent}20` }}>
-    <p className="text-sm font-bold" style={{ color: 'hsl(0,0%,95%)' }}>{value}</p>
-    <p className="text-[9px]" style={{ color: `${accent}90` }}>{label}</p>
+  <div style={{ borderRadius: '8px', padding: '8px 4px', background: `${accent}10`, border: `1px solid ${accent}20`, textAlign: 'center' }}>
+    <p style={{ fontSize: '14px', fontWeight: 700, color: 'hsl(0,0%,95%)' }}>{value}</p>
+    <p style={{ fontSize: '9px', color: accent }}>{label}</p>
   </div>
 );
 
