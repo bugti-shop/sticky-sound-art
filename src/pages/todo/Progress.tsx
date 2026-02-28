@@ -14,6 +14,7 @@ import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 import { WeeklyChallengesCard } from '@/components/WeeklyChallengesCard';
+import { MonthlyChallengeBoard } from '@/components/MonthlyChallengeBoard';
 
 const Progress = () => {
   const { t } = useTranslation();
