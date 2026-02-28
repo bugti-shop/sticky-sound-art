@@ -24,6 +24,7 @@ const Progress = () => {
   const [showStreakDetail, setShowStreakDetail] = useState(false);
   const [rewardDay, setRewardDay] = useState(1);
   const [rewardClaimed, setRewardClaimed] = useState(false);
+  const [hasNewCerts, setHasNewCerts] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
