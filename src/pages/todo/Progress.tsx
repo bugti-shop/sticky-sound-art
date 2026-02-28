@@ -498,12 +498,6 @@ const Progress = () => {
         </AnimatePresence>
       </div>
 
-      {/* Streak Showcase Modal */}
-      <StreakShowcase
-        isOpen={showShowcase}
-        onClose={() => setShowShowcase(false)}
-        streakData={data}
-      />
 
       {/* Weekly Report Modal */}
       <WeeklyReportCard
