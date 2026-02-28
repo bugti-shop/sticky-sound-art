@@ -63,7 +63,6 @@ export const checkDailyReward = async (): Promise<{
 };
 
 export const claimDailyReward = async (): Promise<{
-  xpEarned: number;
   day: number;
   data: DailyRewardData;
 }> => {
