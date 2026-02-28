@@ -231,6 +231,7 @@ const AppContent = () => {
       <WhatsNewSheet />
       <StreakMilestoneCelebration />
       <DailyLoginRewardDialog />
+      <ComboOverlay />
       <WelcomeBackCelebration
         isOpen={isReturning}
         mood={mood}
