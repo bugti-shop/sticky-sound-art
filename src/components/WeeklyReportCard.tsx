@@ -337,15 +337,17 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
 interface ReportCardProps {
   design: ReportDesign;
   stats: WeeklyStats;
+  userName?: string;
+  userAvatar?: string;
 }
 
-const ReportCard = ({ design, stats }: ReportCardProps) => {
+const ReportCard = ({ design, stats, userName, userAvatar }: ReportCardProps) => {
   switch (design) {
-    case 'dashboard': return <DashboardCard stats={stats} />;
-    case 'receipt': return <ReceiptCard stats={stats} />;
-    case 'wrapped': return <WrappedCard stats={stats} />;
-    case 'scorecard': return <ScorecardCard stats={stats} />;
-    case 'postcard': return <PostcardCard stats={stats} />;
+    case 'dashboard': return <DashboardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'receipt': return <ReceiptCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'wrapped': return <WrappedCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'scorecard': return <ScorecardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'postcard': return <PostcardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
   }
 };
 
