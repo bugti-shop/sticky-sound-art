@@ -133,6 +133,15 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
       await updateGoalProgress('weekly_streak', 1);
     }
     
+    // Update weekly challenges
+    try {
+      const { updateWeeklyChallengeProgress } = await import('@/utils/weeklyChallengeStorage');
+      await updateWeeklyChallengeProgress('complete_tasks', 1);
+      if (result.streakIncremented) {
+        await updateWeeklyChallengeProgress('maintain_streak', 1);
+      }
+    } catch (e) { /* ignore */ }
+    
     // Dispatch event for other components
     window.dispatchEvent(new CustomEvent('streakUpdated'));
     
