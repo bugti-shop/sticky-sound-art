@@ -418,7 +418,7 @@ const ShareCard = ({
             letterSpacing: '4px',
           }}
         >
-          NPD
+          Npd
         </span>
       </div>
     </div>
