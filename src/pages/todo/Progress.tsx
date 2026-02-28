@@ -411,6 +411,9 @@ const Progress = () => {
           )}
         </div>
 
+        {/* Monthly Challenge Board */}
+        <MonthlyChallengeBoard />
+
         {/* Milestones */}
         <div className="bg-card rounded-xl p-4 border">
           <h3 className="font-semibold mb-4">{t('streak.milestones', 'Milestones')}</h3>
