@@ -12,6 +12,8 @@ import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import Confetti from 'react-confetti';
 import appLogo from '@/assets/npd-reminder-logo.png';
 import html2canvas from 'html2canvas';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooterLarge } from '@/components/CardBranding';
 
 const MILESTONE_CONFIG: Record<number, { emoji: string; title: string; subtitle: string; gradient: string; glow: string }> = {
   3: {
