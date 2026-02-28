@@ -9,8 +9,11 @@ import {
   loadEarnedMonthlyBadges,
   type MonthlyChallengesData,
   type MonthlyBadge,
+  type MonthlyChallenge,
 } from '@/utils/monthlyChallengeStorage';
 import { Progress } from '@/components/ui/progress';
+import { playChallengeCompleteSound } from '@/utils/gamificationSounds';
+import Confetti from 'react-confetti';
 
 export const MonthlyChallengeBoard = () => {
   const { t } = useTranslation();
@@ -18,6 +21,9 @@ export const MonthlyChallengeBoard = () => {
   const [earnedBadges, setEarnedBadges] = useState<MonthlyBadge[]>([]);
   const [deadline, setDeadline] = useState(getMonthDeadline());
   const [showBadges, setShowBadges] = useState(false);
+  const [celebratingChallenge, setCelebratingChallenge] = useState<MonthlyChallenge | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showBoardConfetti, setShowBoardConfetti] = useState(false);
 
   useEffect(() => {
     const load = async () => {
