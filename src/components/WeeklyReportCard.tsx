@@ -412,17 +412,17 @@ const StatBox = ({ icon, label, value, bg, small }: { icon: React.ReactNode; lab
 );
 
 /* ---- Card 2: Receipt ---- */
-const ReceiptCard = ({ stats }: { stats: WeeklyStats }) => (
+const ReceiptCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 rounded-2xl overflow-hidden" style={{ background: 'hsl(40, 30%, 96%)', minHeight: '360px' }}>
     <div className="p-5 font-mono">
-      {/* Header */}
       <div className="text-center border-b-2 border-dashed pb-3 mb-3" style={{ borderColor: 'hsl(40, 10%, 80%)' }}>
+        <img src={npdLogo} alt="Npd" className="w-8 h-8 rounded mx-auto mb-1" />
         <p className="text-sm font-bold tracking-wider" style={{ color: 'hsl(40, 10%, 15%)' }}>NPD PRODUCTIVITY</p>
         <p className="text-[10px] mt-0.5" style={{ color: 'hsl(40, 10%, 50%)' }}>WEEKLY RECEIPT</p>
         <p className="text-[9px] mt-1" style={{ color: 'hsl(40, 10%, 60%)' }}>{stats.weekLabel}</p>
+        {userName && <p className="text-[9px] mt-1 font-bold" style={{ color: 'hsl(40, 10%, 35%)' }}>{userName}</p>}
       </div>
 
-      {/* Items */}
       <div className="space-y-1.5 mb-3 text-xs" style={{ color: 'hsl(40, 10%, 20%)' }}>
         <ReceiptLine label="TASKS DONE" value={String(stats.tasksCompleted)} />
         <ReceiptLine label="TASKS CREATED" value={String(stats.tasksCreated)} />
