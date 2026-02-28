@@ -192,7 +192,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                   Today's Reward
                 </p>
                 <p className="text-2xl font-black text-primary mt-0.5">
-                  {DAILY_REWARDS[currentDay - 1].icon} +{DAILY_REWARDS[currentDay - 1].xp} XP
+                  {DAILY_REWARDS[currentDay - 1].icon} Day {currentDay}
                 </p>
                 {currentDay === 7 && (
                   <p className="text-[10px] text-warning font-semibold mt-1">
