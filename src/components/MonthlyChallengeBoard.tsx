@@ -334,8 +334,8 @@ export const MonthlyChallengeBoard = () => {
           </p>
           <p className="text-[10px] text-muted-foreground">
             {data.allCompleted
-              ? 'Badge unlocked! +500 XP bonus earned 🎉'
-              : `Complete all ${totalChallenges} challenges to unlock · +500 XP bonus`}
+              ? 'Badge unlocked! 🎉'
+              : `Complete all ${totalChallenges} challenges to unlock`}
           </p>
         </div>
         {data.allCompleted && (

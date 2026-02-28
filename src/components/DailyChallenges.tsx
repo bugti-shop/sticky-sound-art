@@ -135,14 +135,6 @@ export const DailyChallenges = () => {
                     )}>
                       {challenge.title}
                     </h4>
-                     <span className={cn(
-                      "text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0",
-                      challenge.completed
-                        ? "bg-success/20 text-success"
-                        : "bg-info/20 text-info"
-                    )}>
-                      +{challenge.xpReward} XP
-                    </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {challenge.description}
