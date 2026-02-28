@@ -625,6 +625,50 @@ interface CertificateCelebrationProps {
 const CertificateCelebration = ({ cert, windowSize, onDismiss }: CertificateCelebrationProps) => {
   const Icon = cert.icon;
 
+  // Play triumphant fanfare on mount
+  useEffect(() => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Triumphant fanfare: C5 → E5 → G5 → C6 chord
+      const fanfare = [
+        { freq: 523.25, delay: 0, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
+        { freq: 659.25, delay: 0.12, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
+        { freq: 783.99, delay: 0.24, dur: 0.35, type: 'triangle' as OscillatorType, vol: 0.25 },
+        { freq: 1046.50, delay: 0.36, dur: 0.5, type: 'triangle' as OscillatorType, vol: 0.3 },
+      ];
+      fanfare.forEach(({ freq, delay, dur, type, vol }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+        osc.type = type;
+        gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + dur);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + dur);
+      });
+      // Final triumphant chord
+      setTimeout(() => {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 1);
+        });
+      }, 500);
+      setTimeout(() => ctx.close(), 2000);
+    } catch (e) {
+      console.error('Certificate sound error:', e);
+    }
+  }, []);
   return (
     <motion.div
       initial={{ opacity: 0 }}
