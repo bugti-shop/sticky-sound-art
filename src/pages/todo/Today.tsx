@@ -66,6 +66,8 @@ import { SaveSmartViewSheet } from '@/components/SaveSmartViewSheet';
 import { AutoScheduleSheet } from '@/components/AutoScheduleSheet';
 import { useSubscription, FREE_LIMITS } from '@/contexts/SubscriptionContext';
 import { TASK_CIRCLE, TASK_CHECK_ICON } from '@/utils/taskItemStyles';
+import { StreakChallengeDialog, useStreakChallengeDialog } from '@/components/StreakChallengeDialog';
+import { useStreak } from '@/hooks/useStreak';
 
 type ViewMode = 'flat' | 'kanban' | 'kanban-status' | 'timeline' | 'progress' | 'priority' | 'history';
 type SortBy = 'date' | 'priority' | 'name' | 'created';
@@ -140,6 +142,8 @@ const Today = () => {
   const [customSmartViews, setCustomSmartViews] = useState<CustomSmartView[]>([]);
   const [activeCustomViewId, setActiveCustomViewId] = useState<string | null>(null);
   const [isSaveSmartViewOpen, setIsSaveSmartViewOpen] = useState(false);
+  const { showDialog: showStreakChallenge, closeDialog: closeStreakChallenge } = useStreakChallengeDialog();
+  const { data: streakData, weekData: streakWeekData } = useStreak({ autoCheck: false });
   
   const [isAutoScheduleOpen, setIsAutoScheduleOpen] = useState(false);
   
@@ -584,6 +588,9 @@ const Today = () => {
         }
         if (streakResult.earnedFreeze) {
           toast.success(t('todayPage.earnedStreakFreeze'), { description: t('todayPage.earnedStreakFreezeDesc') });
+        }
+        if (streakResult.streakIncremented) {
+          window.dispatchEvent(new CustomEvent('streakChallengeShow', { detail: { currentStreak: streakResult.data.currentStreak } }));
         }
         window.dispatchEvent(new CustomEvent('streakUpdated'));
       } catch (e) { console.warn('Failed to record streak:', e); }
@@ -3545,6 +3552,13 @@ const Today = () => {
         </SheetContent>
       </Sheet>
       
+      {/* Streak Challenge Dialog */}
+      <StreakChallengeDialog
+        isOpen={showStreakChallenge}
+        onClose={closeStreakChallenge}
+        currentStreak={streakData?.currentStreak || 0}
+        weekData={streakWeekData}
+      />
     </TodoLayout>
   );
 };
