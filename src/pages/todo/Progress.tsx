@@ -170,9 +170,11 @@ const Progress = () => {
             </motion.div>
           </div>
         </motion.button>
-          
+
+        {/* Week Progress & Freeze Info Card */}
+        <div className="bg-card rounded-2xl p-6 border shadow-sm">
           {/* Week Progress */}
-          <div className="flex justify-between items-center gap-1 mt-6 overflow-hidden">
+          <div className="flex justify-between items-center gap-1 overflow-hidden">
             {weekData.map((day, index) => (
               <div key={day.date} className="flex flex-col items-center gap-2 min-w-0 flex-1">
                 <span className={cn(
@@ -224,7 +226,7 @@ const Progress = () => {
             </div>
           )}
           
-          {/* Freeze Progress - Show progress towards earning a freeze */}
+          {/* Freeze Progress */}
           {!data?.freezesEarnedToday && (
             <div className="mt-6 pt-4 border-t">
               <div className="flex items-center gap-2 mb-2">
