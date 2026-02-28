@@ -403,31 +403,8 @@ const ShareCard = ({
         {config.title}
       </p>
 
-      {/* Branding */}
-      <div
-        style={{
-          marginTop: '80px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-        }}
-      >
-        <img
-          src={appLogo}
-          alt="Npd"
-          style={{ width: '48px', height: '48px', borderRadius: '12px' }}
-        />
-        <span
-          style={{
-            fontSize: '32px',
-            fontWeight: 700,
-            color: 'rgba(255,255,255,0.4)',
-            letterSpacing: '4px',
-          }}
-        >
-          Npd
-        </span>
-      </div>
+      {/* User profile + Branding */}
+      <CardBrandingFooterLarge color="rgba(255,255,255,0.4)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );
