@@ -12,8 +12,7 @@
 import { loadStreakData, TASK_STREAK_KEY } from './streakStorage';
 import { loadTodoItems } from './todoItemsStorage';
 import { loadDailyChallenges } from './gamificationStorage';
-import { loadXpData } from './gamificationStorage';
-import { startOfWeek, endOfWeek, format } from 'date-fns';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 export interface ProductivityScore {
   total: number; // 0-100
@@ -76,12 +75,11 @@ export const calculateProductivityScore = async (): Promise<ProductivityScore> =
     consistencyScore = ((ratio * 0.5) + (streakComponent * 0.5)) * 15;
   } catch { /* default 0 */ }
 
-  // ── App usage days (10%) ──
+  // ── App usage days (10%) — based on streak history ──
   let usageScore = 0;
   try {
-    const xpData = await loadXpData();
-    const activeDays = Object.keys(xpData.xpHistory).length;
-    // 30 unique days = full score
+    const streakData2 = await loadStreakData(TASK_STREAK_KEY);
+    const activeDays = Object.keys(streakData2.weekHistory || {}).length;
     usageScore = clamp((activeDays / 30) * 10, 0, 10);
   } catch { /* default 0 */ }
 

@@ -173,11 +173,6 @@ export const updateMonthlyChallengeProgress = async (
         challenge.completed = true;
         completedChallenge = challenge;
 
-        // Award per-challenge XP
-        try {
-          const { addXp } = await import('./gamificationStorage');
-          await addXp(challenge.xpReward, `Monthly Challenge: ${challenge.title}`);
-        } catch (e) { /* ignore */ }
 
         window.dispatchEvent(new CustomEvent('monthlyChallengeCompleted', { detail: { challenge } }));
       }
@@ -193,10 +188,6 @@ export const updateMonthlyChallengeProgress = async (
     // Award 500 XP bonus
     if (!data.bonusXpClaimed) {
       data.bonusXpClaimed = true;
-      try {
-        const { addXp } = await import('./gamificationStorage');
-        await addXp(500, `Monthly Challenge Bonus: ${data.theme}`);
-      } catch (e) { /* ignore */ }
     }
 
     // Save badge

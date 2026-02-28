@@ -17,7 +17,7 @@ import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { loadNotesFromDB } from '@/utils/noteStorage';
 import { loadFolders } from '@/utils/folderStorage';
-import { loadXpData, XpData } from '@/utils/gamificationStorage';
+import { getSetting as getSettingForAdmin } from '@/utils/settingsStorage';
 import { StreakData } from '@/utils/streakStorage';
 import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
@@ -41,7 +41,6 @@ export interface CertificateLevel {
     streakDays: number;
     notesCreated: number;
     foldersUsed: number;
-    xpLevel: number;
   };
   certificateText: string;
   linkedInDescription: string;
@@ -61,7 +60,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Beginner',
     subtitle: 'First Steps',
     icon: Shield,
-    requirements: { tasksCompleted: 10, streakDays: 3, notesCreated: 3, foldersUsed: 1, xpLevel: 2 },
+    requirements: { tasksCompleted: 10, streakDays: 3, notesCreated: 3, foldersUsed: 1 },
     certificateText: 'This certifies that the holder has demonstrated initiative in personal productivity by completing their first milestones on Npd. By establishing early habits of task management and note-taking, they have laid the foundation for sustained productivity excellence.',
     linkedInDescription: '🏅 Just earned my Npd Beginner Certificate!\n\nI completed 10+ tasks, maintained a 3-day streak, and started organizing my workflow with Npd task manager.\n\nSmall wins compound into big results. The journey of a thousand tasks starts with one ✅\n\n#Productivity #TaskManagement #Npd #PersonalGrowth',
     colors: {
@@ -78,7 +77,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Achiever',
     subtitle: 'Building Momentum',
     icon: Star,
-    requirements: { tasksCompleted: 50, streakDays: 7, notesCreated: 10, foldersUsed: 2, xpLevel: 5 },
+    requirements: { tasksCompleted: 50, streakDays: 7, notesCreated: 10, foldersUsed: 2 },
     certificateText: 'This certifies that the holder has demonstrated consistent dedication to productivity by completing 50+ tasks and maintaining a full week of unbroken task completion on Npd. Their commitment to organized workflows and systematic note-taking marks them as a true achiever.',
     linkedInDescription: '⭐ Earned the Npd Achiever Certificate!\n\nMilestone reached:\n✅ 50+ tasks completed\n🔥 7-day streak maintained\n📝 10+ notes organized\n\nConsistency isn\'t glamorous, but it\'s what separates those who plan from those who execute.\n\n#Productivity #Accountability #Npd #GoalSetting #GrowthMindset',
     colors: {
@@ -95,7 +94,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Expert',
     subtitle: 'Proven Discipline',
     icon: Award,
-    requirements: { tasksCompleted: 200, streakDays: 14, notesCreated: 30, foldersUsed: 3, xpLevel: 8 },
+    requirements: { tasksCompleted: 200, streakDays: 14, notesCreated: 30, foldersUsed: 3 },
     certificateText: 'This certifies that the holder has achieved Expert-level mastery in personal productivity with Npd. By completing 200+ tasks, maintaining a 14-day streak, and creating a comprehensive knowledge base of 30+ notes, they have proven their ability to sustain disciplined, organized work habits over time.',
     linkedInDescription: '🏆 Npd Expert Certificate — Unlocked!\n\n200+ tasks completed. 14-day streak. 30+ notes captured.\n\nProductivity isn\'t about doing more — it\'s about consistently doing what matters. Npd helped me build that system.\n\nHere\'s what changed:\n→ Clearer priorities\n→ Fewer missed deadlines\n→ Better idea capture\n\n#ProductivityExpert #Npd #TimeManagement #SystemsThinking #ProfessionalDevelopment',
     colors: {
@@ -112,7 +111,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Champion',
     subtitle: 'Elite Performer',
     icon: Crown,
-    requirements: { tasksCompleted: 500, streakDays: 30, notesCreated: 75, foldersUsed: 5, xpLevel: 12 },
+    requirements: { tasksCompleted: 500, streakDays: 30, notesCreated: 75, foldersUsed: 5 },
     certificateText: 'This certifies that the holder has reached Champion status — a distinction held by the top tier of Npd users. With 500+ tasks conquered, a 30-day streak of unbroken productivity, and a rich knowledge system of 75+ notes, they have demonstrated elite-level commitment to personal and professional excellence.',
     linkedInDescription: '👑 Just unlocked the Npd Champion Certificate!\n\n🎯 500+ tasks completed\n🔥 30-day streak — zero days missed\n📝 75+ notes in my knowledge base\n📁 5+ organized workflows\n\n30 consecutive days of showing up. No excuses. No breaks.\n\nThe hardest part was day 1. After that, it became identity.\n\nIf you\'re looking for a system that actually works: @Npd\n\n#Champion #Productivity #Npd #DisciplineEqualsFreedom #30DayChallenge',
     colors: {
@@ -129,7 +128,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Master',
     subtitle: 'Legendary Status',
     icon: Gem,
-    requirements: { tasksCompleted: 1000, streakDays: 60, notesCreated: 150, foldersUsed: 8, xpLevel: 16 },
+    requirements: { tasksCompleted: 1000, streakDays: 60, notesCreated: 150, foldersUsed: 8 },
     certificateText: 'This certifies that the holder has achieved the highest distinction in the Npd productivity system — Master rank. With 1,000+ tasks completed, a 60-day unbroken streak, and a comprehensive knowledge architecture of 150+ notes, they represent the pinnacle of sustained personal productivity. This achievement places them among the most disciplined and committed productivity practitioners.',
     linkedInDescription: '💎 Npd MASTER Certificate — The highest rank achieved.\n\n📊 The numbers:\n• 1,000+ tasks completed\n• 60-day streak — two months, zero missed days\n• 150+ notes in my second brain\n• 8+ structured workflows\n\nThis took months of daily discipline. Not motivation — systems.\n\nNpd didn\'t just help me manage tasks. It changed how I think about execution.\n\nTo anyone building their productivity system: Start today. The compound effect is real.\n\n#Master #ProductivityMaster #Npd #SecondBrain #ExecutionOverPlanning #1000Tasks',
     colors: {
@@ -151,29 +150,29 @@ interface UserProgress {
   longestStreak: number;
   notesCreated: number;
   foldersUsed: number;
-  xpLevel: number;
+  isAdmin: boolean;
 }
 
 const computeUnlockPercent = (progress: UserProgress, cert: CertificateLevel): number => {
+  if (progress.isAdmin) return 100;
   const r = cert.requirements;
   const parts = [
     Math.min(progress.tasksCompleted / r.tasksCompleted, 1),
     Math.min(progress.longestStreak / r.streakDays, 1),
     Math.min(progress.notesCreated / r.notesCreated, 1),
     Math.min(progress.foldersUsed / r.foldersUsed, 1),
-    Math.min(progress.xpLevel / r.xpLevel, 1),
   ];
   return Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100);
 };
 
 const isUnlocked = (progress: UserProgress, cert: CertificateLevel): boolean => {
+  if (progress.isAdmin) return true;
   const r = cert.requirements;
   return (
     progress.tasksCompleted >= r.tasksCompleted &&
     progress.longestStreak >= r.streakDays &&
     progress.notesCreated >= r.notesCreated &&
-    progress.foldersUsed >= r.foldersUsed &&
-    progress.xpLevel >= r.xpLevel
+    progress.foldersUsed >= r.foldersUsed
   );
 };
 
@@ -183,11 +182,11 @@ const isUnlocked = (progress: UserProgress, cert: CertificateLevel): boolean => 
  */
 export const hasNewCertificates = async (longestStreak: number): Promise<boolean> => {
   try {
-    const [tasks, notes, folders, xpData, seenCerts] = await Promise.all([
+    const [tasks, notes, folders, adminBypass, seenCerts] = await Promise.all([
       loadTodoItems(),
       loadNotesFromDB(),
       loadFolders(),
-      loadXpData(),
+      getSettingForAdmin<boolean>('npd_admin_bypass', false),
       getSetting<string[]>('npd_seen_certificates', []),
     ]);
     const completedTasks = tasks.filter(t => t.completed).length;
@@ -200,7 +199,7 @@ export const hasNewCertificates = async (longestStreak: number): Promise<boolean
       longestStreak,
       notesCreated: notes.length,
       foldersUsed: usedFolderIds.size,
-      xpLevel: xpData.currentLevel,
+      isAdmin: !!adminBypass,
     };
     return CERTIFICATE_LEVELS.some(
       cert => isUnlocked(progress, cert) && !seenCerts.includes(cert.id)
@@ -242,11 +241,11 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
     const load = async () => {
       setIsLoading(true);
       try {
-        const [tasks, notes, folders, xpData, seenCerts] = await Promise.all([
+        const [tasks, notes, folders, adminBypass, seenCerts] = await Promise.all([
           loadTodoItems(),
           loadNotesFromDB(),
           loadFolders(),
-          loadXpData(),
+          getSettingForAdmin<boolean>('npd_admin_bypass', false),
           getSetting<string[]>('npd_seen_certificates', []),
         ]);
 
@@ -261,7 +260,7 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
           longestStreak: streakData?.longestStreak || 0,
           notesCreated: notes.length,
           foldersUsed: usedFolderIds.size,
-          xpLevel: xpData.currentLevel,
+          isAdmin: !!adminBypass,
         };
         setProgress(userProgress);
 
@@ -493,7 +492,6 @@ const CertificateDetail = ({
     { label: 'Streak days', current: progress.longestStreak, required: r.streakDays, icon: <Flame className="h-3 w-3" /> },
     { label: 'Notes created', current: progress.notesCreated, required: r.notesCreated, icon: <FileText className="h-3 w-3" /> },
     { label: 'Folders used', current: progress.foldersUsed, required: r.foldersUsed, icon: <FolderOpen className="h-3 w-3" /> },
-    { label: 'XP level', current: progress.xpLevel, required: r.xpLevel, icon: <Star className="h-3 w-3" /> },
   ];
 
   return (

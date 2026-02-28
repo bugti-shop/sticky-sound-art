@@ -85,11 +85,5 @@ export const claimDailyReward = async (): Promise<{
 
   await setSetting(STORAGE_KEY, data);
 
-  // Award XP
-  try {
-    const { addXp } = await import('./gamificationStorage');
-    await addXp(reward.xp, `Daily login reward: Day ${currentDay}`);
-  } catch {}
-
   return { xpEarned: reward.xp, day: currentDay, data };
 };

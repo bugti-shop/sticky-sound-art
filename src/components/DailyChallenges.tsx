@@ -38,10 +38,8 @@ export const DailyChallenges = () => {
     const handleUpdate = () => loadData();
 
     window.addEventListener('challengeCompleted', handleComplete as EventListener);
-    window.addEventListener('xpUpdated', handleUpdate);
     return () => {
       window.removeEventListener('challengeCompleted', handleComplete as EventListener);
-      window.removeEventListener('xpUpdated', handleUpdate);
     };
   }, []);
 
@@ -71,7 +69,7 @@ export const DailyChallenges = () => {
           >
             <Sparkles className="h-5 w-5" />
             <span className="font-semibold">{completedChallenge.title} Complete!</span>
-            <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">+{completedChallenge.xpReward} XP</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">Done!</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -137,14 +135,6 @@ export const DailyChallenges = () => {
                     )}>
                       {challenge.title}
                     </h4>
-                     <span className={cn(
-                      "text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0",
-                      challenge.completed
-                        ? "bg-success/20 text-success"
-                        : "bg-info/20 text-info"
-                    )}>
-                      +{challenge.xpReward} XP
-                    </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {challenge.description}

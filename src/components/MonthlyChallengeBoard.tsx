@@ -58,7 +58,6 @@ export const MonthlyChallengeBoard = () => {
     window.addEventListener('monthlyChallengesUpdated', handler);
     window.addEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
     window.addEventListener('monthlyBoardCompleted', handleBoardComplete);
-    window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getMonthDeadline()), 60000 * 60);
 
@@ -66,7 +65,6 @@ export const MonthlyChallengeBoard = () => {
       window.removeEventListener('monthlyChallengesUpdated', handler);
       window.removeEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
       window.removeEventListener('monthlyBoardCompleted', handleBoardComplete);
-      window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
   }, []);
@@ -76,7 +74,6 @@ export const MonthlyChallengeBoard = () => {
   const completedCount = data.challenges.filter(c => c.completed).length;
   const totalChallenges = data.challenges.length;
   const overallPercent = (completedCount / totalChallenges) * 100;
-  const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0) + 500; // including bonus
 
   return (
     <>
@@ -162,7 +159,7 @@ export const MonthlyChallengeBoard = () => {
               >
                 <p className="text-lg font-black text-warning">Badge Unlocked!</p>
                 <p className="text-sm font-bold text-foreground mt-1">{unlockedBadge.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">All monthly challenges completed · +500 XP bonus 🎉</p>
+                <p className="text-xs text-muted-foreground mt-1">All monthly challenges completed! 🎉</p>
               </motion.div>
 
               {/* Dismiss button */}
@@ -192,7 +189,7 @@ export const MonthlyChallengeBoard = () => {
             <span className="text-2xl">{celebratingChallenge.icon}</span>
             <div>
               <p className="text-sm font-bold text-warning">Monthly Challenge Complete! 🏆</p>
-              <p className="text-xs text-muted-foreground">{celebratingChallenge.title} · +{celebratingChallenge.xpReward} XP</p>
+              <p className="text-xs text-muted-foreground">{celebratingChallenge.title}</p>
             </div>
           </motion.div>
         )}
@@ -276,14 +273,6 @@ export const MonthlyChallengeBoard = () => {
                       )}>
                         {challenge.title}
                       </p>
-                      <span className={cn(
-                        "text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0",
-                        challenge.completed
-                          ? "bg-success/15 text-success"
-                          : "bg-warning/10 text-warning"
-                      )}>
-                        +{challenge.xpReward}
-                      </span>
                     </div>
                     <p className="text-[10px] text-muted-foreground truncate mt-0.5">
                       {challenge.description}
@@ -344,8 +333,8 @@ export const MonthlyChallengeBoard = () => {
           </p>
           <p className="text-[10px] text-muted-foreground">
             {data.allCompleted
-              ? 'Badge unlocked! +500 XP bonus earned 🎉'
-              : `Complete all ${totalChallenges} challenges to unlock · +500 XP bonus`}
+              ? 'Badge unlocked! 🎉'
+              : `Complete all ${totalChallenges} challenges to unlock`}
           </p>
         </div>
         {data.allCompleted && (

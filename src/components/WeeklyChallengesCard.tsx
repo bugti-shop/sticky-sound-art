@@ -40,14 +40,12 @@ export const WeeklyChallengesCard = () => {
 
     window.addEventListener('weeklyChallengesUpdated', handler);
     window.addEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
-    window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getWeekDeadline()), 60000);
 
     return () => {
       window.removeEventListener('weeklyChallengesUpdated', handler);
       window.removeEventListener('weeklyChallengeCompleted', handleComplete as EventListener);
-      window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
   }, []);
@@ -55,7 +53,6 @@ export const WeeklyChallengesCard = () => {
   if (!data) return null;
 
   const completedCount = data.challenges.filter(c => c.completed).length;
-  const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0);
 
   return (
     <>
@@ -83,7 +80,7 @@ export const WeeklyChallengesCard = () => {
             <span className="text-2xl">{celebratingChallenge.icon}</span>
             <div>
               <p className="text-sm font-bold text-success">Weekly Challenge Complete!</p>
-              <p className="text-xs text-muted-foreground">{celebratingChallenge.title} · +{celebratingChallenge.xpReward} XP</p>
+              <p className="text-xs text-muted-foreground">{celebratingChallenge.title}</p>
             </div>
           </motion.div>
         )}
@@ -177,15 +174,6 @@ export const WeeklyChallengesCard = () => {
                 )}
               </div>
 
-              {/* XP Reward */}
-              <div className={cn(
-                "text-xs font-bold px-2 py-1 rounded-full flex-shrink-0",
-                challenge.completed
-                  ? "bg-success/15 text-success"
-                  : "bg-warning/15 text-warning"
-              )}>
-                +{challenge.xpReward} XP
-              </div>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -205,10 +193,9 @@ export const WeeklyChallengesCard = () => {
         </motion.div>
       )}
 
-      {/* Total XP info */}
       {!data.allCompleted && (
         <p className="text-[10px] text-muted-foreground text-center mt-3">
-          Complete all for up to {totalXp} XP · Resets every Saturday
+          Resets every Saturday
         </p>
       )}
     </div>
