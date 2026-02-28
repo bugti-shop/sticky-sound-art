@@ -188,14 +188,13 @@ export default function Profile() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (e) => {
+              onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
                 const reader = new FileReader();
-                reader.onload = async (ev) => {
+                reader.onload = (ev) => {
                   const dataUrl = ev.target?.result as string;
-                  await updateProfile({ avatarUrl: dataUrl });
-                  toast({ title: t('profile.photoUpdated', 'Profile photo updated') });
+                  setCropImageSrc(dataUrl);
                 };
                 reader.readAsDataURL(file);
                 e.target.value = '';
