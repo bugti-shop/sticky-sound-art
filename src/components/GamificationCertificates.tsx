@@ -569,10 +569,18 @@ const CertificateDetail = ({
       {/* Share actions */}
       {unlocked && (
         <>
-          <Button onClick={onShare} disabled={isSharing} className="w-full" size="lg">
-            <Share2 className="h-4 w-4 mr-2" />
-            {isSharing ? 'Generating...' : 'Share Certificate'}
-          </Button>
+          <div className="bg-card border-2 rounded-xl p-5 space-y-3" style={{ borderColor: cert.colors.accent + '60' }}>
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              <Share2 className="h-4 w-4" style={{ color: cert.colors.accent }} />
+              Share on Social Media
+            </h3>
+            <p className="text-xs text-muted-foreground">Download your certificate image and share it on LinkedIn, Instagram, Twitter, or any platform!</p>
+            <Button onClick={onShare} disabled={isSharing} className="w-full font-bold" size="lg"
+              style={{ background: cert.colors.accent, color: 'hsl(0,0%,5%)' }}>
+              <Share2 className="h-4 w-4 mr-2" />
+              {isSharing ? 'Generating Image...' : 'Share Certificate'}
+            </Button>
+          </div>
 
           <div className="bg-card border rounded-xl p-4">
             <h3 className="text-sm font-bold mb-2 flex items-center gap-2">
@@ -588,6 +596,13 @@ const CertificateDetail = ({
             </button>
           </div>
         </>
+      )}
+
+      {!unlocked && (
+        <div className="bg-muted/50 border border-dashed rounded-xl p-5 text-center">
+          <Lock className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground font-medium">Complete all requirements to unlock sharing</p>
+        </div>
       )}
     </div>
   );
