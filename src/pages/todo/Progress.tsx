@@ -9,7 +9,7 @@ import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
 import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
-import { StreakShowcase } from '@/components/StreakShowcase';
+
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
