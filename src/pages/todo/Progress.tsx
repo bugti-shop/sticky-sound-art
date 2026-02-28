@@ -72,7 +72,11 @@ const Progress = () => {
 
     const handler = () => loadStats();
     window.addEventListener('tasksUpdated', handler);
-    return () => window.removeEventListener('tasksUpdated', handler);
+    window.addEventListener('dailyRewardClaimed', handler);
+    return () => {
+      window.removeEventListener('tasksUpdated', handler);
+      window.removeEventListener('dailyRewardClaimed', handler);
+    };
   }, []);
 
   // Get encouraging message based on status
