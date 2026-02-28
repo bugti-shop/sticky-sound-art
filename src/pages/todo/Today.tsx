@@ -142,6 +142,8 @@ const Today = () => {
   const [customSmartViews, setCustomSmartViews] = useState<CustomSmartView[]>([]);
   const [activeCustomViewId, setActiveCustomViewId] = useState<string | null>(null);
   const [isSaveSmartViewOpen, setIsSaveSmartViewOpen] = useState(false);
+  const { showDialog: showStreakChallenge, closeDialog: closeStreakChallenge } = useStreakChallengeDialog();
+  const { data: streakData, weekData: streakWeekData } = useStreak({ autoCheck: false });
   
   const [isAutoScheduleOpen, setIsAutoScheduleOpen] = useState(false);
   
