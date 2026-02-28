@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
-import { startOfWeek, endOfWeek } from 'date-fns';
+import { startOfWeek, endOfWeek, format } from 'date-fns';
 import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 import { StreakShowcase } from '@/components/StreakShowcase';
