@@ -56,7 +56,6 @@ export const ComboOverlay = () => {
             type: 'spring',
             damping: 10,
             stiffness: 300,
-            exit: { duration: 0.4, ease: 'easeOut' },
           }}
           className="fixed top-24 left-1/2 -translate-x-1/2 z-[90] pointer-events-none flex flex-col items-center"
         >
