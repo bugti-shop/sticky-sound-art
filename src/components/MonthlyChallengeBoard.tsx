@@ -74,7 +74,6 @@ export const MonthlyChallengeBoard = () => {
   const completedCount = data.challenges.filter(c => c.completed).length;
   const totalChallenges = data.challenges.length;
   const overallPercent = (completedCount / totalChallenges) * 100;
-  const totalChallenges = data.challenges.length;
 
   return (
     <>
