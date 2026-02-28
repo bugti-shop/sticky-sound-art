@@ -459,13 +459,11 @@ const GradientCard = ({ streak, total, longest, userName, userAvatar }: Shareabl
 );
 
 /* ---- Card 5: Champion Trophy ---- */
-const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) => (
+const TrophyCard = ({ streak, total, longest, milestones, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(170deg, hsl(43, 30%, 10%), hsl(40, 40%, 5%))' }}>
-    {/* Gold shimmer line */}
     <div className="absolute top-0 left-0 right-0 h-1" 
       style={{ background: 'linear-gradient(90deg, transparent, hsl(43, 100%, 50%), transparent)' }} />
-    {/* Gold glow */}
     <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full opacity-10 blur-2xl"
       style={{ background: 'hsl(43, 100%, 50%)' }} />
 
@@ -484,7 +482,6 @@ const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) 
         <p className="text-sm font-semibold mt-1" style={{ color: 'hsl(43, 40%, 50%)' }}>day streak</p>
       </div>
 
-      {/* Milestone badges */}
       <div className="w-full">
         <div className="flex justify-center gap-2 mb-3">
           {[3, 7, 14, 30].map((m) => (
@@ -502,7 +499,7 @@ const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) 
           <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
           <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
         </div>
-        <CardLogoFooter color="hsl(43, 20%, 25%)" />
+        <CardLogoFooter color="hsl(43, 20%, 25%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
