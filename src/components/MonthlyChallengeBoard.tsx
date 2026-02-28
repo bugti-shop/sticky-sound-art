@@ -9,8 +9,11 @@ import {
   loadEarnedMonthlyBadges,
   type MonthlyChallengesData,
   type MonthlyBadge,
+  type MonthlyChallenge,
 } from '@/utils/monthlyChallengeStorage';
 import { Progress } from '@/components/ui/progress';
+import { playChallengeCompleteSound } from '@/utils/gamificationSounds';
+import Confetti from 'react-confetti';
 
 export const MonthlyChallengeBoard = () => {
   const { t } = useTranslation();
@@ -18,6 +21,9 @@ export const MonthlyChallengeBoard = () => {
   const [earnedBadges, setEarnedBadges] = useState<MonthlyBadge[]>([]);
   const [deadline, setDeadline] = useState(getMonthDeadline());
   const [showBadges, setShowBadges] = useState(false);
+  const [celebratingChallenge, setCelebratingChallenge] = useState<MonthlyChallenge | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showBoardConfetti, setShowBoardConfetti] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -30,17 +36,32 @@ export const MonthlyChallengeBoard = () => {
     load();
 
     const handler = () => load();
+    const handleComplete = (e: CustomEvent<{ challenge: MonthlyChallenge }>) => {
+      setCelebratingChallenge(e.detail.challenge);
+      playChallengeCompleteSound();
+      setShowConfetti(true);
+      setTimeout(() => setCelebratingChallenge(null), 3000);
+      setTimeout(() => setShowConfetti(false), 4000);
+      load();
+    };
+    const handleBoardComplete = () => {
+      setShowBoardConfetti(true);
+      playChallengeCompleteSound();
+      setTimeout(() => setShowBoardConfetti(false), 6000);
+      load();
+    };
+
     window.addEventListener('monthlyChallengesUpdated', handler);
-    window.addEventListener('monthlyChallengeCompleted', handler);
-    window.addEventListener('monthlyBoardCompleted', handler);
+    window.addEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
+    window.addEventListener('monthlyBoardCompleted', handleBoardComplete);
     window.addEventListener('xpUpdated', handler);
 
     const timer = setInterval(() => setDeadline(getMonthDeadline()), 60000 * 60);
 
     return () => {
       window.removeEventListener('monthlyChallengesUpdated', handler);
-      window.removeEventListener('monthlyChallengeCompleted', handler);
-      window.removeEventListener('monthlyBoardCompleted', handler);
+      window.removeEventListener('monthlyChallengeCompleted', handleComplete as EventListener);
+      window.removeEventListener('monthlyBoardCompleted', handleBoardComplete);
       window.removeEventListener('xpUpdated', handler);
       clearInterval(timer);
     };
@@ -54,6 +75,50 @@ export const MonthlyChallengeBoard = () => {
   const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0) + 500; // including bonus
 
   return (
+    <>
+      {/* Confetti on individual challenge completion */}
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={150}
+          gravity={0.3}
+          style={{ position: 'fixed', top: 0, left: 0, zIndex: 100, pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* Big confetti on ALL challenges completed */}
+      {showBoardConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={400}
+          gravity={0.2}
+          colors={['#FFD700', '#FFA500', '#FF6347', '#8B5CF6', '#3B82F6']}
+          style={{ position: 'fixed', top: 0, left: 0, zIndex: 100, pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* Celebration toast */}
+      <AnimatePresence>
+        {celebratingChallenge && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-[95] bg-card border border-warning/30 shadow-lg rounded-2xl px-5 py-3 flex items-center gap-3 pointer-events-none"
+          >
+            <span className="text-2xl">{celebratingChallenge.icon}</span>
+            <div>
+              <p className="text-sm font-bold text-warning">Monthly Challenge Complete! 🏆</p>
+              <p className="text-xs text-muted-foreground">{celebratingChallenge.title} · +{celebratingChallenge.xpReward} XP</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
       {/* Theme header */}
       <div className={cn(
@@ -242,5 +307,6 @@ export const MonthlyChallengeBoard = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
