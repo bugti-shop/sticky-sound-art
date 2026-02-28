@@ -71,7 +71,7 @@ export const claimDailyReward = async (): Promise<{
     return { day: data.currentDay, data };
   }
 
-  const reward = DAILY_REWARDS[currentDay - 1];
+  
   data.currentDay = currentDay;
   data.lastClaimDate = format(new Date(), 'yyyy-MM-dd');
   data.totalClaimed += 1;
