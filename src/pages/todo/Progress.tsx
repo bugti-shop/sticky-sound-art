@@ -467,7 +467,7 @@ const Progress = () => {
       {/* Certificates Modal */}
       <GamificationCertificates
         isOpen={showCertificates}
-        onClose={() => setShowCertificates(false)}
+        onClose={() => { setShowCertificates(false); setHasNewCerts(false); }}
         streakData={data}
       />
 
