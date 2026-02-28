@@ -68,8 +68,7 @@ export const claimDailyReward = async (): Promise<{
 }> => {
   const { canClaim, currentDay, data } = await checkDailyReward();
   if (!canClaim) {
-    const reward = DAILY_REWARDS[data.currentDay - 1];
-    return { xpEarned: 0, day: data.currentDay, data };
+    return { day: data.currentDay, data };
   }
 
   const reward = DAILY_REWARDS[currentDay - 1];
