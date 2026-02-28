@@ -15,37 +15,10 @@ import { GamificationCertificates } from '@/components/GamificationCertificates'
 const Progress = () => {
   const { t } = useTranslation();
   const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [celebratingMilestone, setCelebratingMilestone] = useState<number | null>(null);
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showCertificates, setShowCertificates] = useState(false);
-  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-
-  // Handle window resize for confetti
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Listen for milestone celebrations
-  useEffect(() => {
-    const handleMilestone = (e: CustomEvent<{ milestone: number }>) => {
-      setCelebratingMilestone(e.detail.milestone);
-      setShowConfetti(true);
-      setTimeout(() => {
-        setShowConfetti(false);
-        setCelebratingMilestone(null);
-      }, 4000);
-    };
-    
-    window.addEventListener('streakMilestone', handleMilestone as EventListener);
-    return () => window.removeEventListener('streakMilestone', handleMilestone as EventListener);
-  }, []);
 
   useEffect(() => {
     const loadStats = async () => {
