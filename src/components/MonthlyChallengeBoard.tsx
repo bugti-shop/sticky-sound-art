@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Calendar, Check, Crown, Sparkles, Lock } from 'lucide-react';
+import { Calendar, Check, Crown, Sparkles, Lock, Trophy } from 'lucide-react';
 import {
   loadMonthlyChallenges,
   getMonthDeadline,
