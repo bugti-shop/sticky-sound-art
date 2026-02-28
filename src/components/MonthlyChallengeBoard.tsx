@@ -1,0 +1,246 @@
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Calendar, Check, Crown, Sparkles, Lock } from 'lucide-react';
+import {
+  loadMonthlyChallenges,
+  getMonthDeadline,
+  loadEarnedMonthlyBadges,
+  type MonthlyChallengesData,
+  type MonthlyBadge,
+} from '@/utils/monthlyChallengeStorage';
+import { Progress } from '@/components/ui/progress';
+
+export const MonthlyChallengeBoard = () => {
+  const { t } = useTranslation();
+  const [data, setData] = useState<MonthlyChallengesData | null>(null);
+  const [earnedBadges, setEarnedBadges] = useState<MonthlyBadge[]>([]);
+  const [deadline, setDeadline] = useState(getMonthDeadline());
+  const [showBadges, setShowBadges] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const d = await loadMonthlyChallenges();
+      setData(d);
+      setDeadline(getMonthDeadline());
+      const badges = await loadEarnedMonthlyBadges();
+      setEarnedBadges(badges);
+    };
+    load();
+
+    const handler = () => load();
+    window.addEventListener('monthlyChallengesUpdated', handler);
+    window.addEventListener('monthlyChallengeCompleted', handler);
+    window.addEventListener('monthlyBoardCompleted', handler);
+    window.addEventListener('xpUpdated', handler);
+
+    const timer = setInterval(() => setDeadline(getMonthDeadline()), 60000 * 60);
+
+    return () => {
+      window.removeEventListener('monthlyChallengesUpdated', handler);
+      window.removeEventListener('monthlyChallengeCompleted', handler);
+      window.removeEventListener('monthlyBoardCompleted', handler);
+      window.removeEventListener('xpUpdated', handler);
+      clearInterval(timer);
+    };
+  }, []);
+
+  if (!data) return null;
+
+  const completedCount = data.challenges.filter(c => c.completed).length;
+  const totalChallenges = data.challenges.length;
+  const overallPercent = (completedCount / totalChallenges) * 100;
+  const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0) + 500; // including bonus
+
+  return (
+    <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
+      {/* Theme header */}
+      <div className={cn(
+        "px-5 py-4 border-b",
+        data.allCompleted
+          ? "bg-gradient-to-r from-warning/15 to-primary/15"
+          : "bg-gradient-to-r from-primary/10 to-accent/10"
+      )}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl">{data.themeEmoji}</span>
+            <div>
+              <h3 className="font-bold text-sm">{data.theme}</h3>
+              <p className="text-[10px] text-muted-foreground">Monthly Challenge Board</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            <span className={cn(
+              "font-medium",
+              deadline.daysLeft <= 3 && "text-destructive"
+            )}>
+              {deadline.daysLeft === 0
+                ? 'Last day!'
+                : `${deadline.daysLeft}d left`}
+            </span>
+          </div>
+        </div>
+
+        {/* Overall progress */}
+        <div className="mt-3 flex items-center gap-2.5">
+          <Progress value={overallPercent} className="h-2.5 flex-1" />
+          <span className="text-xs font-bold text-muted-foreground">
+            {completedCount}/{totalChallenges}
+          </span>
+        </div>
+      </div>
+
+      {/* Challenge list */}
+      <div className="p-4 space-y-2.5">
+        <AnimatePresence>
+          {data.challenges.map((challenge, i) => {
+            const percent = Math.min((challenge.current / challenge.target) * 100, 100);
+            return (
+              <motion.div
+                key={challenge.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className={cn(
+                  "rounded-xl border p-3 transition-all",
+                  challenge.completed
+                    ? "bg-success/8 border-success/20"
+                    : "bg-muted/20 border-transparent"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  {/* Icon */}
+                  <div className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-base",
+                    challenge.completed ? "bg-success/15" : "bg-muted"
+                  )}>
+                    {challenge.completed ? (
+                      <Check className="h-4 w-4 text-success" />
+                    ) : (
+                      <span>{challenge.icon}</span>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={cn(
+                        "text-xs font-semibold truncate",
+                        challenge.completed && "line-through text-muted-foreground"
+                      )}>
+                        {challenge.title}
+                      </p>
+                      <span className={cn(
+                        "text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0",
+                        challenge.completed
+                          ? "bg-success/15 text-success"
+                          : "bg-warning/10 text-warning"
+                      )}>
+                        +{challenge.xpReward}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                      {challenge.description}
+                    </p>
+                    {!challenge.completed && (
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <div className="flex-1 bg-muted rounded-full h-1.5">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${percent}%` }}
+                            className="bg-primary h-1.5 rounded-full transition-all"
+                          />
+                        </div>
+                        <span className="text-[9px] font-medium text-muted-foreground">
+                          {challenge.current}/{challenge.target}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Badge reward preview / unlock */}
+      <div className={cn(
+        "mx-4 mb-4 rounded-xl border-2 border-dashed p-4 flex items-center gap-3 transition-all",
+        data.allCompleted
+          ? "border-warning/40 bg-warning/8"
+          : "border-muted-foreground/15 bg-muted/20"
+      )}>
+        <div className={cn(
+          "w-12 h-12 rounded-full flex items-center justify-center text-xl flex-shrink-0 transition-all",
+          data.allCompleted
+            ? "bg-warning/20 shadow-sm"
+            : "bg-muted/60"
+        )}>
+          {data.allCompleted ? (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 0.5 }}
+            >
+              {data.badge.icon}
+            </motion.span>
+          ) : (
+            <Lock className="h-5 w-5 text-muted-foreground/50" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={cn(
+            "text-xs font-bold",
+            data.allCompleted ? "text-warning" : "text-muted-foreground"
+          )}>
+            {data.allCompleted ? data.badge.name : 'Exclusive Badge'}
+          </p>
+          <p className="text-[10px] text-muted-foreground">
+            {data.allCompleted
+              ? 'Badge unlocked! +500 XP bonus earned 🎉'
+              : `Complete all ${totalChallenges} challenges to unlock · +500 XP bonus`}
+          </p>
+        </div>
+        {data.allCompleted && (
+          <Crown className="h-5 w-5 text-warning flex-shrink-0" />
+        )}
+      </div>
+
+      {/* Past badges */}
+      {earnedBadges.length > 0 && (
+        <div className="px-4 pb-4">
+          <button
+            onClick={() => setShowBadges(!showBadges)}
+            className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 mb-2"
+          >
+            <Sparkles className="h-3 w-3" />
+            {earnedBadges.length} badge{earnedBadges.length !== 1 ? 's' : ''} earned
+          </button>
+          <AnimatePresence>
+            {showBadges && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="flex flex-wrap gap-2 overflow-hidden"
+              >
+                {earnedBadges.map((badge) => (
+                  <div
+                    key={badge.month}
+                    className="flex items-center gap-1.5 bg-warning/10 border border-warning/20 rounded-full px-2.5 py-1"
+                  >
+                    <span className="text-sm">{badge.icon}</span>
+                    <span className="text-[9px] font-medium text-warning">{badge.name}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+    </div>
+  );
+};
