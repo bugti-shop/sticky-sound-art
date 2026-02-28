@@ -20,6 +20,7 @@ const Progress = () => {
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  const [showCertificates, setShowCertificates] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   // Handle window resize for confetti
