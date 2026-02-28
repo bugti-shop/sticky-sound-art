@@ -164,6 +164,9 @@ export default function Profile() {
             )}
           </div>
 
+          {/* Streak Society Badge */}
+          <StreakSocietyBadge />
+
           <h2 className="text-xl font-semibold text-foreground text-center">
             {user ? user.name : t('profile.guest', 'Guest User')}
           </h2>
