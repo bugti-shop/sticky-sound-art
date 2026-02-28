@@ -368,8 +368,6 @@ export default function Profile() {
               </div>
           </div>
 
-          {/* Productivity Score */}
-          <ProductivityScoreGauge />
         </div>
       </div>
       </div>
