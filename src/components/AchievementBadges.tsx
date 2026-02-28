@@ -142,7 +142,7 @@ export const AchievementBadges = ({ compact = false }: AchievementBadgesProps) =
                   transition={{ delay: 0.5, type: 'spring' }}
                   className="mt-3 inline-block bg-success/20 text-success px-4 py-1 rounded-full font-semibold"
                 >
-                  +{unlockedAchievement.xpReward} XP
+                  Unlocked! 🎉
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -278,9 +278,6 @@ export const AchievementBadges = ({ compact = false }: AchievementBadgesProps) =
               <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight">
                 {achievement.name}
               </span>
-              {isUnlocked && (
-                <span className="text-[9px] text-warning">+{achievement.xpReward} XP</span>
-              )}
             </motion.div>
           );
         })}
