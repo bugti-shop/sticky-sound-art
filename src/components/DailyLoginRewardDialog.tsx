@@ -61,6 +61,18 @@ export const DailyLoginRewardDialog = () => {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
 
+          {/* Day 7 Confetti */}
+          {claimed && currentDay === 7 && (
+            <Confetti
+              width={window.innerWidth}
+              height={window.innerHeight}
+              recycle={false}
+              numberOfPieces={300}
+              gravity={0.2}
+              colors={['#FFD700', '#FF6B35', '#FF4444', '#44FF44', '#4488FF', '#FF44FF', '#FFFFFF']}
+            />
+          )}
+
           {/* Dialog */}
           <motion.div
             initial={{ scale: 0.85, opacity: 0, y: 30 }}
