@@ -363,6 +363,19 @@ export default function Profile() {
       </div>
 
       {lastDashboard === 'todo' ? <TodoBottomNavigation /> : <BottomNavigation />}
+
+      {/* Image Cropper Modal */}
+      {cropImageSrc && (
+        <ProfileImageCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={async (croppedUrl) => {
+            await updateProfile({ avatarUrl: croppedUrl });
+            setCropImageSrc(null);
+            toast({ title: t('profile.photoUpdated', 'Profile photo updated') });
+          }}
+          onCancel={() => setCropImageSrc(null)}
+        />
+      )}
     </div>
   );
 }
