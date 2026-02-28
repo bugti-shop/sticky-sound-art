@@ -58,6 +58,37 @@ export const WeeklyChallengesCard = () => {
   const totalXp = data.challenges.reduce((sum, c) => sum + c.xpReward, 0);
 
   return (
+    <>
+      {/* Confetti on challenge completion */}
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={150}
+          gravity={0.3}
+          style={{ position: 'fixed', top: 0, left: 0, zIndex: 100, pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* Celebration toast */}
+      <AnimatePresence>
+        {celebratingChallenge && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-[95] bg-card border border-success/30 shadow-lg rounded-2xl px-5 py-3 flex items-center gap-3 pointer-events-none"
+          >
+            <span className="text-2xl">{celebratingChallenge.icon}</span>
+            <div>
+              <p className="text-sm font-bold text-success">Weekly Challenge Complete!</p>
+              <p className="text-xs text-muted-foreground">{celebratingChallenge.title} · +{celebratingChallenge.xpReward} XP</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     <div className="bg-card rounded-2xl p-5 border shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
