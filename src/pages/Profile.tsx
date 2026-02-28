@@ -183,6 +183,18 @@ export default function Profile() {
             >
               <Camera className="h-4 w-4" />
             </button>
+            {/* Remove photo button */}
+            {profile.avatarUrl && (
+              <button
+                onClick={async () => {
+                  await updateProfile({ avatarUrl: '' });
+                  toast({ title: t('profile.photoRemoved', 'Profile photo removed') });
+                }}
+                className="absolute bottom-0 left-0 w-9 h-9 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-lg border-2 border-background z-10"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
             <input
               ref={fileInputRef}
               type="file"
