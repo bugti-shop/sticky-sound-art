@@ -49,6 +49,10 @@ const Progress = () => {
         const rewardResult = await checkDailyReward();
         setRewardDay(rewardResult.currentDay);
         setRewardClaimed(!rewardResult.canClaim);
+
+        // Check for new certificate badges
+        const newCerts = await hasNewCertificates(data?.longestStreak || 0);
+        setHasNewCerts(newCerts);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
