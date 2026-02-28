@@ -402,6 +402,13 @@ const Progress = () => {
         onClose={() => setShowShowcase(false)}
         streakData={data}
       />
+
+      {/* Weekly Report Modal */}
+      <WeeklyReportCard
+        isOpen={showWeeklyReport}
+        onClose={() => setShowWeeklyReport(false)}
+        streakData={data}
+      />
     </TodoLayout>
   );
 };
