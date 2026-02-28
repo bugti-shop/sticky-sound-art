@@ -190,7 +190,7 @@ export const MonthlyChallengeBoard = () => {
             <span className="text-2xl">{celebratingChallenge.icon}</span>
             <div>
               <p className="text-sm font-bold text-warning">Monthly Challenge Complete! 🏆</p>
-              <p className="text-xs text-muted-foreground">{celebratingChallenge.title} · +{celebratingChallenge.xpReward} XP</p>
+              <p className="text-xs text-muted-foreground">{celebratingChallenge.title}</p>
             </div>
           </motion.div>
         )}
