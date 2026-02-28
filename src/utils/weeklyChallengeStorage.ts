@@ -25,11 +25,10 @@ export interface WeeklyChallengesData {
 const STORAGE_KEY = 'npd_weekly_challenges';
 
 const WEEKLY_CHALLENGE_TEMPLATES = [
-  { type: 'complete_tasks', title: 'Task Conqueror', description: 'Complete {target} tasks this week', targets: [15, 20, 25, 30], xpBase: [45, 60, 75, 90], icon: '🎯' },
-  { type: 'maintain_streak', title: 'Streak Guardian', description: 'Maintain a {target}-day streak', targets: [5, 7], xpBase: [75, 105], icon: '🔥' },
-  { type: 'daily_challenges', title: 'Challenge Champion', description: 'Complete all daily challenges for {target} days', targets: [3, 5], xpBase: [90, 150], icon: '⭐' },
-  { type: 'earn_xp', title: 'XP Hunter', description: 'Earn {target} XP this week', targets: [150, 250, 400], xpBase: [60, 90, 120], icon: '⚡' },
-  { type: 'complete_subtasks', title: 'Detail Master', description: 'Complete {target} subtasks this week', targets: [10, 20, 30], xpBase: [45, 75, 105], icon: '✅' },
+  { type: 'complete_tasks', title: 'Task Conqueror', description: 'Complete {target} tasks this week', targets: [15, 20, 25, 30], xpBase: [0, 0, 0, 0], icon: '🎯' },
+  { type: 'maintain_streak', title: 'Streak Guardian', description: 'Maintain a {target}-day streak', targets: [5, 7], xpBase: [0, 0], icon: '🔥' },
+  { type: 'daily_challenges', title: 'Challenge Champion', description: 'Complete all daily challenges for {target} days', targets: [3, 5], xpBase: [0, 0], icon: '⭐' },
+  { type: 'complete_subtasks', title: 'Detail Master', description: 'Complete {target} subtasks this week', targets: [10, 20, 30], xpBase: [0, 0, 0], icon: '✅' },
 ];
 
 const generateWeeklyChallenges = (): WeeklyChallenge[] => {
