@@ -11,7 +11,7 @@ import { checkDailyReward, DAILY_REWARDS, type DailyRewardData } from '@/utils/d
 
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
-import { GamificationCertificates } from '@/components/GamificationCertificates';
+import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 
 const Progress = () => {
