@@ -199,12 +199,29 @@ export const DailyLoginRewardDialog = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   className="text-center py-2"
                 >
-                  <p className="text-lg font-black text-success">
-                    +{xpEarned} XP Earned! ✨
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Come back tomorrow for more!
-                  </p>
+                  {currentDay === 7 ? (
+                    <>
+                      <motion.p
+                        className="text-2xl font-black text-warning"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        🏆 +{xpEarned} XP Bonus! 🏆
+                      </motion.p>
+                      <p className="text-xs text-warning/80 font-semibold mt-1">
+                        7-day cycle complete! You're amazing!
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-lg font-black text-success">
+                        +{xpEarned} XP Earned! ✨
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Come back tomorrow for more!
+                      </p>
+                    </>
+                  )}
                 </motion.div>
               )}
             </div>
