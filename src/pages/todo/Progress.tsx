@@ -11,7 +11,7 @@ import { checkDailyReward, DAILY_REWARDS, type DailyRewardData } from '@/utils/d
 
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
-import { GamificationCertificates } from '@/components/GamificationCertificates';
+import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
 
 const Progress = () => {
@@ -24,6 +24,7 @@ const Progress = () => {
   const [showStreakDetail, setShowStreakDetail] = useState(false);
   const [rewardDay, setRewardDay] = useState(1);
   const [rewardClaimed, setRewardClaimed] = useState(false);
+  const [hasNewCerts, setHasNewCerts] = useState(false);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -48,6 +49,10 @@ const Progress = () => {
         const rewardResult = await checkDailyReward();
         setRewardDay(rewardResult.currentDay);
         setRewardClaimed(!rewardResult.canClaim);
+
+        // Check for new certificate badges
+        const newCerts = await hasNewCertificates(data?.longestStreak || 0);
+        setHasNewCerts(newCerts);
       } catch (error) {
         console.error('Failed to load stats:', error);
       }
@@ -417,8 +422,11 @@ const Progress = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onClick={() => setShowCertificates(true)}
-            className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
+            className="relative bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
           >
+            {hasNewCerts && (
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-sm" />
+            )}
             <Award className="h-4 w-4" />
             Certificates
           </motion.button>
@@ -459,7 +467,7 @@ const Progress = () => {
       {/* Certificates Modal */}
       <GamificationCertificates
         isOpen={showCertificates}
-        onClose={() => setShowCertificates(false)}
+        onClose={() => { setShowCertificates(false); setHasNewCerts(false); }}
         streakData={data}
       />
 

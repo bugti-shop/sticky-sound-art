@@ -175,6 +175,39 @@ const isUnlocked = (progress: UserProgress, cert: CertificateLevel): boolean => 
   );
 };
 
+/**
+ * Check if there are unseen unlocked certificates (for badge indicators).
+ * Returns true if user has unlocked certs they haven't viewed yet.
+ */
+export const hasNewCertificates = async (longestStreak: number): Promise<boolean> => {
+  try {
+    const [tasks, notes, folders, xpData, seenCerts] = await Promise.all([
+      loadTodoItems(),
+      loadNotesFromDB(),
+      loadFolders(),
+      loadXpData(),
+      getSetting<string[]>('npd_seen_certificates', []),
+    ]);
+    const completedTasks = tasks.filter(t => t.completed).length;
+    const usedFolderIds = new Set([
+      ...notes.filter(n => n.folderId).map(n => n.folderId),
+      ...tasks.filter(t => t.sectionId).map(t => t.sectionId),
+    ]);
+    const progress: UserProgress = {
+      tasksCompleted: completedTasks,
+      longestStreak,
+      notesCreated: notes.length,
+      foldersUsed: usedFolderIds.size,
+      xpLevel: xpData.currentLevel,
+    };
+    return CERTIFICATE_LEVELS.some(
+      cert => isUnlocked(progress, cert) && !seenCerts.includes(cert.id)
+    );
+  } catch {
+    return false;
+  }
+};
+
 /* ============================================
    MAIN COMPONENT
    ============================================ */
