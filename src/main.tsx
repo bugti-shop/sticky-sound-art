@@ -34,6 +34,9 @@ const AppWithMigration = () => {
         // Initialize reminder system (channels + permissions)
         initializeReminders().catch(console.warn);
         
+        // Initialize streak risk notifications
+        initializeStreakNotifications().catch(console.warn);
+        
         // Configure status bar for native apps
         const theme = await getSetting<string>('theme', 'light');
         const isDarkMode = theme !== 'light';
