@@ -550,6 +550,14 @@ const Progress = () => {
         weekData={weekData}
         completedToday={completedToday}
       />
+
+      {/* Streak Repair Dialog */}
+      <StreakRepairDialog
+        isOpen={showRepairDialog}
+        onClose={() => setShowRepairDialog(false)}
+        onRepaired={() => refresh()}
+        lostStreak={lostStreakValue}
+      />
     </TodoLayout>
   );
 };
