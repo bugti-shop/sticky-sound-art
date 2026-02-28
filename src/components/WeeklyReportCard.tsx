@@ -497,14 +497,13 @@ const WrappedCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; user
 );
 
 /* ---- Card 4: Scorecard ---- */
-const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
+const ScorecardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => {
   const grade = stats.completionRate >= 90 ? 'S' : stats.completionRate >= 75 ? 'A' : stats.completionRate >= 60 ? 'B' : stats.completionRate >= 40 ? 'C' : 'D';
   const gradeColor = grade === 'S' ? 'hsl(43, 100%, 55%)' : grade === 'A' ? 'hsl(142, 71%, 50%)' : grade === 'B' ? 'hsl(217, 91%, 60%)' : 'hsl(25, 95%, 55%)';
   
   return (
     <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
       style={{ background: 'linear-gradient(160deg, hsl(250, 40%, 10%), hsl(260, 50%, 15%))' }}>
-      {/* Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-15 blur-2xl" style={{ background: gradeColor }} />
 
       <div className="relative z-10 flex flex-col items-center h-full p-5">
@@ -515,7 +514,6 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           </span>
         </div>
 
-        {/* Grade */}
         <div className="relative mb-4">
           <div className="w-24 h-24 rounded-full flex items-center justify-center"
             style={{ border: `3px solid ${gradeColor}`, background: `${gradeColor}15` }}>
@@ -527,7 +525,6 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="w-full space-y-2 flex-1">
           <ScoreRow icon={<Target className="h-3 w-3" />} label="Tasks" value={`${stats.tasksCompleted}/${stats.totalTasks}`} color="hsl(142, 71%, 55%)" />
           <ScoreRow icon={<Flame className="h-3 w-3" />} label="Streak" value={`${stats.streakDays} days`} color="hsl(25, 95%, 55%)" />
@@ -538,7 +535,7 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           )}
         </div>
 
-        <p className="text-[9px] mt-2" style={{ color: 'hsl(260, 20%, 30%)' }}>npd • task manager</p>
+        <CardBrandingFooter color="hsl(260, 20%, 30%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   );
