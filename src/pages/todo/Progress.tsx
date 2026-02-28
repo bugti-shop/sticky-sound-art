@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { TodoLayout } from './TodoLayout';
 import { useStreak } from '@/hooks/useStreak';
 import { cn } from '@/lib/utils';
-import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3 } from 'lucide-react';
+import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock, Share2, BarChart3, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import Confetti from 'react-confetti';
 import { StreakShowcase } from '@/components/StreakShowcase';
 import { WeeklyReportCard } from '@/components/WeeklyReportCard';
-
+import { GamificationCertificates } from '@/components/GamificationCertificates';
 
 const Progress = () => {
   const { t } = useTranslation();
@@ -20,6 +20,7 @@ const Progress = () => {
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   const [showShowcase, setShowShowcase] = useState(false);
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  const [showCertificates, setShowCertificates] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   // Handle window resize for confetti
@@ -366,13 +367,13 @@ const Progress = () => {
         </div>
 
         {/* Share Buttons */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {(data?.currentStreak || 0) > 0 && (
             <motion.button
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               onClick={() => setShowShowcase(true)}
-              className="bg-primary/10 border border-primary/20 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-xs active:scale-[0.98] transition-transform"
+              className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-primary font-semibold text-[10px] active:scale-[0.98] transition-transform"
             >
               <Share2 className="h-4 w-4" />
               Share Streak
@@ -383,11 +384,21 @@ const Progress = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
             onClick={() => setShowWeeklyReport(true)}
-            className="bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 font-semibold text-xs active:scale-[0.98] transition-transform"
+            className="bg-accent-purple/10 border border-accent-purple/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 font-semibold text-[10px] active:scale-[0.98] transition-transform"
             style={{ color: 'hsl(var(--accent-purple))' }}
           >
             <BarChart3 className="h-4 w-4" />
             Weekly Report
+          </motion.button>
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            onClick={() => setShowCertificates(true)}
+            className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 text-warning font-semibold text-[10px] active:scale-[0.98] transition-transform"
+          >
+            <Award className="h-4 w-4" />
+            Certificates
           </motion.button>
         </div>
         
@@ -420,6 +431,13 @@ const Progress = () => {
       <WeeklyReportCard
         isOpen={showWeeklyReport}
         onClose={() => setShowWeeklyReport(false)}
+        streakData={data}
+      />
+
+      {/* Certificates Modal */}
+      <GamificationCertificates
+        isOpen={showCertificates}
+        onClose={() => setShowCertificates(false)}
         streakData={data}
       />
     </TodoLayout>
