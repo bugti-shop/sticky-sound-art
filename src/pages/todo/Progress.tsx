@@ -190,18 +190,21 @@ const Progress = () => {
               animate={{ scale: 1 }}
               className="text-center mt-4"
             >
-              <h2 className={cn(
-                "text-5xl font-bold",
-                completedToday ? "text-streak" : "text-muted-foreground"
-              )}>
-                {data?.currentStreak || 0}
-              </h2>
-              <p className={cn(
-                "text-lg font-medium",
-                completedToday ? "text-streak" : "text-muted-foreground"
-              )}>
-                {t('streak.dayStreak', 'day streak')}
-              </p>
+                <h2 className={cn(
+                  "text-5xl font-bold",
+                  completedToday ? "text-streak" : "text-muted-foreground"
+                )}>
+                  {data?.currentStreak || 0}
+                </h2>
+                <p className={cn(
+                  "text-lg font-medium",
+                  completedToday ? "text-streak" : "text-muted-foreground"
+                )}>
+                  {t('streak.dayStreak', 'day streak')}
+                </p>
+                <div className="flex justify-center mt-2">
+                  <StreakSocietyBadge streak={data?.currentStreak || 0} compact />
+                </div>
               {(data?.currentStreak || 0) > 0 && (data?.currentStreak || 0) >= (data?.longestStreak || 0) ? (
                 <motion.p
                   initial={{ opacity: 0, scale: 0.8 }}
