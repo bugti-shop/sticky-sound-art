@@ -23,6 +23,8 @@ import { AppLockScreen } from "@/components/AppLockScreen";
 import { WhatsNewSheet } from "@/components/WhatsNewSheet";
 import { StreakMilestoneCelebration } from "@/components/StreakMilestoneCelebration";
 import { DailyLoginRewardDialog } from "@/components/DailyLoginRewardDialog";
+import { WelcomeBackCelebration } from "@/components/WelcomeBackCelebration";
+import { useRetentionLogo } from "@/hooks/useRetentionLogo";
 // Eager load only the two most critical pages for instant first render
 import Index from "./pages/Index";
 import Today from "./pages/todo/Today";
