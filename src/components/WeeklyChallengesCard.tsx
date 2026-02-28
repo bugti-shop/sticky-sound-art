@@ -10,11 +10,15 @@ import {
   type WeeklyChallenge 
 } from '@/utils/weeklyChallengeStorage';
 import { Progress } from '@/components/ui/progress';
+import { playChallengeCompleteSound } from '@/utils/gamificationSounds';
+import Confetti from 'react-confetti';
 
 export const WeeklyChallengesCard = () => {
   const { t } = useTranslation();
   const [data, setData] = useState<WeeklyChallengesData | null>(null);
   const [deadline, setDeadline] = useState(getWeekDeadline());
+  const [celebratingChallenge, setCelebratingChallenge] = useState<WeeklyChallenge | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const load = async () => {
