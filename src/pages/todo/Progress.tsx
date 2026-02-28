@@ -22,7 +22,7 @@ const Progress = () => {
   const { data, isLoading, completedToday, atRisk, status, weekData, gracePeriodRemaining } = useStreak();
   const [weekStats, setWeekStats] = useState({ completed: 0, total: 0 });
   
-  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  
   const [showCertificates, setShowCertificates] = useState(false);
   const [showStreakDetail, setShowStreakDetail] = useState(false);
   const [rewardDay, setRewardDay] = useState(1);
