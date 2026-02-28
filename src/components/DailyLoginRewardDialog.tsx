@@ -22,7 +22,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
   const [currentDay, setCurrentDay] = useState(1);
   const [data, setData] = useState<DailyRewardData | null>(null);
   const [claimed, setClaimed] = useState(false);
-  const [xpEarned, setXpEarned] = useState(0);
+  
 
   const loadRewardState = useCallback(async () => {
     try {
@@ -65,8 +65,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
 
   const handleClaim = useCallback(async () => {
     triggerHaptic(currentDay === 7 ? 'heavy' : 'medium').catch(() => {});
-    const result = await claimDailyReward();
-    setXpEarned(result.xpEarned);
+    await claimDailyReward();
     setClaimed(true);
     window.dispatchEvent(new Event('dailyRewardClaimed'));
     setTimeout(() => setIsOpen(false), currentDay === 7 ? 3500 : 2000);
@@ -121,7 +120,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
               </motion.div>
               <h2 className="text-xl font-black text-foreground">Daily Reward</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Log in every day to earn bonus XP!
+                Log in every day to earn rewards!
               </p>
             </div>
 
@@ -180,14 +179,6 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                       <span className="text-[9px] font-bold text-muted-foreground mt-1">
                         D{reward.day}
                       </span>
-                      <span
-                        className={cn(
-                          'text-[8px] font-bold mt-0.5',
-                          isCurrent ? 'text-primary' : 'text-muted-foreground'
-                        )}
-                      >
-                        {reward.xp}xp
-                      </span>
                     </motion.div>
                   );
                 })}
@@ -201,7 +192,7 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                   Today's Reward
                 </p>
                 <p className="text-2xl font-black text-primary mt-0.5">
-                  {DAILY_REWARDS[currentDay - 1].icon} +{DAILY_REWARDS[currentDay - 1].xp} XP
+                  {DAILY_REWARDS[currentDay - 1].icon} Day {currentDay}
                 </p>
                 {currentDay === 7 && (
                   <p className="text-[10px] text-warning font-semibold mt-1">
@@ -234,16 +225,16 @@ export const DailyLoginRewardDialog = ({ forceOpen, onForceOpenHandled }: DailyL
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
                       >
-                        🏆 +{xpEarned} XP Bonus! 🏆
+                        🏆 7-Day Cycle Complete! 🏆
                       </motion.p>
                       <p className="text-xs text-warning/80 font-semibold mt-1">
-                        7-day cycle complete! You're amazing!
+                        You're amazing! Keep it up!
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="text-lg font-black text-success">
-                        +{xpEarned} XP Earned! ✨
+                        Reward Claimed! ✨
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Come back tomorrow for more!

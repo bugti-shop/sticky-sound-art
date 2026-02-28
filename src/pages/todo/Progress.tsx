@@ -7,13 +7,12 @@ import { Flame, Check, Snowflake, Trophy, Zap, TrendingUp, Calendar, Gift, Clock
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
-import { checkDailyReward, DAILY_REWARDS, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
+import { checkDailyReward, loadDailyRewardData, type DailyRewardData } from '@/utils/dailyRewardStorage';
 
 
 
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
-import { WeeklyChallengesCard } from '@/components/WeeklyChallengesCard';
 import { MonthlyChallengeBoard } from '@/components/MonthlyChallengeBoard';
 import { StreakSocietyBadge } from '@/components/StreakSocietyBadge';
 
@@ -340,76 +339,6 @@ const Progress = () => {
             </div>
             <p className="text-2xl font-bold">{data?.streakFreezes || 0}</p>
           </div>
-        </div>
-        {/* Weekly Challenges */}
-        <WeeklyChallengesCard />
-
-
-        {/* Daily Reward Cycle */}
-        <div
-          className="bg-card rounded-xl p-4 border cursor-pointer active:scale-[0.98] transition-transform"
-          onClick={() => window.dispatchEvent(new Event('openDailyReward'))}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Gift className="h-4 w-4 text-primary" />
-              Daily Rewards
-              {completedCycles > 0 && (
-                <span className="text-[9px] font-bold bg-warning/15 text-warning px-1.5 py-0.5 rounded-full">
-                  🔁 {completedCycles} {completedCycles === 1 ? 'cycle' : 'cycles'}
-                </span>
-              )}
-            </h3>
-            <span className={cn(
-              "text-xs font-bold px-2 py-0.5 rounded-full",
-              rewardClaimed 
-                ? "bg-success/15 text-success" 
-                : "bg-primary/15 text-primary"
-            )}>
-              {rewardClaimed ? '✓ Claimed' : `Day ${rewardDay}/7`}
-            </span>
-          </div>
-          <div className="flex gap-1.5">
-            {DAILY_REWARDS.map((reward) => {
-              const isPast = reward.day < rewardDay || (reward.day === rewardDay && rewardClaimed);
-              const isCurrent = reward.day === rewardDay && !rewardClaimed;
-              const isFuture = reward.day > rewardDay || (reward.day > rewardDay);
-
-              return (
-                <motion.div
-                  key={reward.day}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: reward.day * 0.04 }}
-                  className={cn(
-                    "flex-1 flex flex-col items-center rounded-lg py-2 border transition-all",
-                    isPast && "bg-success/10 border-success/25",
-                    isCurrent && "bg-primary/10 border-primary shadow-sm ring-1 ring-primary/20",
-                    isFuture && "bg-muted/40 border-transparent opacity-50"
-                  )}
-                >
-                  {isPast ? (
-                    <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center mb-0.5">
-                      <Check className="h-3 w-3 text-success" />
-                    </div>
-                  ) : (
-                    <span className="text-base leading-none mb-0.5">{reward.icon}</span>
-                  )}
-                  <span className={cn(
-                    "text-[8px] font-bold",
-                    isCurrent ? "text-primary" : "text-muted-foreground"
-                  )}>
-                    {reward.icon}
-                  </span>
-                </motion.div>
-              );
-            })}
-          </div>
-          {!rewardClaimed && (
-            <p className="text-[10px] text-muted-foreground text-center mt-2">
-              Tap to claim your daily reward · Missing a day resets the cycle
-            </p>
-          )}
         </div>
 
         {/* Monthly Challenge Board */}

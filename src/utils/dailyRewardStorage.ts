@@ -11,13 +11,13 @@ export interface DailyRewardData {
 }
 
 export const DAILY_REWARDS = [
-  { day: 1, xp: 10,  icon: '💎', label: 'Gem' },
-  { day: 2, xp: 15,  icon: '🎁', label: 'Treasure' },
-  { day: 3, xp: 25,  icon: '⚡', label: 'Energy' },
-  { day: 4, xp: 35,  icon: '🔮', label: 'Crystal' },
-  { day: 5, xp: 50,  icon: '🏅', label: 'Medal' },
-  { day: 6, xp: 75,  icon: '👑', label: 'Crown' },
-  { day: 7, xp: 100, icon: '🏆', label: 'Trophy' },
+  { day: 1, icon: '💎', label: 'Gem' },
+  { day: 2, icon: '🎁', label: 'Treasure' },
+  { day: 3, icon: '⚡', label: 'Energy' },
+  { day: 4, icon: '🔮', label: 'Crystal' },
+  { day: 5, icon: '🏅', label: 'Medal' },
+  { day: 6, icon: '👑', label: 'Crown' },
+  { day: 7, icon: '🏆', label: 'Trophy' },
 ] as const;
 
 const getDefault = (): DailyRewardData => ({
@@ -63,17 +63,15 @@ export const checkDailyReward = async (): Promise<{
 };
 
 export const claimDailyReward = async (): Promise<{
-  xpEarned: number;
   day: number;
   data: DailyRewardData;
 }> => {
   const { canClaim, currentDay, data } = await checkDailyReward();
   if (!canClaim) {
-    const reward = DAILY_REWARDS[data.currentDay - 1];
-    return { xpEarned: 0, day: data.currentDay, data };
+    return { day: data.currentDay, data };
   }
 
-  const reward = DAILY_REWARDS[currentDay - 1];
+  
   data.currentDay = currentDay;
   data.lastClaimDate = format(new Date(), 'yyyy-MM-dd');
   data.totalClaimed += 1;
@@ -85,5 +83,5 @@ export const claimDailyReward = async (): Promise<{
 
   await setSetting(STORAGE_KEY, data);
 
-  return { xpEarned: reward.xp, day: currentDay, data };
+  return { day: currentDay, data };
 };
