@@ -17,8 +17,6 @@ import {
 } from '@/utils/streakStorage';
 import { triggerNotificationHaptic, triggerHaptic } from '@/utils/haptics';
 import {
-  addXp,
-  XP_REWARDS,
   checkAndUnlockAchievements,
   updateChallengeProgress,
 } from '@/utils/gamificationStorage';
