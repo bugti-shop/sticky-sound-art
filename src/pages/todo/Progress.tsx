@@ -393,7 +393,16 @@ const Progress = () => {
       <GamificationCertificates
         isOpen={showCertificates}
         onClose={() => setShowCertificates(false)}
-        streakData={data}
+      {/* Streak Detail Sheet */}
+      <StreakDetailSheet
+        isOpen={showStreakDetail}
+        onClose={() => setShowStreakDetail(false)}
+        currentStreak={data?.currentStreak || 0}
+        longestStreak={data?.longestStreak || 0}
+        streakFreezes={data?.streakFreezes || 0}
+        totalCompletions={data?.totalCompletions || 0}
+        weekData={weekData}
+        completedToday={completedToday}
       />
     </TodoLayout>
   );
