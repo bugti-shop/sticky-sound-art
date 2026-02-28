@@ -20,6 +20,7 @@ import {
   checkAndUnlockAchievements,
   updateChallengeProgress,
 } from '@/utils/gamificationStorage';
+import { updateGoalProgress } from '@/utils/weeklyGoalsStorage';
 
 import { playStreakMilestoneSound } from '@/utils/gamificationSounds';
 

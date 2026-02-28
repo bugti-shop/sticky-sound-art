@@ -278,9 +278,6 @@ export const AchievementBadges = ({ compact = false }: AchievementBadgesProps) =
               <span className="text-[10px] font-medium text-center line-clamp-2 leading-tight">
                 {achievement.name}
               </span>
-              {isUnlocked && (
-                <span className="text-[9px] text-warning">+{achievement.xpReward} XP</span>
-              )}
             </motion.div>
           );
         })}
