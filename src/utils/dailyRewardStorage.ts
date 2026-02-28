@@ -11,13 +11,13 @@ export interface DailyRewardData {
 }
 
 export const DAILY_REWARDS = [
-  { day: 1, xp: 10,  icon: '💎', label: 'Gem' },
-  { day: 2, xp: 15,  icon: '🎁', label: 'Treasure' },
-  { day: 3, xp: 25,  icon: '⚡', label: 'Energy' },
-  { day: 4, xp: 35,  icon: '🔮', label: 'Crystal' },
-  { day: 5, xp: 50,  icon: '🏅', label: 'Medal' },
-  { day: 6, xp: 75,  icon: '👑', label: 'Crown' },
-  { day: 7, xp: 100, icon: '🏆', label: 'Trophy' },
+  { day: 1, icon: '💎', label: 'Gem' },
+  { day: 2, icon: '🎁', label: 'Treasure' },
+  { day: 3, icon: '⚡', label: 'Energy' },
+  { day: 4, icon: '🔮', label: 'Crystal' },
+  { day: 5, icon: '🏅', label: 'Medal' },
+  { day: 6, icon: '👑', label: 'Crown' },
+  { day: 7, icon: '🏆', label: 'Trophy' },
 ] as const;
 
 const getDefault = (): DailyRewardData => ({
