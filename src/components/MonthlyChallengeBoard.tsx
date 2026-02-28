@@ -24,6 +24,8 @@ export const MonthlyChallengeBoard = () => {
   const [celebratingChallenge, setCelebratingChallenge] = useState<MonthlyChallenge | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showBoardConfetti, setShowBoardConfetti] = useState(false);
+  const [showBadgeUnlock, setShowBadgeUnlock] = useState(false);
+  const [unlockedBadge, setUnlockedBadge] = useState<MonthlyBadge | null>(null);
 
   useEffect(() => {
     const load = async () => {
