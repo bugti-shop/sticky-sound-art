@@ -13,7 +13,6 @@ import { checkDailyReward, loadDailyRewardData, type DailyRewardData } from '@/u
 
 import { GamificationCertificates, hasNewCertificates } from '@/components/GamificationCertificates';
 import { StreakDetailSheet } from '@/components/StreakDetailSheet';
-import { WeeklyChallengesCard } from '@/components/WeeklyChallengesCard';
 import { MonthlyChallengeBoard } from '@/components/MonthlyChallengeBoard';
 import { StreakSocietyBadge } from '@/components/StreakSocietyBadge';
 
