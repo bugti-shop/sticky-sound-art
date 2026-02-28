@@ -142,6 +142,18 @@ export const useStreak = (options: UseStreakOptions = {}): UseStreakReturn => {
       }
     } catch (e) { /* ignore */ }
     
+    // Update monthly challenges
+    try {
+      const { updateMonthlyChallengeProgress } = await import('@/utils/monthlyChallengeStorage');
+      await updateMonthlyChallengeProgress('complete_tasks', 1);
+      if (result.streakIncremented) {
+        await updateMonthlyChallengeProgress('maintain_streak', 1);
+      }
+      if (hour < 12) {
+        await updateMonthlyChallengeProgress('early_completions', 1);
+      }
+    } catch (e) { /* ignore */ }
+    
     // Dispatch event for other components
     window.dispatchEvent(new CustomEvent('streakUpdated'));
     
