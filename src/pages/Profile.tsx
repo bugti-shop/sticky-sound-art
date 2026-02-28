@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRevenueCat } from '@/contexts/RevenueCatContext';
-import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, HardDrive, User, LogOut, Cloud, RefreshCw, Loader2, CheckCircle2, AlertCircle, Camera, Pencil } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BottomNavigation } from '@/components/BottomNavigation';
@@ -13,6 +13,7 @@ import { useGoogleAuth } from '@/contexts/GoogleAuthContext';
 import { performSync, getLastSyncInfo, SyncMeta, SyncResult, SyncState, addSyncListener } from '@/utils/driveSyncManager';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -25,6 +26,10 @@ export default function Profile() {
   const [isCalculatingSize, setIsCalculatingSize] = useState(false);
   const [syncState, setSyncState] = useState<SyncState>('idle');
   const [lastSync, setLastSync] = useState<SyncMeta | null>(null);
+  const { profile, updateProfile } = useUserProfile();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load last sync info
   useEffect(() => {
@@ -151,7 +156,13 @@ export default function Profile() {
             <div className="absolute top-0 left-0 w-6 h-6 bg-primary/10 rounded-full -translate-x-10 -translate-y-6" />
             <div className="absolute bottom-0 right-0 w-4 h-4 bg-primary/10 rounded-full translate-x-14 translate-y-4" />
             
-            {user?.picture ? (
+            {profile.avatarUrl ? (
+              <img
+                src={profile.avatarUrl}
+                alt={profile.name || 'Profile'}
+                className="relative w-28 h-28 rounded-full object-cover ring-4 ring-primary/20"
+              />
+            ) : user?.picture ? (
               <img
                 src={user.picture}
                 alt={user.name}
@@ -163,14 +174,70 @@ export default function Profile() {
                 <User className="w-14 h-14 text-primary" />
               </div>
             )}
+            {/* Camera button to change avatar */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg border-2 border-background z-10"
+            >
+              <Camera className="h-4 w-4" />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                  const dataUrl = ev.target?.result as string;
+                  await updateProfile({ avatarUrl: dataUrl });
+                  toast({ title: t('profile.photoUpdated', 'Profile photo updated') });
+                };
+                reader.readAsDataURL(file);
+                e.target.value = '';
+              }}
+            />
           </div>
 
           {/* Streak Society Badge */}
           <StreakSocietyBadge />
 
-          <h2 className="text-xl font-semibold text-foreground text-center">
-            {user ? user.name : t('profile.guest', 'Guest User')}
-          </h2>
+          {/* Editable name */}
+          {isEditingName ? (
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === 'Enter') {
+                    await updateProfile({ name: nameInput.trim() });
+                    setIsEditingName(false);
+                  } else if (e.key === 'Escape') {
+                    setIsEditingName(false);
+                  }
+                }}
+                onBlur={async () => {
+                  await updateProfile({ name: nameInput.trim() });
+                  setIsEditingName(false);
+                }}
+                className="text-xl font-semibold text-foreground text-center bg-transparent border-b-2 border-primary outline-none w-48"
+                placeholder={t('profile.enterName', 'Enter your name')}
+              />
+            </div>
+          ) : (
+            <button
+              onClick={() => { setNameInput(profile.name || user?.name || ''); setIsEditingName(true); }}
+              className="flex items-center gap-2 group"
+            >
+              <h2 className="text-xl font-semibold text-foreground text-center">
+                {profile.name || user?.name || t('profile.guest', 'Guest User')}
+              </h2>
+              <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          )}
           {user && (
             <p className="text-sm text-muted-foreground text-center">{user.email}</p>
           )}

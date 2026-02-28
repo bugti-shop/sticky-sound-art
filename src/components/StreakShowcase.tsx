@@ -17,6 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { triggerHaptic } from '@/utils/haptics';
 import html2canvas from 'html2canvas';
 import npdLogo from '@/assets/npd-reminder-logo.png';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooter } from '@/components/CardBranding';
 
 interface StreakShowcaseProps {
   isOpen: boolean;
@@ -60,6 +62,7 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
   const [copiedCaption, setCopiedCaption] = useState<number | null>(null);
   const [isSharing, setIsSharing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   const streak = streakData?.currentStreak || 0;
   const total = streakData?.totalCompletions || 0;
@@ -196,6 +199,8 @@ export const StreakShowcase = ({ isOpen, onClose, streakData }: StreakShowcasePr
                     longest={longest}
                     freezes={freezes}
                     milestones={milestones}
+                    userName={profile.name}
+                    userAvatar={profile.avatarUrl}
                   />
                 </div>
               </div>
@@ -266,6 +271,8 @@ interface ShareableCardProps {
   longest: number;
   freezes: number;
   milestones: number[];
+  userName?: string;
+  userAvatar?: string;
 }
 
 const ShareableCard = (props: ShareableCardProps) => {
@@ -279,17 +286,12 @@ const ShareableCard = (props: ShareableCardProps) => {
 };
 
 /* ---- Logo Footer Component ---- */
-const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)' }: { color?: string }) => (
-  <div className="flex items-center justify-center gap-2 mt-1">
-    <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" style={{ objectFit: 'cover' }} />
-    <span className="text-[10px] font-bold tracking-wider" style={{ color }}>
-      Npd • task manager
-    </span>
-  </div>
+const CardLogoFooter = ({ color = 'hsl(0, 0%, 40%)', userName, userAvatar }: { color?: string; userName?: string; userAvatar?: string }) => (
+  <CardBrandingFooter color={color} userName={userName} userAvatar={userAvatar} />
 );
 
 /* ---- Card 1: Fire Streak ---- */
-const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
+const FireCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(145deg, hsl(15, 90%, 8%), hsl(0, 85%, 12%), hsl(25, 95%, 15%))' }}>
     {/* Glow ring behind flame */}
@@ -298,12 +300,10 @@ const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
         background: 'radial-gradient(circle, hsl(25, 95%, 53%, 0.35), hsl(25, 95%, 53%, 0.1) 50%, transparent 70%)',
         boxShadow: '0 0 60px 20px hsl(25, 95%, 53%, 0.15)'
       }} />
-    {/* Outer ring decoration */}
     <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full"
       style={{ border: '2px solid hsl(25, 95%, 53%, 0.15)' }} />
     
     <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 text-center">
-      {/* Header with logo */}
       <div className="flex items-center gap-2 mt-2">
         <img src={npdLogo} alt="Npd" className="w-5 h-5 rounded" />
         <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: 'hsl(25, 95%, 70%)' }}>
@@ -331,20 +331,18 @@ const FireCard = ({ streak, total, longest }: ShareableCardProps) => (
             <p className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'hsl(0, 0%, 55%)' }}>best</p>
           </div>
         </div>
-        <CardLogoFooter color="hsl(0, 0%, 35%)" />
+        <CardLogoFooter color="hsl(0, 0%, 35%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
 );
 
 /* ---- Card 2: Clean Minimal ---- */
-const MinimalCard = ({ streak, total, longest }: ShareableCardProps) => (
+const MinimalCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'hsl(220, 15%, 8%)' }}>
-    {/* Corner accent */}
     <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-8"
       style={{ background: 'hsl(220, 85%, 59%)' }} />
-    {/* Subtle grid lines */}
     <div className="absolute inset-0 opacity-[0.03]" 
       style={{ backgroundImage: 'linear-gradient(hsl(220, 85%, 59%) 1px, transparent 1px), linear-gradient(90deg, hsl(220, 85%, 59%) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
@@ -368,17 +366,16 @@ const MinimalCard = ({ streak, total, longest }: ShareableCardProps) => (
           <span className="text-xs font-medium" style={{ color: 'hsl(220, 15%, 45%)' }}>Best Streak</span>
           <span className="text-sm font-bold" style={{ color: 'hsl(0, 0%, 100%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(220, 15%, 28%)" />
+        <CardLogoFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
 );
 
 /* ---- Card 3: Neon Glow ---- */
-const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
+const NeonCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(180deg, hsl(270, 50%, 6%), hsl(260, 60%, 10%))' }}>
-    {/* Neon glow orbs */}
     <div className="absolute bottom-10 left-6 w-24 h-24 rounded-full opacity-20 blur-2xl"
       style={{ background: 'hsl(280, 100%, 60%)' }} />
     <div className="absolute top-16 right-4 w-20 h-20 rounded-full opacity-15 blur-2xl"
@@ -413,17 +410,16 @@ const NeonCard = ({ streak, total, longest }: ShareableCardProps) => (
           <span className="text-xs font-medium" style={{ color: 'hsl(260, 30%, 50%)' }}>Longest streak</span>
           <span className="text-xs font-bold" style={{ color: 'hsl(280, 100%, 70%)' }}>{longest} days</span>
         </div>
-        <CardLogoFooter color="hsl(260, 30%, 30%)" />
+        <CardLogoFooter color="hsl(260, 30%, 30%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>
 );
 
 /* ---- Card 4: Sunset Gradient ---- */
-const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
+const GradientCard = ({ streak, total, longest, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(160deg, hsl(25, 100%, 55%), hsl(340, 80%, 50%), hsl(280, 70%, 45%))' }}>
-    {/* Decorative circles */}
     <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full opacity-10"
       style={{ background: 'hsl(0, 0%, 100%)' }} />
     <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-8"
@@ -455,7 +451,7 @@ const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
           </div>
         </div>
         <div className="mt-2 pt-2" style={{ borderTop: '1px solid hsl(0, 0%, 100%, 0.1)' }}>
-          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" />
+          <CardLogoFooter color="hsl(0, 0%, 100%, 0.4)" userName={userName} userAvatar={userAvatar} />
         </div>
       </div>
     </div>
@@ -463,13 +459,11 @@ const GradientCard = ({ streak, total, longest }: ShareableCardProps) => (
 );
 
 /* ---- Card 5: Champion Trophy ---- */
-const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) => (
+const TrophyCard = ({ streak, total, longest, milestones, userName, userAvatar }: ShareableCardProps) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(170deg, hsl(43, 30%, 10%), hsl(40, 40%, 5%))' }}>
-    {/* Gold shimmer line */}
     <div className="absolute top-0 left-0 right-0 h-1" 
       style={{ background: 'linear-gradient(90deg, transparent, hsl(43, 100%, 50%), transparent)' }} />
-    {/* Gold glow */}
     <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full opacity-10 blur-2xl"
       style={{ background: 'hsl(43, 100%, 50%)' }} />
 
@@ -488,7 +482,6 @@ const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) 
         <p className="text-sm font-semibold mt-1" style={{ color: 'hsl(43, 40%, 50%)' }}>day streak</p>
       </div>
 
-      {/* Milestone badges */}
       <div className="w-full">
         <div className="flex justify-center gap-2 mb-3">
           {[3, 7, 14, 30].map((m) => (
@@ -506,7 +499,7 @@ const TrophyCard = ({ streak, total, longest, milestones }: ShareableCardProps) 
           <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>{total} tasks</span>
           <span className="font-medium" style={{ color: 'hsl(43, 30%, 40%)' }}>Best: {longest}d</span>
         </div>
-        <CardLogoFooter color="hsl(43, 20%, 25%)" />
+        <CardLogoFooter color="hsl(43, 20%, 25%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   </div>

@@ -23,6 +23,8 @@ import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
 import Confetti from 'react-confetti';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import npdLogo from '@/assets/npd-reminder-logo.png';
 
 /* ============================================
    CERTIFICATE DEFINITIONS
@@ -227,6 +229,7 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
   const [celebratingCert, setCelebratingCert] = useState<CertificateLevel | null>(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -381,6 +384,8 @@ export const GamificationCertificates = ({ isOpen, onClose, streakData }: Certif
             onBack={() => setSelectedCert(null)}
             onCopyLinkedIn={handleCopyLinkedIn}
             onShare={handleShareCard}
+            userName={profile.name}
+            userAvatar={profile.avatarUrl}
           />
         ) : (
           /* Certificate List */
@@ -470,11 +475,13 @@ interface CertificateDetailProps {
   onBack: () => void;
   onCopyLinkedIn: (text: string) => void;
   onShare: () => void;
+  userName?: string;
+  userAvatar?: string;
 }
 
 const CertificateDetail = ({
   cert, progress, unlocked, cardRef, copiedLinkedIn, isSharing,
-  onBack, onCopyLinkedIn, onShare,
+  onBack, onCopyLinkedIn, onShare, userName, userAvatar,
 }: CertificateDetailProps) => {
   const Icon = cert.icon;
   const r = cert.requirements;
@@ -497,7 +504,7 @@ const CertificateDetail = ({
       {/* Certificate Card */}
       <div className="flex justify-center">
         <div ref={cardRef}>
-          <CertificateCard cert={cert} unlocked={unlocked} />
+          <CertificateCard cert={cert} unlocked={unlocked} userName={userName} userAvatar={userAvatar} />
         </div>
       </div>
 
@@ -572,7 +579,7 @@ const CertificateDetail = ({
    CERTIFICATE CARD (SHAREABLE IMAGE)
    ============================================ */
 
-const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked: boolean }) => {
+const CertificateCard = ({ cert, unlocked, userName, userAvatar }: { cert: CertificateLevel; unlocked: boolean; userName?: string; userAvatar?: string }) => {
   const Icon = cert.icon;
   const dateStr = format(new Date(), 'MMMM d, yyyy');
 
@@ -616,6 +623,16 @@ const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked:
           </p>
         </div>
 
+        {/* User name + avatar */}
+        {userName && (
+          <div className="flex items-center gap-2 mt-1">
+            {userAvatar && (
+              <img src={userAvatar} alt="" className="w-6 h-6 rounded-full object-cover" style={{ border: `1.5px solid ${cert.colors.accent}50` }} />
+            )}
+            <p className="text-xs font-semibold" style={{ color: 'hsl(0,0%,85%)' }}>{userName}</p>
+          </div>
+        )}
+
         {/* Stats summary */}
         <div className="w-full">
           <div className="grid grid-cols-3 gap-2 mb-4">
@@ -628,9 +645,12 @@ const CertificateCard = ({ cert, unlocked }: { cert: CertificateLevel; unlocked:
             <p className="text-[9px]" style={{ color: `${cert.colors.text}60` }}>
               {unlocked ? dateStr : 'Not yet achieved'}
             </p>
-            <p className="text-[9px] font-bold tracking-wider" style={{ color: `${cert.colors.text}40` }}>
-              NPD
-            </p>
+            <div className="flex items-center gap-1">
+              <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
+              <p className="text-[9px] font-bold tracking-wider" style={{ color: `${cert.colors.text}40` }}>
+                NPD
+              </p>
+            </div>
           </div>
         </div>
       </div>

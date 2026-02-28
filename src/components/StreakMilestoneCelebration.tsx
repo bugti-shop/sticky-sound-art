@@ -12,6 +12,8 @@ import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import Confetti from 'react-confetti';
 import appLogo from '@/assets/npd-reminder-logo.png';
 import html2canvas from 'html2canvas';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooterLarge } from '@/components/CardBranding';
 
 const MILESTONE_CONFIG: Record<number, { emoji: string; title: string; subtitle: string; gradient: string; glow: string }> = {
   3: {
@@ -70,6 +72,7 @@ export const StreakMilestoneCelebration = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [isSharing, setIsSharing] = useState(false);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   // Listen for milestone events globally
   useEffect(() => {
@@ -299,7 +302,7 @@ export const StreakMilestoneCelebration = () => {
         {/* Hidden shareable card for html2canvas */}
         <div className="fixed -left-[9999px] top-0">
           <div ref={shareCardRef}>
-            <ShareCard milestone={milestone} config={config} />
+            <ShareCard milestone={milestone} config={config} userName={profile.name} userAvatar={profile.avatarUrl} />
           </div>
         </div>
       </motion.div>
@@ -314,9 +317,13 @@ export const StreakMilestoneCelebration = () => {
 const ShareCard = ({
   milestone,
   config,
+  userName,
+  userAvatar,
 }: {
   milestone: number;
   config: typeof MILESTONE_CONFIG[number];
+  userName?: string;
+  userAvatar?: string;
 }) => (
   <div
     className="w-[1080px] h-[1920px] relative overflow-hidden flex flex-col items-center justify-center"
@@ -396,31 +403,8 @@ const ShareCard = ({
         {config.title}
       </p>
 
-      {/* Branding */}
-      <div
-        style={{
-          marginTop: '80px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-        }}
-      >
-        <img
-          src={appLogo}
-          alt="Npd"
-          style={{ width: '48px', height: '48px', borderRadius: '12px' }}
-        />
-        <span
-          style={{
-            fontSize: '32px',
-            fontWeight: 700,
-            color: 'rgba(255,255,255,0.4)',
-            letterSpacing: '4px',
-          }}
-        >
-          Npd
-        </span>
-      </div>
+      {/* User profile + Branding */}
+      <CardBrandingFooterLarge color="rgba(255,255,255,0.4)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );

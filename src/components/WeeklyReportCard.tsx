@@ -20,6 +20,9 @@ import { loadFolders, Folder } from '@/utils/folderStorage';
 import { StreakData } from '@/utils/streakStorage';
 import { startOfWeek, endOfWeek, format, subWeeks, isWithinInterval } from 'date-fns';
 import html2canvas from 'html2canvas';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { CardBrandingFooter } from '@/components/CardBranding';
+import npdLogo from '@/assets/npd-reminder-logo.png';
 
 interface WeeklyReportCardProps {
   isOpen: boolean;
@@ -79,6 +82,7 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
   const [stats, setStats] = useState<WeeklyStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
   // Load weekly stats
   useEffect(() => {
@@ -288,7 +292,7 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
 
                 <div className="flex justify-center px-8">
                   <div ref={cardRef}>
-                    <ReportCard design={REPORT_DESIGNS[activeDesign].id} stats={stats} />
+                    <ReportCard design={REPORT_DESIGNS[activeDesign].id} stats={stats} userName={profile.name} userAvatar={profile.avatarUrl} />
                   </div>
                 </div>
               </div>
@@ -333,20 +337,22 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
 interface ReportCardProps {
   design: ReportDesign;
   stats: WeeklyStats;
+  userName?: string;
+  userAvatar?: string;
 }
 
-const ReportCard = ({ design, stats }: ReportCardProps) => {
+const ReportCard = ({ design, stats, userName, userAvatar }: ReportCardProps) => {
   switch (design) {
-    case 'dashboard': return <DashboardCard stats={stats} />;
-    case 'receipt': return <ReceiptCard stats={stats} />;
-    case 'wrapped': return <WrappedCard stats={stats} />;
-    case 'scorecard': return <ScorecardCard stats={stats} />;
-    case 'postcard': return <PostcardCard stats={stats} />;
+    case 'dashboard': return <DashboardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'receipt': return <ReceiptCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'wrapped': return <WrappedCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'scorecard': return <ScorecardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
+    case 'postcard': return <PostcardCard stats={stats} userName={userName} userAvatar={userAvatar} />;
   }
 };
 
 /* ---- Card 1: Dashboard ---- */
-const DashboardCard = ({ stats }: { stats: WeeklyStats }) => (
+const DashboardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden"
     style={{ background: 'linear-gradient(160deg, hsl(220, 20%, 10%), hsl(220, 25%, 14%))' }}>
     <div className="flex flex-col h-full p-5">
@@ -393,7 +399,7 @@ const DashboardCard = ({ stats }: { stats: WeeklyStats }) => (
           label="Top folder" value={stats.topFolder?.name || '—'} bg="hsl(271, 70%, 60%, 0.1)" small />
       </div>
 
-      <p className="text-[9px] text-center mt-3" style={{ color: 'hsl(220, 15%, 28%)' }}>npd • task manager</p>
+      <CardBrandingFooter color="hsl(220, 15%, 28%)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );
@@ -406,17 +412,17 @@ const StatBox = ({ icon, label, value, bg, small }: { icon: React.ReactNode; lab
 );
 
 /* ---- Card 2: Receipt ---- */
-const ReceiptCard = ({ stats }: { stats: WeeklyStats }) => (
+const ReceiptCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 rounded-2xl overflow-hidden" style={{ background: 'hsl(40, 30%, 96%)', minHeight: '360px' }}>
     <div className="p-5 font-mono">
-      {/* Header */}
       <div className="text-center border-b-2 border-dashed pb-3 mb-3" style={{ borderColor: 'hsl(40, 10%, 80%)' }}>
+        <img src={npdLogo} alt="Npd" className="w-8 h-8 rounded mx-auto mb-1" />
         <p className="text-sm font-bold tracking-wider" style={{ color: 'hsl(40, 10%, 15%)' }}>NPD PRODUCTIVITY</p>
         <p className="text-[10px] mt-0.5" style={{ color: 'hsl(40, 10%, 50%)' }}>WEEKLY RECEIPT</p>
         <p className="text-[9px] mt-1" style={{ color: 'hsl(40, 10%, 60%)' }}>{stats.weekLabel}</p>
+        {userName && <p className="text-[9px] mt-1 font-bold" style={{ color: 'hsl(40, 10%, 35%)' }}>{userName}</p>}
       </div>
 
-      {/* Items */}
       <div className="space-y-1.5 mb-3 text-xs" style={{ color: 'hsl(40, 10%, 20%)' }}>
         <ReceiptLine label="TASKS DONE" value={String(stats.tasksCompleted)} />
         <ReceiptLine label="TASKS CREATED" value={String(stats.tasksCreated)} />
@@ -449,10 +455,9 @@ const ReceiptLine = ({ label, value, bold }: { label: string; value: string; bol
 );
 
 /* ---- Card 3: Wrapped (Spotify-inspired) ---- */
-const WrappedCard = ({ stats }: { stats: WeeklyStats }) => (
+const WrappedCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'linear-gradient(170deg, hsl(142, 70%, 35%), hsl(180, 60%, 25%), hsl(220, 60%, 30%))' }}>
-    {/* Abstract shapes */}
     <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-20" style={{ background: 'hsl(60, 100%, 70%)' }} />
     <div className="absolute bottom-20 -left-6 w-24 h-24 rounded-full opacity-15" style={{ background: 'hsl(330, 100%, 70%)' }} />
 
@@ -486,20 +491,19 @@ const WrappedCard = ({ stats }: { stats: WeeklyStats }) => (
         )}
       </div>
 
-      <p className="text-[9px]" style={{ color: 'hsl(0, 0%, 100%, 0.25)' }}>npd • task manager</p>
+      <CardBrandingFooter color="hsl(0, 0%, 100%, 0.3)" userName={userName} userAvatar={userAvatar} />
     </div>
   </div>
 );
 
 /* ---- Card 4: Scorecard ---- */
-const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
+const ScorecardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => {
   const grade = stats.completionRate >= 90 ? 'S' : stats.completionRate >= 75 ? 'A' : stats.completionRate >= 60 ? 'B' : stats.completionRate >= 40 ? 'C' : 'D';
   const gradeColor = grade === 'S' ? 'hsl(43, 100%, 55%)' : grade === 'A' ? 'hsl(142, 71%, 50%)' : grade === 'B' ? 'hsl(217, 91%, 60%)' : 'hsl(25, 95%, 55%)';
   
   return (
     <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
       style={{ background: 'linear-gradient(160deg, hsl(250, 40%, 10%), hsl(260, 50%, 15%))' }}>
-      {/* Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-15 blur-2xl" style={{ background: gradeColor }} />
 
       <div className="relative z-10 flex flex-col items-center h-full p-5">
@@ -510,7 +514,6 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           </span>
         </div>
 
-        {/* Grade */}
         <div className="relative mb-4">
           <div className="w-24 h-24 rounded-full flex items-center justify-center"
             style={{ border: `3px solid ${gradeColor}`, background: `${gradeColor}15` }}>
@@ -522,7 +525,6 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="w-full space-y-2 flex-1">
           <ScoreRow icon={<Target className="h-3 w-3" />} label="Tasks" value={`${stats.tasksCompleted}/${stats.totalTasks}`} color="hsl(142, 71%, 55%)" />
           <ScoreRow icon={<Flame className="h-3 w-3" />} label="Streak" value={`${stats.streakDays} days`} color="hsl(25, 95%, 55%)" />
@@ -533,7 +535,7 @@ const ScorecardCard = ({ stats }: { stats: WeeklyStats }) => {
           )}
         </div>
 
-        <p className="text-[9px] mt-2" style={{ color: 'hsl(260, 20%, 30%)' }}>npd • task manager</p>
+        <CardBrandingFooter color="hsl(260, 20%, 30%)" userName={userName} userAvatar={userAvatar} />
       </div>
     </div>
   );
@@ -550,10 +552,9 @@ const ScoreRow = ({ icon, label, value, color }: { icon: React.ReactNode; label:
 );
 
 /* ---- Card 5: Postcard ---- */
-const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
+const PostcardCard = ({ stats, userName, userAvatar }: { stats: WeeklyStats; userName?: string; userAvatar?: string }) => (
   <div className="w-72 aspect-[4/5] rounded-2xl overflow-hidden relative"
     style={{ background: 'hsl(0, 0%, 100%)' }}>
-    {/* Accent strip */}
     <div className="h-1.5" style={{ background: 'linear-gradient(90deg, hsl(220, 85%, 59%), hsl(271, 70%, 60%), hsl(330, 80%, 60%))' }} />
 
     <div className="flex flex-col h-full p-5">
@@ -562,7 +563,7 @@ const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
           Week of {stats.weekLabel}
         </p>
         <h3 className="text-xl font-black mt-1" style={{ color: 'hsl(220, 20%, 12%)' }}>
-          My Weekly<br />Productivity
+          {userName ? `${userName}'s` : 'My'} Weekly<br />Productivity
         </h3>
       </div>
 
@@ -581,7 +582,10 @@ const PostcardCard = ({ stats }: { stats: WeeklyStats }) => (
       )}
 
       <div className="flex items-center justify-between mt-3">
-        <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
+        <div className="flex items-center gap-1.5">
+          <img src={npdLogo} alt="Npd" className="w-4 h-4 rounded" />
+          <p className="text-[9px]" style={{ color: 'hsl(220, 15%, 75%)' }}>npd • task manager</p>
+        </div>
         {stats.previousWeekTasks > 0 && (
           <p className="text-[9px] font-medium" style={{ color: stats.tasksCompleted >= stats.previousWeekTasks ? 'hsl(142, 71%, 45%)' : 'hsl(0, 84%, 60%)' }}>
             {stats.tasksCompleted >= stats.previousWeekTasks ? '↑' : '↓'} {Math.abs(stats.tasksCompleted - stats.previousWeekTasks)} vs last week
