@@ -322,6 +322,11 @@ const Progress = () => {
             <h3 className="font-semibold flex items-center gap-2">
               <Gift className="h-4 w-4 text-primary" />
               Daily Rewards
+              {completedCycles > 0 && (
+                <span className="text-[9px] font-bold bg-warning/15 text-warning px-1.5 py-0.5 rounded-full">
+                  🔁 {completedCycles} {completedCycles === 1 ? 'cycle' : 'cycles'}
+                </span>
+              )}
             </h3>
             <span className={cn(
               "text-xs font-bold px-2 py-0.5 rounded-full",
