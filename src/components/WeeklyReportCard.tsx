@@ -292,7 +292,7 @@ export const WeeklyReportCard = ({ isOpen, onClose, streakData }: WeeklyReportCa
 
                 <div className="flex justify-center px-8">
                   <div ref={cardRef}>
-                    <ReportCard design={REPORT_DESIGNS[activeDesign].id} stats={stats} />
+                    <ReportCard design={REPORT_DESIGNS[activeDesign].id} stats={stats} userName={profile.name} userAvatar={profile.avatarUrl} />
                   </div>
                 </div>
               </div>
