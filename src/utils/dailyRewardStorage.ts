@@ -24,6 +24,7 @@ const getDefault = (): DailyRewardData => ({
   currentDay: 1,
   lastClaimDate: null,
   totalClaimed: 0,
+  completedCycles: 0,
 });
 
 export const loadDailyRewardData = async (): Promise<DailyRewardData> => {
