@@ -128,7 +128,7 @@ const CERTIFICATE_LEVELS: CertificateLevel[] = [
     title: 'Master',
     subtitle: 'Legendary Status',
     icon: Gem,
-    requirements: { tasksCompleted: 1000, streakDays: 60, notesCreated: 150, foldersUsed: 8, xpLevel: 16 },
+    requirements: { tasksCompleted: 1000, streakDays: 60, notesCreated: 150, foldersUsed: 8 },
     certificateText: 'This certifies that the holder has achieved the highest distinction in the Npd productivity system — Master rank. With 1,000+ tasks completed, a 60-day unbroken streak, and a comprehensive knowledge architecture of 150+ notes, they represent the pinnacle of sustained personal productivity. This achievement places them among the most disciplined and committed productivity practitioners.',
     linkedInDescription: '💎 Npd MASTER Certificate — The highest rank achieved.\n\n📊 The numbers:\n• 1,000+ tasks completed\n• 60-day streak — two months, zero missed days\n• 150+ notes in my second brain\n• 8+ structured workflows\n\nThis took months of daily discipline. Not motivation — systems.\n\nNpd didn\'t just help me manage tasks. It changed how I think about execution.\n\nTo anyone building their productivity system: Start today. The compound effect is real.\n\n#Master #ProductivityMaster #Npd #SecondBrain #ExecutionOverPlanning #1000Tasks',
     colors: {
