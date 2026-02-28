@@ -230,6 +230,12 @@ const AppContent = () => {
       <WhatsNewSheet />
       <StreakMilestoneCelebration />
       <DailyLoginRewardDialog />
+      <WelcomeBackCelebration
+        isOpen={isReturning}
+        mood={mood}
+        daysAway={daysAway}
+        onDismiss={acknowledgeReturn}
+      />
       <AppRoutes />
     </>
   );
