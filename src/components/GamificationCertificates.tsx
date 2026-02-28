@@ -2,6 +2,7 @@
  * Gamification Certificate System
  * 5 certificate levels from Beginner to Master
  * Shareable cards with LinkedIn-ready descriptions
+ * Includes confetti celebration for first-time unlocks
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -12,14 +13,16 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { triggerHaptic } from '@/utils/haptics';
+import { triggerHaptic, triggerNotificationHaptic } from '@/utils/haptics';
 import { loadTodoItems } from '@/utils/todoItemsStorage';
 import { loadNotesFromDB } from '@/utils/noteStorage';
 import { loadFolders } from '@/utils/folderStorage';
 import { loadXpData, XpData } from '@/utils/gamificationStorage';
 import { StreakData } from '@/utils/streakStorage';
+import { getSetting, setSetting } from '@/utils/settingsStorage';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
+import Confetti from 'react-confetti';
 
 /* ============================================
    CERTIFICATE DEFINITIONS
